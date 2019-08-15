@@ -2,3 +2,8 @@
 .classpath
 .project
 /target/
+/geom2d/target/
+/geom2d-check/target/
+/geom2d-demo/target/
+/geom2d-tune/target/
+/geom3d/target/
