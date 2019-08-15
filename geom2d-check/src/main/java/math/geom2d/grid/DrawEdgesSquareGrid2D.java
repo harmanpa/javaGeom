@@ -47,6 +47,6 @@ public class DrawEdgesSquareGrid2D  extends JPanel{
 		JFrame frame = new JFrame("Draw a square grid");
 		frame.setContentPane(panel);
 		frame.setSize(400, 400);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 	}
 }

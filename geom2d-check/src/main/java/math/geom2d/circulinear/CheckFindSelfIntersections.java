@@ -67,6 +67,6 @@ public class CheckFindSelfIntersections extends JPanel{
 		JFrame frame = new JFrame("Check self-intersections");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

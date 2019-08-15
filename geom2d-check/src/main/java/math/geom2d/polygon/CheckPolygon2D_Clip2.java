@@ -82,6 +82,6 @@ public class CheckPolygon2D_Clip2 extends JPanel{
 		JFrame frame = new JFrame("Clip Polygon demo (2)");
 		frame.setContentPane(panel);
 		frame.setSize(400, 400);
-		frame.setVisible(true);	
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);	
 	}
 }

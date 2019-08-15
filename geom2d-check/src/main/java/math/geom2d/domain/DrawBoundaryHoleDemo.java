@@ -79,7 +79,7 @@ public class DrawBoundaryHoleDemo extends JPanel{
 		JFrame frame = new JFrame("Draw boundary of a domain with hole");
 		frame.setContentPane(panel);
 		frame.setSize(400, 300);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}
 }

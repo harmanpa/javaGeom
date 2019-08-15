@@ -178,7 +178,7 @@ public class DrawHyperbolaDemo extends JPanel{
 		JFrame frame = new JFrame("Draw hyperbola demo");
 		frame.setContentPane(panel);
 		frame.setSize(500, 400);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}
 }

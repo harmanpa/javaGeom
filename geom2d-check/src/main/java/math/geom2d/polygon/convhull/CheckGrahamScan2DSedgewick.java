@@ -91,7 +91,7 @@ public class CheckGrahamScan2DSedgewick extends JPanel{
 		JFrame frame = new JFrame("Convex hull by Graham scan");
 		frame.setContentPane(panel);
 		frame.setSize(500, 400);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}
 }

@@ -69,6 +69,6 @@ public class CheckInertiaEllipse extends JPanel{
 		JFrame frame = new JFrame("Inertia ellipse of a set of points");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

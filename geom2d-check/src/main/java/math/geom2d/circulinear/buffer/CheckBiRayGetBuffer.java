@@ -74,6 +74,6 @@ public class CheckBiRayGetBuffer extends JPanel{
 		JFrame frame = new JFrame("Several parallels of a bi-ray");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

@@ -72,6 +72,6 @@ public class CheckGeneralPath2D_Clip extends JPanel {
 		JFrame frame = new JFrame("Clip a General Path");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}	
 }

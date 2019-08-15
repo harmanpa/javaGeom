@@ -56,6 +56,6 @@ public class CheckQuadBezier2D  extends JPanel{
 		JFrame frame = new JFrame("Check Quadratic Bezier Curve");
 		frame.setContentPane(panel);
 		frame.setSize(400, 400);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}}

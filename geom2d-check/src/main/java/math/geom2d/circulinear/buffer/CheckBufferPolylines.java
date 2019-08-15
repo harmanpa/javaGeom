@@ -94,6 +94,6 @@ public class CheckBufferPolylines extends JPanel{
 		JFrame frame = new JFrame("Several buffers of polylines");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

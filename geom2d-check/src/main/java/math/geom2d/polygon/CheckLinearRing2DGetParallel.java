@@ -56,6 +56,6 @@ public class CheckLinearRing2DGetParallel extends JPanel{
 		JFrame frame = new JFrame("Draw parallel polyline");
 		frame.setContentPane(panel);
 		frame.setSize(500, 400);
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

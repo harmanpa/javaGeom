@@ -56,5 +56,5 @@ public class CheckCircleArc2D  extends JPanel{
 		panel.setPreferredSize(new Dimension(400, 400));
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 	}}

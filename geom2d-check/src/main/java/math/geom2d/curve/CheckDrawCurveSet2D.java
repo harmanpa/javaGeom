@@ -56,7 +56,7 @@ public class CheckDrawCurveSet2D extends JPanel{
 		JFrame frame = new JFrame("Draw curve set demo");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}
 }

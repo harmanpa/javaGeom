@@ -55,6 +55,6 @@ public class CheckBufferLozenge extends JPanel{
 		JFrame frame = new JFrame("Linear ring buffer");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

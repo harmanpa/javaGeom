@@ -72,6 +72,6 @@ public class CheckGeneralPath2D_Rotate extends JPanel {
 		JFrame frame = new JFrame("Draw Rotated General Path");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}	
 }

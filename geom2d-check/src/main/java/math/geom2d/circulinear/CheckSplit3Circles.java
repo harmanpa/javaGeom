@@ -68,6 +68,6 @@ public class CheckSplit3Circles extends JPanel{
 		JFrame frame = new JFrame("Split 3 intersecting circles");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

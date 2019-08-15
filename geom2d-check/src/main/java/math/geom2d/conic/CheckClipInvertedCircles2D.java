@@ -87,7 +87,7 @@ public class CheckClipInvertedCircles2D extends JPanel{
 		JFrame frame = new JFrame("Draw inverted circles");
 		panel.setPreferredSize(new Dimension(400, 400));
 		frame.setContentPane(panel);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		frame.pack();
 	}
 }

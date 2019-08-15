@@ -58,6 +58,6 @@ public class CheckGetBufferTwoLines extends JPanel{
 		JFrame frame = new JFrame("Compute buffer of two intersecting lines");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

@@ -61,6 +61,6 @@ public class CheckClipCircle2D  extends JPanel{
 		JFrame frame = new JFrame("Check Clip Circle2D");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}}

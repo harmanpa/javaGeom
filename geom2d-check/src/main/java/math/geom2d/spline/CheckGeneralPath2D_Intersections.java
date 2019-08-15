@@ -75,6 +75,6 @@ public class CheckGeneralPath2D_Intersections extends JPanel {
 		JFrame frame = new JFrame("Draw Intersections of General Path");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}	
 }

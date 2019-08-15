@@ -52,6 +52,6 @@ public class CheckCircleArc2DTransform  extends JPanel{
 		JFrame frame = new JFrame("Check Circle arc transform");
 		frame.setContentPane(panel);
 		frame.setSize(400, 400);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}}

@@ -59,6 +59,6 @@ public class CheckSplit2Circles extends JPanel{
 		JFrame frame = new JFrame("Split intersecting circles");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

@@ -71,6 +71,6 @@ public class CheckGeneralPath2D_Box extends JPanel {
 		JFrame frame = new JFrame("Draw Bounding Box of General Path");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}	
 }

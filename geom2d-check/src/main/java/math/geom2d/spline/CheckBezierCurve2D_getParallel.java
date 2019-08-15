@@ -44,6 +44,6 @@ public class CheckBezierCurve2D_getParallel  extends JPanel{
 		JFrame frame = new JFrame("Check parallel Bezier Curve");
 		frame.setContentPane(panel);
 		frame.setSize(400, 400);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}}

@@ -42,7 +42,7 @@ public class CheckBufferEllipseAsLinearRing extends JPanel{
 		
 		// fill the buffer
 		g2.setColor(Color.CYAN);
-		//buffer.fill(g2);
+		buffer.fill(g2);
 
 //		// Draw the 2 parallels of the ring
 //		g2.setColor(Color.RED);
@@ -54,16 +54,7 @@ public class CheckBufferEllipseAsLinearRing extends JPanel{
 		ellipse.draw(g2);
 			
 		g2.setColor(Color.BLUE);
-		//buffer.boundary().draw(g2);
-                g2.setColor(Color.GREEN);
-                
-                
-                ellipse.parallel(-dist).draw(g2);
-                ellipse.parallel(-dist).parallel(-dist).draw(g2);
-                ellipse.parallel(-dist).parallel(-dist).parallel(-dist).draw(g2);
-                ellipse.parallel(-dist).parallel(-dist).parallel(-dist).parallel(-dist).draw(g2);
-                ellipse.parallel(-dist).parallel(-dist).parallel(-dist).parallel(-dist).parallel(-dist).draw(g2);
-                ellipse.parallel(-dist).parallel(-dist).parallel(-dist).parallel(-dist).parallel(-dist).parallel(-dist).draw(g2);
+		buffer.boundary().draw(g2);
                 
 	}
 	
@@ -75,6 +66,6 @@ public class CheckBufferEllipseAsLinearRing extends JPanel{
 		JFrame frame = new JFrame("Approximated ellipse buffer");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

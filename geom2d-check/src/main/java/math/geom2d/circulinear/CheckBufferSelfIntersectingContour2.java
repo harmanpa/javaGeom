@@ -73,6 +73,6 @@ public class CheckBufferSelfIntersectingContour2 extends JPanel{
 		JFrame frame = new JFrame("buffer of self-intersecting contour");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

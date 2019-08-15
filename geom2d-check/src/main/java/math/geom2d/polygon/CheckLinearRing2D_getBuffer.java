@@ -55,6 +55,6 @@ public class CheckLinearRing2D_getBuffer extends JPanel{
 		JFrame frame = new JFrame("Draw buffer of linear ring");
 		frame.setContentPane(panel);
 		frame.setSize(500, 400);
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

@@ -82,7 +82,7 @@ public class CheckJarvisMarch2DRandom100 extends JPanel{
 		JFrame frame = new JFrame("Convex hull by Jarvis march");
 		frame.setContentPane(panel);
 		frame.setSize(500, 400);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}
 }

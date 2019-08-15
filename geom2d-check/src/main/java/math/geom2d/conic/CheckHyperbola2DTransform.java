@@ -110,7 +110,7 @@ public class CheckHyperbola2DTransform extends JPanel{
 		JFrame frame = new JFrame("Check rotations of hyperbolas");
 		frame.setContentPane(panel);
 		frame.setSize(500, 400);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}
 }

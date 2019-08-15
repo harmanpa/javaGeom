@@ -69,6 +69,6 @@ public class CheckIntersectPolyline2D extends JPanel{
 		frame.setBackground(Color.WHITE);
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 	}
 }

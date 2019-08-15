@@ -73,6 +73,6 @@ public class CheckSplit2Contours extends JPanel{
 		JFrame frame = new JFrame("Split intersecting contours");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

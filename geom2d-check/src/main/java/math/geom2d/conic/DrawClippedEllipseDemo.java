@@ -90,7 +90,7 @@ public class DrawClippedEllipseDemo extends JPanel{
 		JFrame frame = new JFrame("Draw clipped ellipse demo");
 		frame.setContentPane(panel);
 		frame.setSize(400, 300);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}
 }

@@ -65,6 +65,6 @@ public class CheckBufferPolyCurveColinear extends JPanel{
 		JFrame frame = new JFrame("Buffer of a colinear polycurve");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

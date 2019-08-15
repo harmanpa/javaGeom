@@ -63,6 +63,6 @@ public class CheckPolyCirculinearCurve2DGetParallel extends JPanel{
 		JFrame frame = new JFrame("Draw parallel polyline");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

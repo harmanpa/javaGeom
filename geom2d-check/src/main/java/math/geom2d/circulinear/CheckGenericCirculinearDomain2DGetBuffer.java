@@ -62,6 +62,6 @@ public class CheckGenericCirculinearDomain2DGetBuffer extends JPanel{
 		JFrame frame = new JFrame("Buffer of a generic domain");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

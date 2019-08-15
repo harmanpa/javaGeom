@@ -105,6 +105,6 @@ public class CheckAsymptotesHyperbola2D extends JPanel{
 		JFrame frame = new JFrame("Check asymptotes of hyperbola");
 		frame.setContentPane(panel);
 		frame.pack();
-		frame.setVisible(true);		
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);		
 	}
 }

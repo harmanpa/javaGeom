@@ -128,7 +128,7 @@ public class CheckBox2D_ClipBoundary extends JPanel{
 		JFrame frame = new JFrame("Draw box boundaries demo");
 		frame.setContentPane(panel);
 		frame.setSize(500, 500);
-		frame.setVisible(true);
+		frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE); frame.setVisible(true);
 		
 	}
 }
