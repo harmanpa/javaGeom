@@ -4,7 +4,7 @@
  * 
  * Distributed under the LGPL License.
  *
- * Created: 4 févr. 09
+ * Created: 4 fÃ©vr. 09
  */
 package math.geom2d.point;
 

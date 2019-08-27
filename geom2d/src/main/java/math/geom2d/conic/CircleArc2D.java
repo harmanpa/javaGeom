@@ -383,6 +383,9 @@ public class CircleArc2D extends AbstractSmoothCurve2D
 
         Point2D p1 = circle.point(startAngle);
         Point2D p2 = circle.point(startAngle + angleExtent);
+        if(p1.distance(p2)<Shape2D.ACCURACY) {
+            return direct ? -dist : dist;
+        }
         boolean onLeft = (new StraightLine2D(p1, p2)).isInside(point);
 
         if (direct && !onLeft) {
@@ -484,26 +487,10 @@ public class CircleArc2D extends AbstractSmoothCurve2D
     }
 
     /**
-     * @deprecated replaced by t0()
-     */
-    @Deprecated
-    public double getT0() {
-        return 0;
-    }
-
-    /**
      * Returns the last position of the circle are, which is given by the
      * absolute angle of angle extent of this arc.
      */
     public double t1() {
-        return abs(this.angleExtent);
-    }
-
-    /**
-     * @deprecated replaced by t1()
-     */
-    @Deprecated
-    public double getT1() {
         return abs(this.angleExtent);
     }
 
@@ -941,7 +928,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
     public String toString() {
         Point2D center = circle.center();
         return String.format(Locale.US,
-                "CircleArc2D(%7.2f,%7.2f,%7.2f,%7.5f,%7.5f)",
+                "CircleArc2D(%.8f,%.8f,%.8f,%7.5f,%7.5f)",
                 center.x(), center.y(), circle.radius(),
                 getStartAngle(), getAngleExtent());
     }

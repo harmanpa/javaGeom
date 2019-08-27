@@ -76,6 +76,7 @@ public interface Domain2D extends Shape2D {
 
     /**
      * Returns an approximation of the domain as a polygon, or a MultiPolygon.
+     * @param n
      * @return a polygon
      * @since 0.10.2
      */

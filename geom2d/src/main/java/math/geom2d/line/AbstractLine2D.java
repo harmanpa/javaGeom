@@ -189,7 +189,8 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      * <p>
      * It can be easily extended to higher dimensions and/or higher polynomial
      * forms.
-     * @return 
+     *
+     * @return
      */
     public double[][] parametric() {
         double tab[][] = new double[2][2];
@@ -258,6 +259,10 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      * <p>
      * If the point does not belong to the line, the method returns the position
      * of its projection on the line.
+     *
+     * @param x
+     * @param y
+     * @return
      */
     public double positionOnLine(double x, double y) {
         double denom = dx * dx + dy * dy;
@@ -413,8 +418,12 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
 
     @Override
     public boolean containsProjection(Point2D point) {
-        double pos = this.positionOnLine(point);
-        return pos > (this.t0() - Shape2D.ACCURACY) && pos < (this.t1() + Shape2D.ACCURACY);
+        try {
+            double pos = this.positionOnLine(point);
+            return pos > (this.t0() - Shape2D.ACCURACY) && pos < (this.t1() + Shape2D.ACCURACY);
+        } catch (DegeneratedLine2DException ex) {
+            return false;
+        }
     }
 
     // ===================================================================
@@ -422,6 +431,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     /* (non-Javadoc)
 	 * @see math.geom2d.circulinear.CirculinearCurve2D#length()
      */
+    @Override
     public double length() {
         if (!this.isBounded()) {
             return Double.POSITIVE_INFINITY;
@@ -709,10 +719,13 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     @Override
     public double project(Point2D point) {
-        double pos = this.positionOnLine(point);
-
-        // Bounds between t0 and t1
-        return Math.min(Math.max(pos, this.t0()), this.t1());
+        try {
+            double pos = this.positionOnLine(point);
+            // Bounds between t0 and t1
+            return Math.min(Math.max(pos, this.t0()), this.t1());
+        } catch (DegeneratedLine2DException ex) {
+            return this.t0();
+        }
     }
 
     /**

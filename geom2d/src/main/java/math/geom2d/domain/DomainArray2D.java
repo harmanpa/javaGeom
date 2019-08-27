@@ -4,7 +4,7 @@
  * 
  * Distributed under the LGPL License.
  *
- * Created: 17 ao�t 10
+ * Created: 17 aoï¿½t 10
  */
 package math.geom2d.domain;
 

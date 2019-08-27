@@ -62,7 +62,7 @@ public interface Curve2D extends Shape2D {
 
     // ===================================================================
     // accessors
-
+    
     /**
      * Get value of parameter t for the first point of the curve. It can be
      * -Infinity, in this case the piece of curve is not bounded.

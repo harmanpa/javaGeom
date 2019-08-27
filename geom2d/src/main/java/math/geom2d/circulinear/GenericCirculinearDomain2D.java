@@ -9,6 +9,10 @@
 package math.geom2d.circulinear;
 
 import java.util.Collection;
+import math.geom2d.AffineTransform2D;
+import math.geom2d.domain.Boundary2D;
+import math.geom2d.domain.BoundaryPolyCurve2D;
+import math.geom2d.domain.ContinuousOrientedCurve2D;
 
 import math.geom2d.domain.GenericDomain2D;
 import math.geom2d.transform.CircleInversion2D;

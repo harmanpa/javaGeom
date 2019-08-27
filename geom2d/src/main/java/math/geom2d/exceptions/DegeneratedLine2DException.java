@@ -8,7 +8,7 @@ import math.geom2d.line.LinearShape2D;
  * 
  * Distributed under the LGPL License.
  *
- * Created: 19 août 2010
+ * Created: 19 aoÃ»t 2010
  */
 
 

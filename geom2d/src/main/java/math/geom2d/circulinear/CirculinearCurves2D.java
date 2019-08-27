@@ -10,6 +10,7 @@ package math.geom2d.circulinear;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 import java.util.TreeMap;
 import java.util.TreeSet;
 
@@ -24,6 +25,7 @@ import math.geom2d.curve.Curves2D;
 import math.geom2d.curve.CurveSet2D;
 import math.geom2d.curve.SmoothCurve2D;
 import math.geom2d.line.LinearShape2D;
+import math.geom2d.polygon.Polygon2D;
 
 /**
  * Some utilities for working with circulinear curves.
@@ -34,9 +36,32 @@ import math.geom2d.line.LinearShape2D;
 public class CirculinearCurves2D {
 
     /**
+     * Converts a shape to a circulinear curve, by concatenating all elements of
+     * the shape to the appropriate circulinear curve type. If the curve
+     * contains one or more non-circulinear smooth curve, null is returned
+     *
+     * @param shape
+     * @return
+     */
+    public static CirculinearCurve2D convert(Shape2D shape) {
+        if (shape instanceof Curve2D) {
+            return convert((Curve2D) shape);
+        }
+        if (shape instanceof Polygon2D) {
+            List<CirculinearElement2D> elements = new ArrayList<>();
+            ((Polygon2D) shape).edges().forEach(e -> elements.add(e));
+            return new PolyCirculinearCurve2D<>(elements);
+        }
+        return null;
+    }
+
+    /**
      * Converts a curve to a circulinear curve, by concatenating all elements of
      * the curve to the appropriate circulinear curve type. If the curve
      * contains one or more non-circulinear smooth curve, null is returned
+     *
+     * @param curve
+     * @return
      */
     public static CirculinearCurve2D convert(Curve2D curve) {
         // first check type, to avoid unnecessary computations
@@ -77,7 +102,7 @@ public class CirculinearCurves2D {
 
             // prepare array of elements
             ArrayList<CirculinearContinuousCurve2D> curves
-                    = new ArrayList<CirculinearContinuousCurve2D>(continuousCurves.size());
+                    = new ArrayList<>(continuousCurves.size());
 
             // class cast for each element, or throw an exception
             for (ContinuousCurve2D continuous : continuousCurves) {

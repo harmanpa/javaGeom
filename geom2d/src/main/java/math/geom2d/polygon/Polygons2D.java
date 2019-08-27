@@ -12,6 +12,7 @@ import de.lighti.clipper.Point;
 import static java.lang.Math.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 
@@ -390,6 +391,16 @@ public final class Polygons2D {
         return compute(polygon1, polygon2, Clipper.ClipType.UNION);
     }
 
+    public final static Polygon2D union(List<Polygon2D> polygon1,
+            Polygon2D polygon2) {
+        return compute(polygon1, Arrays.asList(polygon2), Clipper.ClipType.UNION);
+    }
+
+    public final static Polygon2D union(List<Polygon2D> polygon1,
+            List<Polygon2D> polygon2) {
+        return compute(polygon1, polygon2, Clipper.ClipType.UNION);
+    }
+
     /**
      * Computes the intersection of the two polygons.
      */
@@ -415,19 +426,33 @@ public final class Polygons2D {
             Polygon2D polygon2) {
         return compute(polygon1, polygon2, Clipper.ClipType.DIFFERENCE);
     }
-    
+
+    public final static Polygon2D difference(List<Polygon2D> polygon1,
+            Polygon2D polygon2) {
+        return compute(polygon1, Arrays.asList(polygon2), Clipper.ClipType.DIFFERENCE);
+    }
+
+    public final static Polygon2D difference(Polygon2D polygon1,
+            List<Polygon2D> polygon2) {
+        return compute(Arrays.asList(polygon1), polygon2, Clipper.ClipType.DIFFERENCE);
+    }
+
     private static Polygon2D compute(Polygon2D polygon1,
             Polygon2D polygon2, Clipper.ClipType clipType) {
-        // convert to Clipper data structures
-        Path path1 = convertToClipperPath(polygon1, 8);
-        Path path2 = convertToClipperPath(polygon2, 8);
+        return compute(Arrays.asList(polygon1), Arrays.asList(polygon2), clipType);
+    }
 
+    private static Polygon2D compute(List<Polygon2D> polygons1,
+            List<Polygon2D> polygons2, Clipper.ClipType clipType) {
         // compute
-        Paths subject = new Paths();
-        subject.add(path1);
-        subject.add(path2);
         final DefaultClipper cp = new DefaultClipper(Clipper.STRICTLY_SIMPLE);
-        cp.addPaths(subject, PolyType.SUBJECT, true);
+        // convert to Clipper data structures
+        polygons1.forEach((polygon1) -> {
+            cp.addPath(convertToClipperPath(polygon1, 8), PolyType.SUBJECT, true);
+        });
+        polygons2.forEach((polygon2) -> {
+            cp.addPath(convertToClipperPath(polygon2, 8), PolyType.CLIP, true);
+        });
         Paths solution = new Paths();
         if (cp.execute(clipType, solution)) {
             // convert result to javaGeom structure

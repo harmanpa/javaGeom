@@ -165,6 +165,11 @@ public class Circle2D extends AbstractSmoothCurve2D
         // initialize array of points (maximum 2 intersections)
         ArrayList<Point2D> intersections = new ArrayList<Point2D>(2);
 
+        // Check line is valid
+        if (line.length() < Shape2D.ACCURACY) {
+            return intersections;
+        }
+
         // extract parameters of the circle
         Circle2D parent = circle.supportingCircle();
         Point2D center = parent.center();
@@ -187,6 +192,9 @@ public class Circle2D extends AbstractSmoothCurve2D
             if (line.containsProjection(inter) && circle.containsProjection(inter)) {
                 intersections.add(inter);
             }
+            return intersections;
+        }
+        if (dist - radius >= Shape2D.ACCURACY) {
             return intersections;
         }
 
@@ -668,7 +676,7 @@ public class Circle2D extends AbstractSmoothCurve2D
      * Always returns false.
      */
     public boolean isEmpty() {
-        return false;
+        return r <= 0;
     }
 
     /**
@@ -933,7 +941,7 @@ public class Circle2D extends AbstractSmoothCurve2D
     @Override
     public String toString() {
         return String.format(Locale.US,
-                "Circle2D(%7.2f,%7.2f,%7.2f,%s)",
+                "Circle2D(%.8f,%.8f,%.8f,%s)",
                 xc, yc, r, direct ? "true" : "false");
     }
 

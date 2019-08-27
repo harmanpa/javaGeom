@@ -815,7 +815,7 @@ public static EllipseArc2D create(Ellipse2D ell, double start, double end,
     public String toString() {
     	Point2D center = ellipse.center();
         return String.format(Locale.US, 
-                "EllipseArc2D(%7.2f,%7.2f,%7.2f,%7.2f,%7.5f,%7.5f,%7.5f)", 
+                "EllipseArc2D(%.8f,%.8f,%.8f,%.8f,%7.5f,%7.5f,%7.5f)", 
                 center.x(), center.y(), 
                 ellipse.r1, ellipse.r2, ellipse.theta,
                 startAngle, angleExtent);

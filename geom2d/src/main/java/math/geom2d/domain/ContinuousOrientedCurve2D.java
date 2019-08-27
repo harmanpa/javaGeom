@@ -20,7 +20,7 @@
  * The Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307, USA.
  * 
- * Created on 25 déc. 2006
+ * Created on 25 dÃ©c. 2006
  *
  */
 

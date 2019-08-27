@@ -236,7 +236,7 @@ public class StraightLine2D extends AbstractLine2D implements
         // enforce condition on direction vector
         if (Math.hypot(dx, dy) < Shape2D.ACCURACY)
         {
-            throw new IllegalArgumentException("Straight lines can not have direction vector with zero norm");
+            throw new DegeneratedLine2DException("Straight lines can not have direction vector with zero norm", this);
         }
     }
 

@@ -22,7 +22,7 @@
  * Boston, MA 02111-1307, USA.
  * 
  * author : Legland
- * Created on 31 déc. 2003
+ * Created on 31 dÃ©c. 2003
  */
 
 package math.geom2d.line;

@@ -8,8 +8,10 @@
  */
 package math.geom2d.circulinear.buffer;
 
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
 
@@ -54,6 +56,7 @@ public class BufferCalculator {
     // Class variables
     private final JoinFactory joinFactory;
     private final CapFactory capFactory;
+    private final InternalCornerFactory internalCornerFactory;
 
     // ===================================================================
     // Constructors
@@ -61,8 +64,7 @@ public class BufferCalculator {
      * Creates a new buffer calculator with default join and cap factories.
      */
     public BufferCalculator() {
-        this.joinFactory = new RoundJoinFactory();
-        this.capFactory = new RoundCapFactory();
+        this(new RoundJoinFactory(), new RoundCapFactory(), new NullInternalCornerFactory());
     }
 
     /**
@@ -72,8 +74,21 @@ public class BufferCalculator {
      * @param capFactory
      */
     public BufferCalculator(JoinFactory joinFactory, CapFactory capFactory) {
+        this(joinFactory, capFactory, new NullInternalCornerFactory());
+    }
+
+    /**
+     * Creates a new buffer calculator with specific join, cap and internal
+     * corner factories.
+     *
+     * @param joinFactory
+     * @param capFactory
+     * @param internalCornerFactory
+     */
+    public BufferCalculator(JoinFactory joinFactory, CapFactory capFactory, InternalCornerFactory internalCornerFactory) {
         this.joinFactory = joinFactory;
         this.capFactory = capFactory;
+        this.internalCornerFactory = internalCornerFactory;
     }
 
     // ===================================================================
@@ -183,19 +198,17 @@ public class BufferCalculator {
             CirculinearContinuousCurve2D curve, double dist) {
 
         // extract collection of circulinear elements
-        Collection<? extends CirculinearElement2D> elements
-                = curve.smoothPieces();
-
         Iterator<? extends CirculinearElement2D> iterator
-                = elements.iterator();
+                = curve.smoothPieces().stream()
+                        .filter(e -> Math.pow(e.length(), 2) > Shape2D.ACCURACY).iterator();
 
         // previous curve
         CirculinearElement2D previous;
         CirculinearElement2D current;
 
         // create array for storing result
-        ArrayList<CirculinearContinuousCurve2D> parallelCurves
-                = new ArrayList<>();
+        Deque<CirculinearContinuousCurve2D> parallelCurves
+                = new ArrayDeque<>();
 
         // check if curve is empty
         if (!iterator.hasNext()) {
@@ -205,7 +218,12 @@ public class BufferCalculator {
         // add parallel to the first curve
         current = iterator.next();
         CirculinearElement2D parallel = current.parallel(dist);
+        while (Math.pow(parallel.length(), 2) < Shape2D.ACCURACY) {
+            current = iterator.next();
+            parallel = current.parallel(dist);
+        }
         parallelCurves.add(parallel);
+        CirculinearElement2D first = current;
 
         // iterate on circulinear element couples
         CirculinearContinuousCurve2D join;
@@ -214,24 +232,58 @@ public class BufferCalculator {
             previous = current;
             current = iterator.next();
 
-            // add circle arc between the two curve elements
-            join = joinFactory.createJoin(previous, current, dist);
-            if (join.length() > 0) {
-                parallelCurves.add(join);
+            // create the parallel curve for the current curve
+            CirculinearElement2D currentParallel = current.parallel(dist);
+            while (currentParallel.length() < Shape2D.ACCURACY && iterator.hasNext()) {
+                current = iterator.next();
+                currentParallel = current.parallel(dist);
             }
 
-            // add parallel to set of parallels
-            parallelCurves.add(current.parallel(dist));
+            // check if this is an internal corner
+            boolean internalCorner = dist < 0 ? previous.isInside(current.point(0.01)) : !previous.isInside(current.point(0.01));
+
+            // if it is an internal corner, check if the internalCornerFactory wishes to handle it. if not handle as normal.
+            if (!internalCorner || !internalCornerFactory.createInternalCorner(parallelCurves, currentParallel)) {
+                // add circle arc between the two curve elements
+                join = joinFactory.createJoin(previous, current, dist);
+
+                if (join.length() > 0) {
+                    parallelCurves.add(join);
+                }
+
+                // add parallel to set of parallels
+                parallelCurves.add(currentParallel);
+            }
         }
 
         // Add eventually a circle arc to close the parallel curve
         if (curve.isClosed()) {
             previous = current;
-            current = elements.iterator().next();
+            current = first;
+            CirculinearContinuousCurve2D currentParallel = parallelCurves.getFirst();
 
-            join = joinFactory.createJoin(previous, current, dist);
-            if (join.length() > 0) {
-                parallelCurves.add(join);
+            // check if this is an internal corner
+            boolean internalCorner = dist < 0 ? previous.isInside(current.point(0.01)) : !previous.isInside(current.point(0.01));
+
+            // if it is an internal corner, check if the internalCornerFactory wishes to handle it. if not handle as normal.
+            if (internalCorner) {
+                if (internalCornerFactory.createInternalCorner(parallelCurves, currentParallel)) {
+                    parallelCurves.removeFirst();
+                } else {
+                    // add circle arc between the two curve elements
+                    join = joinFactory.createJoin(previous, current, dist);
+
+                    if (join.length() > 0) {
+                        parallelCurves.add(join);
+                    }
+                }
+            } else {
+                // add circle arc between the two curve elements
+                join = joinFactory.createJoin(previous, current, dist);
+
+                if (join.length() > 0) {
+                    parallelCurves.add(join);
+                }
             }
         }
 
