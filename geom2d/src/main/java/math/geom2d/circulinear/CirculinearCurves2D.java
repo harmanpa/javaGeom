@@ -90,7 +90,7 @@ public class CirculinearCurves2D {
             }
 
             // create the resulting CirculinearContinuousCurve2D
-            return new PolyCirculinearCurve2D<>(elements);
+            return new PolyCirculinearCurve2D<>(elements, continuous.isClosed());
         }
 
         // If the curve is continuous, creates a CirculinearContinuousCurve2D

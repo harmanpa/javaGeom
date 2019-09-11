@@ -643,14 +643,14 @@ public abstract class Curves2D {
 
         // One of the curvature is zero (straight curve)
         if (sp == 0) {
-            if (sn < 0) {
+            if (sn <= 0) {
                 return JunctionType.SALIENT;
-            } else if (sn > 0) {
+            } else /*if (sn > 0)*/ {
                 return JunctionType.REENTRANT;
-            } else {
+            }/* else {
                 // Both curvatures are zero => problem...
                 throw new IllegalArgumentException("colinear lines...");
-            }
+            }*/
         } else if (sn == 0) {
             if (sp < 0) {
                 return JunctionType.SALIENT;
