@@ -375,7 +375,7 @@ implements Contour2D, Conic2D {
         ArrayList<Point2D> points = new ArrayList<Point2D>();
 
         // case of vertical or quasi-vertical line
-        if (Math.abs(dx) < Shape2D.ACCURACY) {
+        if (Math.abs(dx) < Tolerance2D.get()) {
             if (debug)
                 System.out.println("intersect parabola with vertical line ");
             double x = line2.origin().x();
@@ -541,7 +541,7 @@ implements Contour2D, Conic2D {
         double yp = p2.y();
 
         // check condition of parabola
-		return abs(yp - xp * xp) < Shape2D.ACCURACY;
+		return abs(yp - xp * xp) < Tolerance2D.get();
     }
 
     public boolean contains(Point2D point) {

@@ -74,7 +74,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         double theta = Angle2D.horizontalAngle(x1, y1, x2, y2);
 
         double dist = focus1.distance(focus2);
-//        if (dist < Shape2D.ACCURACY)
+//        if (dist < Tolerance2D.get())
 //            return new Circle2D(xc, yc, chord / 2);
 
         double r1 = chord / 2;
@@ -109,7 +109,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
 
         // Compute orientation angle of the ellipse
         double theta;
-        if (abs(A - C) < Shape2D.ACCURACY) {
+        if (abs(A - C) < Tolerance2D.get()) {
             theta = PI / 4;
         } else {
             theta = atan2(B, (A - C)) / 2.0;
@@ -129,7 +129,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
             f = abs(coefs[5]);
         }
 
-        assert abs(coefs2[1] / f) < Shape2D.ACCURACY :
+        assert abs(coefs2[1] / f) < Tolerance2D.get() :
                 "Second conic coefficient should be zero";
 
         // extract major and minor axis lengths, ensuring r1 is greater
@@ -145,7 +145,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         }
 
 //		// If both semi-axes are equal, return a circle
-//		if (abs(r1 - r2) < Shape2D.ACCURACY)
+//		if (abs(r1 - r2) < Tolerance2D.get())
 //			return new Circle2D(0, 0, r1);
         // return the reduced ellipse
         return new Ellipse2D(0, 0, r1, r2, theta);
@@ -339,7 +339,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
     }
 
     public Point2D projectedPoint(Point2D point) {
-        Vector2D polar = this.projectedVector(point, Shape2D.ACCURACY);
+        Vector2D polar = this.projectedVector(point, Tolerance2D.get());
         return new Point2D(point.x() + polar.x(), point.y() + polar.y());
     }
 
@@ -545,7 +545,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
      * for both r1 and r2.
      */
     public boolean isCircle() {
-        return abs(r1 - r2) < Shape2D.ACCURACY;
+        return abs(r1 - r2) < Tolerance2D.get();
     }
 
     /**
@@ -635,7 +635,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
     // ===================================================================
     // methods implementing Conic2D interface
     public Conic2D.Type conicType() {
-        if (Math.abs(this.r1 - this.r2) < Shape2D.ACCURACY) {
+        if (Math.abs(this.r1 - this.r2) < Tolerance2D.get()) {
             return Conic2D.Type.CIRCLE;
         }
         return Conic2D.Type.ELLIPSE;
@@ -815,7 +815,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
      * Always returns false.
      */
     public boolean isEmpty() {
-        return r1 < Shape2D.ACCURACY || r2 < Shape2D.ACCURACY;
+        return r1 < Tolerance2D.get() || r2 < Tolerance2D.get();
     }
 
     /**
@@ -930,7 +930,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         // compute angle
         double angle = Angle2D.horizontalAngle(xp, yp);
 
-        if (abs(hypot(xp, yp) - 1) < Shape2D.ACCURACY) {
+        if (abs(hypot(xp, yp) - 1) < Tolerance2D.get()) {
             return angle;
         } else {
             return Double.NaN;
@@ -1103,7 +1103,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
     // methods implementing the Shape interface
     /**
      * Returns true if the point p lies on the ellipse, with precision given by
-     * Shape2D.ACCURACY.
+     * Tolerance2D.get().
      */
     public boolean contains(Point2D p) {
         return contains(p.x(), p.y());
@@ -1111,10 +1111,10 @@ public class Ellipse2D extends AbstractSmoothCurve2D
 
     /**
      * Returns true if the point (x, y) lies on the ellipse, with precision
-     * given by Shape2D.ACCURACY.
+     * given by Tolerance2D.get().
      */
     public boolean contains(double x, double y) {
-        return this.distance(x, y) < Shape2D.ACCURACY;
+        return this.distance(x, y) < Tolerance2D.get();
     }
 
     public java.awt.geom.GeneralPath getGeneralPath() {

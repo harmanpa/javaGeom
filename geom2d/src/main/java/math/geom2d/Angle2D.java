@@ -250,9 +250,9 @@ public class Angle2D {
 		angle1 = formatAngle(angle1);
 		angle2 = formatAngle(angle2);
 		double diff = formatAngle(angle1 - angle2);
-		if (diff < Shape2D.ACCURACY)
+		if (diff < Tolerance2D.get())
 			return true;
-		if (abs(diff - PI * 2) < Shape2D.ACCURACY)
+		if (abs(diff - PI * 2) < Tolerance2D.get())
 			return true;
 		return false;
 	}

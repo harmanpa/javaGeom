@@ -176,29 +176,29 @@ public class Angle2DTest extends TestCase {
 		double angle;
 		
 		angle = Angle2D.angle(p1, p2, p3);
-		assertEquals(Math.PI*3/4, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI*3/4, angle, Tolerance2D.get());
 		angle = Angle2D.angle(p3, p2, p1);
-		assertEquals(Math.PI*5/4, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI*5/4, angle, Tolerance2D.get());
 
 		p1 = new Point2D(0, 50);
 		angle = Angle2D.angle(p1, p2, p3);
-		assertEquals(Math.PI, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI, angle, Tolerance2D.get());
 		angle = Angle2D.angle(p3, p2, p1);
-		assertEquals(Math.PI, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI, angle, Tolerance2D.get());
 
 		// Aligned points
 		p1 = new Point2D(50, 0);
 		p3 = new Point2D(50, 100);
 		angle = Angle2D.angle(p1, p2, p3);
-		assertEquals(Math.PI, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI, angle, Tolerance2D.get());
 		angle = Angle2D.angle(p3, p2, p1);
-		assertEquals(Math.PI, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI, angle, Tolerance2D.get());
 
 		p3 = new Point2D(50, 0);
 		angle = Angle2D.angle(p1, p2, p3);
-		assertEquals(0, angle, Shape2D.ACCURACY);
+		assertEquals(0, angle, Tolerance2D.get());
 		angle = Angle2D.angle(p3, p2, p1);
-		assertEquals(0, angle, Shape2D.ACCURACY);
+		assertEquals(0, angle, Tolerance2D.get());
 	}
 
 	public void testGetAngleDoubles() {
@@ -212,16 +212,16 @@ public class Angle2DTest extends TestCase {
 		double angle;
 		
 		angle = Angle2D.angle(x1, y1, x2, y2, x3, y3);
-		assertEquals(Math.PI*3/4, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI*3/4, angle, Tolerance2D.get());
 		angle = Angle2D.angle(x3, y3, x2, y2, x1, y1);
-		assertEquals(Math.PI*5/4, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI*5/4, angle, Tolerance2D.get());
 
 		x1 = 0;
 		y1 = 50;
 		angle = Angle2D.angle(x1, y1, x2, y2, x3, y3);
-		assertEquals(Math.PI, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI, angle, Tolerance2D.get());
 		angle = Angle2D.angle(x3, y3, x2, y2, x1, y1);
-		assertEquals(Math.PI, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI, angle, Tolerance2D.get());
 
 		// Aligned points
 		x1 = 50;
@@ -229,16 +229,16 @@ public class Angle2DTest extends TestCase {
 		x3 = 50;
 		y3 = 100;
 		angle = Angle2D.angle(x1, y1, x2, y2, x3, y3);
-		assertEquals(Math.PI, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI, angle, Tolerance2D.get());
 		angle = Angle2D.angle(x3, y3, x2, y2, x1, y1);
-		assertEquals(Math.PI, angle, Shape2D.ACCURACY);
+		assertEquals(Math.PI, angle, Tolerance2D.get());
 
 		x3 = 50;
 		y3 = 0;
 		angle = Angle2D.angle(x1, y1, x2, y2, x3, y3);
-		assertEquals(0, angle, Shape2D.ACCURACY);
+		assertEquals(0, angle, Tolerance2D.get());
 		angle = Angle2D.angle(x3, y3, x2, y2, x1, y1);
-		assertEquals(0, angle, Shape2D.ACCURACY);
+		assertEquals(0, angle, Tolerance2D.get());
 	}
 
 	/*
@@ -250,21 +250,21 @@ public class Angle2DTest extends TestCase {
 		p2 = new Point2D(50, 50);
 		p3 = new Point2D(100, 50);
 				
-		assertEquals(Angle2D.absoluteAngle(p1, p2, p3), Math.PI*3/4, Shape2D.ACCURACY);
-		assertEquals(Angle2D.absoluteAngle(p3, p2, p1), Math.PI*3/4, Shape2D.ACCURACY);
+		assertEquals(Angle2D.absoluteAngle(p1, p2, p3), Math.PI*3/4, Tolerance2D.get());
+		assertEquals(Angle2D.absoluteAngle(p3, p2, p1), Math.PI*3/4, Tolerance2D.get());
 		
 		p1 = new Point2D(0, 50);
-		assertEquals(Angle2D.absoluteAngle(p1, p2, p3), Math.PI, Shape2D.ACCURACY);
-		assertEquals(Angle2D.absoluteAngle(p3, p2, p1), Math.PI, Shape2D.ACCURACY);
+		assertEquals(Angle2D.absoluteAngle(p1, p2, p3), Math.PI, Tolerance2D.get());
+		assertEquals(Angle2D.absoluteAngle(p3, p2, p1), Math.PI, Tolerance2D.get());
 
 		p1 = new Point2D(50, 0);
 		p3 = new Point2D(50, 100);
-		assertEquals(Angle2D.absoluteAngle(p1, p2, p3), Math.PI, Shape2D.ACCURACY);
-		assertEquals(Angle2D.absoluteAngle(p3, p2, p1), Math.PI, Shape2D.ACCURACY);
+		assertEquals(Angle2D.absoluteAngle(p1, p2, p3), Math.PI, Tolerance2D.get());
+		assertEquals(Angle2D.absoluteAngle(p3, p2, p1), Math.PI, Tolerance2D.get());
 
 		p3 = new Point2D(50, 0);
-		assertEquals(Angle2D.absoluteAngle(p1, p2, p3), 0, Shape2D.ACCURACY);
-		assertEquals(Angle2D.absoluteAngle(p3, p2, p1), 0, Shape2D.ACCURACY);
+		assertEquals(Angle2D.absoluteAngle(p1, p2, p3), 0, Tolerance2D.get());
+		assertEquals(Angle2D.absoluteAngle(p3, p2, p1), 0, Tolerance2D.get());
 	}
 
 

@@ -166,7 +166,7 @@ public class Circle2D extends AbstractSmoothCurve2D
         ArrayList<Point2D> intersections = new ArrayList<Point2D>(2);
 
         // Check line is valid
-        if (line.length() < Shape2D.ACCURACY) {
+        if (line.length() < Tolerance2D.get()) {
             return intersections;
         }
 
@@ -188,13 +188,13 @@ public class Circle2D extends AbstractSmoothCurve2D
 
         // if the distance is the radius of the circle, return the
         // intersection point
-        if (abs(dist - radius) < Shape2D.ACCURACY) {
+        if (abs(dist - radius) < Tolerance2D.get()) {
             if (line.containsProjection(inter) && circle.containsProjection(inter)) {
                 intersections.add(inter);
             }
             return intersections;
         }
-        if (dist - radius >= Shape2D.ACCURACY) {
+        if (dist - radius >= Tolerance2D.get()) {
             return intersections;
         }
 
@@ -240,7 +240,7 @@ public class Circle2D extends AbstractSmoothCurve2D
 
         // distance between centers
         double dist = p1.distance(p2);
-        if (dist < Shape2D.ACCURACY) {
+        if (dist < Tolerance2D.get()) {
             throw new IllegalArgumentException("Input circles must have distinct centers");
         }
 
@@ -503,7 +503,7 @@ public class Circle2D extends AbstractSmoothCurve2D
         Point2D c1 = this.center();
 
         // If circles are concentric, creates directly the new circle
-        if (center.distance(c1) < Shape2D.ACCURACY) {
+        if (center.distance(c1) < Tolerance2D.get()) {
             double r0 = inv.radius();
             double r2 = r0 * r0 / this.r;
             return new Circle2D(center, r2, this.direct);
@@ -523,7 +523,7 @@ public class Circle2D extends AbstractSmoothCurve2D
 
         // If the circle contains the inversion center, it transforms into a
         // straight line
-        if (this.distance(center) < Shape2D.ACCURACY) {
+        if (this.distance(center) < Tolerance2D.get()) {
             // choose the intersection point that is not the center
             double dist1 = center.distance(p1);
             double dist2 = center.distance(p2);
@@ -822,7 +822,7 @@ public class Circle2D extends AbstractSmoothCurve2D
     // methods of Shape interface
     /**
      * Returns true if the point p lies on the circle, with precision given by
-     * Shape2D.ACCURACY.
+     * Tolerance2D.get().
      */
     public boolean contains(Point2D p) {
         return contains(p.x(), p.y());
@@ -839,7 +839,7 @@ public class Circle2D extends AbstractSmoothCurve2D
      * Returns true if the point (x, y) lies exactly on the circle.
      */
     public boolean contains(double x, double y) {
-        return abs(distance(x, y)) <= Shape2D.ACCURACY;
+        return abs(distance(x, y)) <= Tolerance2D.get();
     }
 
     public java.awt.geom.GeneralPath appendPath(java.awt.geom.GeneralPath path) {

@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Angle2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.exceptions.NonInvertibleTransform2DException;
 import math.geom2d.line.StraightLine2D;
 
@@ -38,7 +38,7 @@ public class Conics2DTest extends TestCase {
         double[] coefs2;
         Conic2D conic;
 
-        double eps = Shape2D.ACCURACY;
+        double eps = Tolerance2D.get();
 
         // Ellipse transformed by an identity
         AffineTransform2D id = new AffineTransform2D();
@@ -364,7 +364,7 @@ public class Conics2DTest extends TestCase {
         Conic2D conic;
         StraightLine2D line;
 
-        double eps = Shape2D.ACCURACY;
+        double eps = Tolerance2D.get();
         Point2D origin = new Point2D(0, 0);
 
         // Vertical line
@@ -405,7 +405,7 @@ public class Conics2DTest extends TestCase {
         Conic2D conic;
         Conics2D.ConicTwoLines2D lines;
 
-        double eps = Shape2D.ACCURACY;
+        double eps = Tolerance2D.get();
         Point2D origin = new Point2D(0, 0);
 
         // Horizontal lines
@@ -439,7 +439,7 @@ public class Conics2DTest extends TestCase {
         Conic2D conic;
         Conics2D.ConicTwoLines2D lines;
 
-        double eps = Shape2D.ACCURACY;
+        double eps = Tolerance2D.get();
         Point2D origin = new Point2D(0, 0);
 
         // Horizontal lines

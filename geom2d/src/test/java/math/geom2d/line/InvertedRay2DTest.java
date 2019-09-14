@@ -28,7 +28,6 @@
 package math.geom2d.line;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
 import math.geom2d.exceptions.UnboundedShape2DException;
 import math.geom2d.Vector2D;
 import math.geom2d.circulinear.CirculinearCurve2D;
@@ -39,6 +38,7 @@ import math.geom2d.curve.CurveSet2D;
 import math.geom2d.domain.Domain2D;
 import math.geom2d.transform.CircleInversion2D;
 import junit.framework.TestCase;
+import math.geom2d.Tolerance2D;
 
 
 /**
@@ -116,7 +116,7 @@ public class InvertedRay2DTest extends TestCase {
 	public void testGetBoundingBox(){
 		double plus = Double.POSITIVE_INFINITY;
 		double minus = Double.NEGATIVE_INFINITY;
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		InvertedRay2D ray1 = new InvertedRay2D(2, 2, 1, 1);
 		assertTrue(ray1.boundingBox().equals(new Box2D(minus, 2, minus, 2)));
@@ -135,7 +135,7 @@ public class InvertedRay2DTest extends TestCase {
 		Ray2D inv1 = new Ray2D(2, 2, -1, 0);
 
 		Curve2D inverted = ray1.reverse();
-		assertTrue(inverted.almostEquals(inv1, Shape2D.ACCURACY));
+		assertTrue(inverted.almostEquals(inv1, Tolerance2D.get()));
 		
 	}
 	

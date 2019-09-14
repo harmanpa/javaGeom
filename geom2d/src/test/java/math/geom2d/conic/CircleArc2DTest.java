@@ -47,6 +47,7 @@ import math.geom2d.polygon.Polyline2D;
 import math.geom2d.transform.CircleInversion2D;
 
 import static java.lang.Math.PI;
+import math.geom2d.Tolerance2D;
 
 
 /**
@@ -123,13 +124,13 @@ public class CircleArc2DTest extends TestCase {
 		
 		// direct arc
 		CircleArc2D arc = new CircleArc2D(center, r, 0, PI/2);
-		CircleArc2D par = arc.parallel(2);
+		CircleArc2D par = (CircleArc2D)arc.parallel(2);
 		Circle2D circ = par.supportingCircle();
 		assertEquals(12, circ.radius(), 1e-12);
 		
 		// direct arc
 		CircleArc2D arc2 = new CircleArc2D(center, r, PI, -PI/2);
-		CircleArc2D par2 = arc2.parallel(2);
+		CircleArc2D par2 = (CircleArc2D)arc2.parallel(2);
 		Circle2D circ2 = par2.supportingCircle();
 		assertEquals(8, circ2.radius(), 1e-12);
 	}
@@ -180,13 +181,13 @@ public class CircleArc2DTest extends TestCase {
 	
 	public void testGetLength() {
 		CircleArc2D arc = new CircleArc2D(new Point2D(0, 0), 10, 0, PI/2);
-		assertEquals(arc.length(), (10*PI/2), Shape2D.ACCURACY);
+		assertEquals(arc.length(), (10*PI/2), Tolerance2D.get());
 	}
 	
 	public void testGetT0Double(){
 		CircleArc2D arc = new CircleArc2D(new Point2D(0, 0), 10, 0, PI/2);
-		assertEquals(arc.t0(), 0, Shape2D.ACCURACY);
-		assertEquals(arc.t1(), PI/2, Shape2D.ACCURACY);
+		assertEquals(arc.t0(), 0, Tolerance2D.get());
+		assertEquals(arc.t1(), PI/2, Tolerance2D.get());
 	}
 	
 	public void testGetPointDouble() {
@@ -197,13 +198,13 @@ public class CircleArc2DTest extends TestCase {
 		
 		CircleArc2D arc = new CircleArc2D(p0, 10, 0, PI/2);
 		Point2D p1 = new Point2D(10, 0);
-		assertTrue(p1.distance(arc.point(arc.t0()))<Shape2D.ACCURACY);
+		assertTrue(p1.distance(arc.point(arc.t0()))<Tolerance2D.get());
 		Point2D p2 = new Point2D(0, 10);
-		assertTrue(p2.distance(arc.point(arc.t1()))<Shape2D.ACCURACY);
+		assertTrue(p2.distance(arc.point(arc.t1()))<Tolerance2D.get());
 		
 		// Check inverted arc
 		arc = new CircleArc2D(p0, 10, 3*PI/2, -3*PI/2);
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		assertTrue(arc.point(PI/2).almostEquals(new Point2D(x0-r, y0), eps));
 		assertTrue(arc.point(PI).almostEquals(new Point2D(x0, y0+r), eps));
 	}
@@ -229,38 +230,38 @@ public class CircleArc2DTest extends TestCase {
 	 */
 	public void testGetDistancedoubledouble() {
 		CircleArc2D arc = new CircleArc2D(new Point2D(0, 0), 10, 0, PI/2);
-		assertEquals(arc.distance(0, 0), 10, Shape2D.ACCURACY);
-		assertEquals(arc.distance(10, 0), 0, Shape2D.ACCURACY);
-		assertEquals(arc.distance(0, 10), 0, Shape2D.ACCURACY);
-		assertEquals(arc.distance(10, -10), 10, Shape2D.ACCURACY);		
-		assertEquals(arc.distance(10, 10), (10*(Math.sqrt(2)-1)), Shape2D.ACCURACY);		
+		assertEquals(arc.distance(0, 0), 10, Tolerance2D.get());
+		assertEquals(arc.distance(10, 0), 0, Tolerance2D.get());
+		assertEquals(arc.distance(0, 10), 0, Tolerance2D.get());
+		assertEquals(arc.distance(10, -10), 10, Tolerance2D.get());		
+		assertEquals(arc.distance(10, 10), (10*(Math.sqrt(2)-1)), Tolerance2D.get());		
 	}
 
 	public void testGetTangent() {
 		CircleArc2D arc = new CircleArc2D(new Point2D(0, 0), 10, 0, PI);
 		double t0 = PI/2;
 		Vector2D tangent = arc.tangent(t0);
-		assertVectorEquals(new Vector2D(-10, 0), tangent, Shape2D.ACCURACY);
+		assertVectorEquals(new Vector2D(-10, 0), tangent, Tolerance2D.get());
 		
 		arc = new CircleArc2D(new Point2D(0, 0), 10, PI, -PI);
 		t0 = PI/2;
 		tangent = arc.tangent(t0);
-		assertVectorEquals(new Vector2D(10, 0), tangent, Shape2D.ACCURACY);
+		assertVectorEquals(new Vector2D(10, 0), tangent, Tolerance2D.get());
 	}
 	
 	public void testGetWindingAngle() {
 		CircleArc2D arc = new CircleArc2D(new Point2D(0, 0), 10, 0, PI/2);
 		Point2D p = new Point2D(0, 0);
-		assertEquals(arc.windingAngle(p), (PI/2), Shape2D.ACCURACY);
+		assertEquals(arc.windingAngle(p), (PI/2), Tolerance2D.get());
 		p = new Point2D(0, -10);
-		assertEquals(arc.windingAngle(p), (PI/4), Shape2D.ACCURACY);
+		assertEquals(arc.windingAngle(p), (PI/4), Tolerance2D.get());
 		p = new Point2D(0, -20);
-		assertEquals(arc.windingAngle(p), Math.atan(.5), Shape2D.ACCURACY);
+		assertEquals(arc.windingAngle(p), Math.atan(.5), Tolerance2D.get());
 	}
 
 	public void testGetIntersectionsStraightObject2D(){
 		double r = 10;
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		// Test with a centered circle arc and 4 edges in each main direction
 		CircleArc2D arc = new CircleArc2D(0, 0, 10, 3*PI/8, 15*PI/8);
@@ -314,25 +315,25 @@ public class CircleArc2DTest extends TestCase {
 		arc0 	= new CircleArc2D(xc, yc, r, t0, dt);
 		box0 	= new Box2D(xc-r2, xc+r2, r2, r);
 		bounds0 = arc0.boundingBox();
-		assertTrue(box0.almostEquals(bounds0, Shape2D.ACCURACY));
+		assertTrue(box0.almostEquals(bounds0, Tolerance2D.get()));
 
 		// left
 		arc1 	= new CircleArc2D(xc, yc, r, t1, dt);
 		box1 	= new Box2D(xc-r, xc-r2, -r2, r2);
 		bounds1 = arc1.boundingBox();
-		assertTrue(box1.almostEquals(bounds1, Shape2D.ACCURACY));
+		assertTrue(box1.almostEquals(bounds1, Tolerance2D.get()));
 
 		// bottom
 		arc2 	= new CircleArc2D(xc, yc, r, t2, dt);
 		box2 	= new Box2D(xc-r2, xc+r2, -r, -r2);
 		bounds2 = arc2.boundingBox();
-		assertTrue(box2.almostEquals(bounds2, Shape2D.ACCURACY));
+		assertTrue(box2.almostEquals(bounds2, Tolerance2D.get()));
 
 		// right
 		arc3 	= new CircleArc2D(xc, yc, r, t3, dt);
 		box3 	= new Box2D(r2, r, -r2, r2);
 		bounds3 = arc3.boundingBox();
-		assertTrue(box3.almostEquals(bounds3, Shape2D.ACCURACY));
+		assertTrue(box3.almostEquals(bounds3, Tolerance2D.get()));
 
 		/// circle arcs with extent 3*pi/2
 		dt = 3*PI/2;
@@ -341,25 +342,25 @@ public class CircleArc2DTest extends TestCase {
 		arc0 	= new CircleArc2D(xc, yc, r, t3, dt);
 		box0 	= new Box2D(xc-r, xc+r, -r2, r);
 		bounds0 = arc0.boundingBox();
-		assertTrue(box0.almostEquals(bounds0, Shape2D.ACCURACY));
+		assertTrue(box0.almostEquals(bounds0, Tolerance2D.get()));
 
 		// left
 		arc1 	= new CircleArc2D(xc, yc, r, t0, dt);
 		box1 	= new Box2D(xc-r, xc+r2, -r, r);
 		bounds1 = arc1.boundingBox();
-		assertTrue(box1.almostEquals(bounds1, Shape2D.ACCURACY));
+		assertTrue(box1.almostEquals(bounds1, Tolerance2D.get()));
 
 		// bottom
 		arc2 	= new CircleArc2D(xc, yc, r, t1, dt);
 		box2 	= new Box2D(xc-r, xc+r, -r, r2);
 		bounds2 = arc2.boundingBox();
-		assertTrue(box2.almostEquals(bounds2, Shape2D.ACCURACY));
+		assertTrue(box2.almostEquals(bounds2, Tolerance2D.get()));
 
 		// right
 		arc3 	= new CircleArc2D(xc, yc, r, t2, dt);
 		box3 	= new Box2D(-r2, r, -r, r);
 		bounds3 = arc3.boundingBox();
-		assertTrue(box3.almostEquals(bounds3, Shape2D.ACCURACY));
+		assertTrue(box3.almostEquals(bounds3, Tolerance2D.get()));
 	
 	}
 	
@@ -480,8 +481,8 @@ public class CircleArc2DTest extends TestCase {
 		curves = arc0.clip(new Box2D(x0-20, x0, y0-20, y0));
 		assertEquals(curves.size(), 2);
 		Iterator<CircleArc2D> iter = curves.iterator();
-		assertTrue(iter.next().almostEquals(arc1, Shape2D.ACCURACY));
-		assertTrue(iter.next().almostEquals(arc2, Shape2D.ACCURACY));
+		assertTrue(iter.next().almostEquals(arc1, Tolerance2D.get()));
+		assertTrue(iter.next().almostEquals(arc2, Tolerance2D.get()));
 	}
 
 	public void testGetReverseCurve(){
@@ -490,23 +491,23 @@ public class CircleArc2DTest extends TestCase {
 		CircleArc2D arc1 = new CircleArc2D(circle1, 0, PI/2);
 		CircleArc2D rev1 = arc1.reverse(); 
 		CircleArc2D exp1 = new CircleArc2D(circle1, PI / 2, -PI / 2);
-		assertTrue(rev1.almostEquals(exp1, Shape2D.ACCURACY));
+		assertTrue(rev1.almostEquals(exp1, Tolerance2D.get()));
 
 		// inverse circle arc, inverse circle
 		Circle2D circle2 = new Circle2D(0, 0, 10, false);
 		CircleArc2D arc2 = new CircleArc2D(circle2, PI, -PI/2);
 		assertTrue(arc2.reverse().almostEquals(
-				new CircleArc2D(circle2, PI/2, PI/2), Shape2D.ACCURACY));
+				new CircleArc2D(circle2, PI/2, PI/2), Tolerance2D.get()));
 		
 		// direct arc, indirect circle
 		CircleArc2D arc3 = new CircleArc2D(circle2, 0, PI/2);
 		assertTrue(arc3.reverse().almostEquals(
-				new CircleArc2D(circle2, PI/2, -PI/2), Shape2D.ACCURACY));
+				new CircleArc2D(circle2, PI/2, -PI/2), Tolerance2D.get()));
 		
 		// inverse circle arc, direct circle
 		CircleArc2D arc4 = new CircleArc2D(circle1, PI, -PI/2);
 		assertTrue(arc4.reverse().almostEquals(
-				new CircleArc2D(circle1, PI/2, PI/2), Shape2D.ACCURACY));
+				new CircleArc2D(circle1, PI/2, PI/2), Tolerance2D.get()));
 	}
 	
 	public void testClass(){
@@ -528,7 +529,7 @@ public class CircleArc2DTest extends TestCase {
 		// basic tests
 		assertTrue(res instanceof CircleArc2D);
 		CircleArc2D exp = new CircleArc2D(tx, ty, 10, 0, PI/2);
-		assertTrue(res.almostEquals(exp, Shape2D.ACCURACY));
+		assertTrue(res.almostEquals(exp, Tolerance2D.get()));
 	}		
 
 	public void testTransform_Rotation2D(){
@@ -543,7 +544,7 @@ public class CircleArc2DTest extends TestCase {
 		// basic tests
 		assertTrue(res instanceof CircleArc2D);
 		CircleArc2D exp = new CircleArc2D(0, 0, 10, theta, PI/2);
-		assertTrue(res.almostEquals(exp, Shape2D.ACCURACY));
+		assertTrue(res.almostEquals(exp, Tolerance2D.get()));
 	}		
 
 	public void testTransform_Scaling2D(){
@@ -559,7 +560,7 @@ public class CircleArc2DTest extends TestCase {
 		// basic tests
 		assertFalse(res instanceof CircleArc2D);
 		EllipseArc2D exp = new EllipseArc2D(0, 0, 30, 20, 0, 0, PI/2);
-		assertTrue(res.almostEquals(exp, Shape2D.ACCURACY));
+		assertTrue(res.almostEquals(exp, Tolerance2D.get()));
 	}		
 
 	public void testTransform_LineReflectionOx(){
@@ -574,7 +575,7 @@ public class CircleArc2DTest extends TestCase {
 		// basic tests
 		assertTrue(res instanceof CircleArc2D);
 		CircleArc2D exp = new CircleArc2D(0, 0, 10, 0, -PI/2);
-		assertTrue(res.almostEquals(exp, Shape2D.ACCURACY));
+		assertTrue(res.almostEquals(exp, Tolerance2D.get()));
 	}		
 
 	public void testTransform_LineReflectionOy2D(){
@@ -589,7 +590,7 @@ public class CircleArc2DTest extends TestCase {
 		// basic tests
 		assertTrue(res instanceof CircleArc2D);
 		CircleArc2D exp = new CircleArc2D(0, 0, 10, PI, -PI/2);
-		assertTrue(res.almostEquals(exp, Shape2D.ACCURACY));
+		assertTrue(res.almostEquals(exp, Tolerance2D.get()));
 	}		
 
 	
@@ -613,12 +614,12 @@ public class CircleArc2DTest extends TestCase {
 		// translation
 		AffineTransform2D tra = AffineTransform2D.createTranslation(tx, ty);
 		assertTrue(arc.transform(tra).almostEquals(
-				new CircleArc2D(x0+tx, y0+ty, r, PI/2, -PI/2), Shape2D.ACCURACY));
+				new CircleArc2D(x0+tx, y0+ty, r, PI/2, -PI/2), Tolerance2D.get()));
 		
 		// rotation
 		AffineTransform2D rot = AffineTransform2D.createRotation(p0, theta);
 		assertTrue(arc.transform(rot).almostEquals(
-				new CircleArc2D(x0, y0, r, theta+PI/2, -PI/2), Shape2D.ACCURACY));
+				new CircleArc2D(x0, y0, r, theta+PI/2, -PI/2), Tolerance2D.get()));
 		
 		// scaling with unequal factors
 		AffineTransform2D sca = AffineTransform2D.createScaling(p0, sx, sy);
@@ -630,11 +631,11 @@ public class CircleArc2DTest extends TestCase {
 				new StraightLine2D(x0, y0, 1, 0));
 		EllipseArcShape2D transformed = arc.transform(refOx);
 		assertTrue(transformed.almostEquals(
-				new CircleArc2D(x0, y0, r, 3*PI/2, PI/2), Shape2D.ACCURACY));
+				new CircleArc2D(x0, y0, r, 3*PI/2, PI/2), Tolerance2D.get()));
 		AffineTransform2D refOy = AffineTransform2D.createLineReflection(
 				new StraightLine2D(x0, y0, 0, 1));
 		assertTrue(arc.transform(refOy).almostEquals(
-				new CircleArc2D(x0, y0, r, PI/2, PI/2), Shape2D.ACCURACY));	
+				new CircleArc2D(x0, y0, r, PI/2, PI/2), Tolerance2D.get()));	
 	}
 	
 	/*

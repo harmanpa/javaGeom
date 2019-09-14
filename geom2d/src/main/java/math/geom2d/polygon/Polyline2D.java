@@ -33,7 +33,7 @@ import java.util.Iterator;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.GeometricObject2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.circulinear.CirculinearContinuousCurve2D;
 import math.geom2d.circulinear.PolyCirculinearCurve2D;
 import math.geom2d.line.LineSegment2D;
@@ -257,12 +257,12 @@ implements CirculinearContinuousCurve2D {
         t = Math.max(Math.min(t, t1), t0);
 
         // index of vertex before point
-        int ind0 = (int) Math.floor(t+Shape2D.ACCURACY);
+        int ind0 = (int) Math.floor(t+Tolerance2D.get());
         double tl = t - ind0;
         Point2D p0 = vertices.get(ind0);
 
 		// check if equal to a vertex
-		if (Math.abs(t - ind0) < Shape2D.ACCURACY)
+		if (Math.abs(t - ind0) < Tolerance2D.get())
 			return p0;
 
         // index of vertex after point

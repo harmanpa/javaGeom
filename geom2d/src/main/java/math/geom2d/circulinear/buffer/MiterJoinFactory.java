@@ -23,11 +23,12 @@ import math.geom2d.polygon.Polyline2D;
  */
 public class MiterJoinFactory implements JoinFactory {
 
-	private double minDenom = 1e-100;
+	private final double minDenom = 1e-100;
 	
 	/* (non-Javadoc)
 	 * @see math.geom2d.circulinear.buffer.JoinFactory#createJoin(math.geom2d.circulinear.CirculinearElement2D, math.geom2d.circulinear.CirculinearElement2D, double)
 	 */
+        @Override
 	public CirculinearContinuousCurve2D createJoin(CirculinearElement2D curve1,
 			CirculinearElement2D curve2, double dist) {
 		

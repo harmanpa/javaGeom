@@ -33,7 +33,7 @@ import java.util.Collection;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
 import math.geom2d.polygon.Polyline2D;
 
@@ -419,7 +419,7 @@ public class PolyCurve2D<T extends ContinuousCurve2D> extends CurveArray2D<T>
         // add the path of the first curve
         for(ContinuousCurve2D curve : curves) {
         	start = curve.firstPoint();
-			if (start.distance(current) > Shape2D.ACCURACY)
+			if (start.distance(current) > Tolerance2D.get())
 				path.lineTo((float) start.x(), (float) start.y());
         	path = curve.appendPath(path);
         	current = start;

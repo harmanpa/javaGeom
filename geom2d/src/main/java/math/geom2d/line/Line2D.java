@@ -219,7 +219,7 @@ implements LinearElement2D {
 	@Override
 	public boolean containsProjection(Point2D point) {
 	    double pos = new LineSegment2D(p1, p2).project(point);
-	    return pos > (0 - Shape2D.ACCURACY) && pos < (1 + Shape2D.ACCURACY);
+	    return pos > (0 - Tolerance2D.get()) && pos < (1 + Tolerance2D.get());
 	}
 
     // ===================================================================
@@ -286,7 +286,7 @@ implements LinearElement2D {
         
         // Degenerate case of a line passing through the center.
         // returns the line itself.
-        if (Math.abs(d) < Shape2D.ACCURACY){
+        if (Math.abs(d) < Tolerance2D.get()){
         	Point2D p1 = this.firstPoint().transform(inv);
         	Point2D p2 = this.lastPoint().transform(inv);
         	return new LineSegment2D(p1, p2);
@@ -626,7 +626,7 @@ implements LinearElement2D {
 
     /**
      * Returns true if the point (x, y) lies on the line, with precision given
-     * by Shape2D.ACCURACY.
+     * by Tolerance2D.get().
      */
     public boolean contains(double x, double y) {
         return new LineSegment2D(p1, p2).contains(x, y);
@@ -634,7 +634,7 @@ implements LinearElement2D {
 
     /**
      * Returns true if the point p lies on the line, with precision given by
-     * Shape2D.ACCURACY.
+     * Tolerance2D.get().
      */
     public boolean contains(Point2D p) {
         return contains(p.x(), p.y());

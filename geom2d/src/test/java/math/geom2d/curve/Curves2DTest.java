@@ -31,12 +31,12 @@ import junit.framework.TestCase;
 import math.geom2d.Angle2D;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
 import math.geom2d.conic.Circle2D;
 import math.geom2d.conic.CircleArc2D;
 import math.geom2d.line.LineSegment2D;
 import math.geom2d.polygon.Polyline2D;
 import static java.lang.Math.PI;
+import math.geom2d.Tolerance2D;
 
 public class Curves2DTest extends TestCase {
 
@@ -87,8 +87,8 @@ public class Curves2DTest extends TestCase {
 		CircleArc2D arc2c = new CircleArc2D(r, 0, r,
 				Angle2D.formatAngle(PI - alpha), 2 * alpha);
 
-		assertTrue(arc1c.almostEquals(curve1, Shape2D.ACCURACY));
-		assertTrue(arc2c.almostEquals(curve2, Shape2D.ACCURACY));
+		assertTrue(arc1c.almostEquals(curve1, Tolerance2D.get()));
+		assertTrue(arc2c.almostEquals(curve2, Tolerance2D.get()));
 	}
 
 	public void testClipCurve_CurveSet2D() {
@@ -116,8 +116,8 @@ public class Curves2DTest extends TestCase {
 		CircleArc2D arc2c = new CircleArc2D(r, 0, r, 
 				Angle2D.formatAngle(PI - alpha), 2 * alpha);
 		
-		assertTrue(arc1c.almostEquals(curve1, Shape2D.ACCURACY));
-		assertTrue(arc2c.almostEquals(curve2, Shape2D.ACCURACY));
+		assertTrue(arc1c.almostEquals(curve1, Tolerance2D.get()));
+		assertTrue(arc2c.almostEquals(curve2, Tolerance2D.get()));
 		
 	}
 	
@@ -146,7 +146,7 @@ public class Curves2DTest extends TestCase {
 		set1.add(sub2);
 		set1.add(sub3);
 		set1.add(sub4);
-		assertTrue(set1.almostEquals(clip1, Shape2D.ACCURACY));
+		assertTrue(set1.almostEquals(clip1, Tolerance2D.get()));
 	}
 	
 	public void testFindNextCurveIndex() {

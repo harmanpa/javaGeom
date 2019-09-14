@@ -234,7 +234,7 @@ public class StraightLine2D extends AbstractLine2D implements
         super(xp, yp, dx, dy);
         
         // enforce condition on direction vector
-        if (Math.hypot(dx, dy) < Shape2D.ACCURACY)
+        if (Math.hypot(dx, dy) < Tolerance2D.get())
         {
             throw new DegeneratedLine2DException("Straight lines can not have direction vector with zero norm", this);
         }
@@ -300,7 +300,7 @@ public class StraightLine2D extends AbstractLine2D implements
 	 */
     public StraightLine2D parallel(double d) {
 		double d2 = Math.hypot(this.dx, this.dy);
-		if (Math.abs(d2) < Shape2D.ACCURACY)
+		if (Math.abs(d2) < Tolerance2D.get())
 			throw new DegeneratedLine2DException(
 					"Can not compute parallel of degenerated line", this);
 		d2 = d / d2;
@@ -331,7 +331,7 @@ public class StraightLine2D extends AbstractLine2D implements
 
         // Degenerate case of a point belonging to the line:
 		// the transform is the line itself.
-		if (Math.abs(d) < Shape2D.ACCURACY) {
+		if (Math.abs(d) < Tolerance2D.get()) {
 			return new StraightLine2D(this);
         }
         
@@ -515,11 +515,11 @@ public class StraightLine2D extends AbstractLine2D implements
     }
 
     public Box2D boundingBox() {
-        if (Math.abs(dx) < Shape2D.ACCURACY)
+        if (Math.abs(dx) < Tolerance2D.get())
             return new Box2D(
                     x0, x0, 
                     Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
-        if (Math.abs(dy) < Shape2D.ACCURACY)
+        if (Math.abs(dy) < Tolerance2D.get())
             return new Box2D(
                     Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY, 
                     x0, y0);
@@ -548,7 +548,7 @@ public class StraightLine2D extends AbstractLine2D implements
 
     /**
      * Returns true if the point (x, y) lies on the line, with precision given
-     * by Shape2D.ACCURACY.
+     * by Tolerance2D.get().
      */
     public boolean contains(double x, double y) {
         return super.supportContains(x, y);
@@ -556,7 +556,7 @@ public class StraightLine2D extends AbstractLine2D implements
 
     /**
      * Returns true if the point p lies on the line, with precision given by
-     * Shape2D.ACCURACY.
+     * Tolerance2D.get().
      */
     @Override
     public boolean contains(Point2D p) {

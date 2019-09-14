@@ -28,7 +28,7 @@ package math.geom2d.conic;
 import static java.lang.Math.PI;
 import junit.framework.TestCase;
 import math.geom2d.AffineTransform2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.polygon.Polyline2D;
@@ -93,38 +93,38 @@ public class EllipseArc2DTest extends TestCase {
 		AffineTransform2D tra = AffineTransform2D.createTranslation(tx, ty);
 		assertTrue(arc.transform(tra).almostEquals(
 				new EllipseArc2D(tx, ty, a, b, 0, 0, Math.PI/2),
-				Shape2D.ACCURACY));
+				Tolerance2D.get()));
 		
 		// rotation
 		AffineTransform2D rot = AffineTransform2D.createRotation(theta);
 		assertTrue(arc.transform(rot).almostEquals(
 				new EllipseArc2D(x0, y0, a, b, theta, 0, Math.PI/2), 
-				Shape2D.ACCURACY));
+				Tolerance2D.get()));
 		
 		// scaling with unequal factors
 		AffineTransform2D sca = AffineTransform2D.createScaling(sx, sy);
 		assertTrue(arc.transform(sca).almostEquals(
 				new EllipseArc2D(x0, y0, a*sx, b*sy, 0, 0, Math.PI/2), 
-				Shape2D.ACCURACY));
+				Tolerance2D.get()));
 		
 		// line reflections
 		AffineTransform2D refOx = AffineTransform2D.createLineReflection(
 				new StraightLine2D(0, 0, 1, 0));
 		assertTrue(arc.transform(refOx).almostEquals(
 				new EllipseArc2D(x0, y0, a, b, 0, 0, -Math.PI/2), 
-				Shape2D.ACCURACY));
+				Tolerance2D.get()));
 		AffineTransform2D refOy = AffineTransform2D.createLineReflection(
 				new StraightLine2D(0, 0, 0, 1));
 		assertTrue(arc.transform(refOy).almostEquals(
 				new EllipseArc2D(x0, y0, a, b, 0, Math.PI, -Math.PI/2), 
-				Shape2D.ACCURACY));
+				Tolerance2D.get()));
 		
 		// Rotated ellipse
 		arc = new EllipseArc2D(x0, y0, a, b, Math.PI/3, 0, Math.PI/2);
 		transformed = arc.transform(refOy);
 		assertTrue(transformed.almostEquals(
 				new EllipseArc2D(x0, y0, a, b, 2*Math.PI/3, 0, -Math.PI/2),
-				Shape2D.ACCURACY));
+				Tolerance2D.get()));
 		
 		// Rotated ellipse, from indirect ellipse
 		Ellipse2D ell = new Ellipse2D(x0, y0, a, b, Math.PI/3, true);
@@ -133,7 +133,7 @@ public class EllipseArc2DTest extends TestCase {
 		transformed = arc.transform(refOy);
 		assertTrue(transformed.almostEquals(
 				new EllipseArc2D(ell2, 0, -Math.PI/2), 
-				Shape2D.ACCURACY));
+				Tolerance2D.get()));
 	}
 	
 	public void testAsPolyline() {
@@ -145,7 +145,7 @@ public class EllipseArc2DTest extends TestCase {
 	
 	public void testGetTangent() {
         Ellipse2D ellipse = new Ellipse2D(0, 0, 50, 20, 0);
-        double eps = Shape2D.ACCURACY;
+        double eps = Tolerance2D.get();
         
         // Direct arc
         EllipseArc2D arc1 = new EllipseArc2D(ellipse, 0, Math.PI/2);        

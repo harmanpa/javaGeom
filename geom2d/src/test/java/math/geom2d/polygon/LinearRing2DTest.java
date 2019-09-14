@@ -33,7 +33,7 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.circulinear.CirculinearContinuousCurve2D;
 import math.geom2d.circulinear.CirculinearDomain2D;
 import math.geom2d.circulinear.buffer.BufferCalculator;
@@ -179,7 +179,7 @@ public class LinearRing2DTest extends TestCase {
 				new Point2D(0, 10) });
 		
 		// length is 4*10=40
-		assertEquals(line.length(), 40, Shape2D.ACCURACY);
+		assertEquals(line.length(), 40, Tolerance2D.get());
 	}
 
 	public void testAddVertex() {
@@ -364,7 +364,7 @@ public class LinearRing2DTest extends TestCase {
     	
     	double dist = ring.signedDistance(p0);
     	
-    	assertEquals(-2, dist, Shape2D.ACCURACY);
+    	assertEquals(-2, dist, Tolerance2D.get());
     }
 
 	public void testIsInside(){

@@ -36,6 +36,7 @@ import math.geom2d.*;
 import math.geom2d.circulinear.CirculinearDomain2D;
 import math.geom2d.circulinear.CirculinearElement2D;
 import math.geom2d.circulinear.buffer.BufferCalculator;
+import math.geom2d.circulinear.buffer.PointElement2D;
 import math.geom2d.curve.*;
 import math.geom2d.line.LineSegment2D;
 import math.geom2d.line.LinearShape2D;
@@ -258,11 +259,30 @@ public class CircleArc2D extends AbstractSmoothCurve2D
 
     /**
      * Returns the circle arc parallel to this circle arc, at the distance dist.
+     *
+     * @param dist
+     * @return
      */
-    public CircleArc2D parallel(double dist) {
+    @Override
+    public CirculinearElement2D parallel(double dist) {
         double r = circle.radius();
-        double r2 = max(angleExtent > 0 ? r + dist : r - dist, 0);
-        return new CircleArc2D(circle.center(), r2, startAngle, angleExtent);
+        // Calculate radius of new arc
+        double r2 = angleExtent > 0 ? r + dist : r - dist;
+        // If the radius is >0 then return new arc
+        if (r2 > Tolerance2D.get()) {
+            return new CircleArc2D(circle.center(), r2, startAngle, angleExtent);
+        }
+        // If the radius is close to 0 return the centre point
+        if (r2 > -Tolerance2D.get()) {
+            return new PointElement2D(supportingCircle().center());
+        }
+        // If radius is less than zero the center moves away
+        if (firstPoint().distance(lastPoint()) <= Tolerance2D.get()) {
+            return null;
+        }
+        double dist2 = Math.signum(dist) * Math.sqrt(Math.pow(dist, 2) - Math.pow(firstPoint().distance(lastPoint()) / 2, 2));
+        Point2D point = StraightLine2D.createMedian(firstPoint(), lastPoint()).intersection(StraightLine2D.createParallel(new LineSegment2D(firstPoint(), lastPoint()), dist2));
+        return new PointElement2D(point);
     }
 
     public double length() {
@@ -383,7 +403,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
 
         Point2D p1 = circle.point(startAngle);
         Point2D p2 = circle.point(startAngle + angleExtent);
-        if(p1.distance(p2)<Shape2D.ACCURACY) {
+        if (p1.distance(p2) < Tolerance2D.get()) {
             return direct ? -dist : dist;
         }
         boolean onLeft = (new StraightLine2D(p1, p2)).isInside(point);
@@ -698,7 +718,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
     public boolean contains(double x, double y) {
         // Check if radius is correct
         double r = circle.radius();
-        if (abs(Point2D.distance(circle.xc, circle.yc, x, y) - r) > Shape2D.ACCURACY) {
+        if (abs(Point2D.distance(circle.xc, circle.yc, x, y) - r) > Tolerance2D.get()) {
             return false;
         }
 
@@ -964,7 +984,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
         // if no difference, this is the same
         return true;
     }
-    
+
     /**
      * @return A collection of intersection points or empty if either there are
      * no intersections or if the arc & circle are coincident.

@@ -31,7 +31,6 @@ import java.util.ArrayList;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
 import math.geom2d.Vector2D;
 import math.geom2d.circulinear.CirculinearDomain2D;
 import math.geom2d.conic.Circle2D;
@@ -41,6 +40,7 @@ import math.geom2d.domain.Domain2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.transform.CircleInversion2D;
 import junit.framework.TestCase;
+import math.geom2d.Tolerance2D;
 
 /**
  * @author Legland
@@ -107,7 +107,7 @@ public class SimplePolygon2DTest extends TestCase {
 		Point2D centro2 = new Point2D(-15, 15);
 		double dist = centro2.distance(poly2.centroid());
 		
-		assertTrue(dist < Shape2D.ACCURACY);
+		assertTrue(dist < Tolerance2D.get());
 	}
 	
 	public void testTransform_Motion_InvertedPolygon(){
@@ -132,7 +132,7 @@ public class SimplePolygon2DTest extends TestCase {
 		Point2D centro2 = new Point2D(-15, 15);
 		double dist = centro2.distance(poly2.centroid());
 		
-		assertTrue(dist < Shape2D.ACCURACY);
+		assertTrue(dist < Tolerance2D.get());
 	}
 	
 	public void testTransform_Reflect(){
@@ -157,7 +157,7 @@ public class SimplePolygon2DTest extends TestCase {
 		Point2D centro2 = new Point2D(-15, 15);
 		double dist = centro2.distance(poly2.centroid());
 		
-		assertTrue(dist < Shape2D.ACCURACY);
+		assertTrue(dist < Tolerance2D.get());
 	}
 	
 	public void testTransform_Reflect_InvertedPolygon(){
@@ -183,7 +183,7 @@ public class SimplePolygon2DTest extends TestCase {
 		Point2D centro2 = new Point2D(-15, 15);
 		double dist = centro2.distance(poly2.centroid());
 		
-		assertTrue(dist < Shape2D.ACCURACY);
+		assertTrue(dist < Tolerance2D.get());
 	}
 	
 	/*
@@ -435,7 +435,7 @@ public class SimplePolygon2DTest extends TestCase {
     	
     	double dist = polygon.boundary().signedDistance(p0);
     	
-    	assertEquals(-2, dist, Shape2D.ACCURACY);
+    	assertEquals(-2, dist, Tolerance2D.get());
     }
 
 	public void testCreate_Collection() {

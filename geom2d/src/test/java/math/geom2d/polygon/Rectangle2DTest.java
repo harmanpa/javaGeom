@@ -28,7 +28,7 @@ package math.geom2d.polygon;
 
 import junit.framework.TestCase;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 
 /**
  * @author Legland
@@ -47,7 +47,7 @@ public class Rectangle2DTest extends TestCase {
 		Rectangle2D rect = new Rectangle2D(10, 20, 30, 40);
 		Point2D exp = new Point2D(25, 40);
 		Point2D center = rect.centroid();
-		assertTrue(exp.almostEquals(center, Shape2D.ACCURACY));
+		assertTrue(exp.almostEquals(center, Tolerance2D.get()));
 	}
 	
 	public void testVertexNumber() {
@@ -57,10 +57,10 @@ public class Rectangle2DTest extends TestCase {
 
 	public void testDistance(){
 		Rectangle2D rect = new Rectangle2D(10, 20, 30, 40);
-		assertEquals(rect.distance(10, 20), 0, Shape2D.ACCURACY);		
-		assertEquals(rect.distance(40, 20), 0, Shape2D.ACCURACY);		
-		assertEquals(rect.distance(40, 60), 0, Shape2D.ACCURACY);		
-		assertEquals(rect.distance(10, 60), 0, Shape2D.ACCURACY);		
+		assertEquals(rect.distance(10, 20), 0, Tolerance2D.get());		
+		assertEquals(rect.distance(40, 20), 0, Tolerance2D.get());		
+		assertEquals(rect.distance(40, 60), 0, Tolerance2D.get());		
+		assertEquals(rect.distance(10, 60), 0, Tolerance2D.get());		
 	}
 
 	/*

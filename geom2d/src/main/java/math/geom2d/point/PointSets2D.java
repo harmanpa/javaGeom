@@ -5,7 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 
 /**
  * A set of static methods for manipulating point sets.
@@ -50,7 +50,7 @@ public class PointSets2D {
     	// iterate over couple of points
     	while (iter.hasNext()) {
     		current = iter.next();
-    		if (Point2D.distance(current, previous) < Shape2D.ACCURACY)
+    		if (Point2D.distance(current, previous) < Tolerance2D.get())
     			return true;
     		previous = current;
     	}
@@ -89,7 +89,7 @@ public class PointSets2D {
     	// iterate over couple of points
     	while (iter.hasNext()) {
     		current = iter.next();
-    		if (Point2D.distance(current, previous) < Shape2D.ACCURACY)
+    		if (Point2D.distance(current, previous) < Tolerance2D.get())
     			count++;
     		previous = current;
     	}
@@ -131,7 +131,7 @@ public class PointSets2D {
     	// compare each couple of contiguous vertex
     	while (iter.hasNext()) {
     		current = iter.next();
-    		if (Point2D.distance(current, previous) > Shape2D.ACCURACY) {
+    		if (Point2D.distance(current, previous) > Tolerance2D.get()) {
     			result.add(current);
     		}
     		previous = current;

@@ -30,7 +30,7 @@ import java.util.Collection;
 
 import junit.framework.TestCase;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
 import math.geom2d.conic.Circle2D;
 import math.geom2d.conic.CircleArc2D;
@@ -264,8 +264,8 @@ public class CirculinearCurves2DTest extends TestCase {
         assertEquals(2, points.size());
 
         PointArray2D pointSet = PointArray2D.create(points);
-        assertTrue(pointSet.distance(new Point2D(18, 4)) < Shape2D.ACCURACY);
-        assertTrue(pointSet.distance(new Point2D(4, 18)) < Shape2D.ACCURACY);
+        assertTrue(pointSet.distance(new Point2D(18, 4)) < Tolerance2D.get());
+        assertTrue(pointSet.distance(new Point2D(4, 18)) < Tolerance2D.get());
     }
 
 }

@@ -16,9 +16,8 @@ import java.util.TreeSet;
 import math.geom2d.Angle2D;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
-import math.geom2d.exceptions.Geom2DException;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.line.LinearShape2D;
 
@@ -271,10 +270,10 @@ public abstract class Curves2D {
                 touch = true;
 
                 double pos = choosePosition(t0, iter.next());
-                while (Math.abs(pos - t0) < Shape2D.ACCURACY && iter.hasNext()) {
+                while (Math.abs(pos - t0) < Tolerance2D.get() && iter.hasNext()) {
                     pos = choosePosition(t0, iter.next());
                 }
-                if (Math.abs(pos - t0) < Shape2D.ACCURACY) {
+                if (Math.abs(pos - t0) < Tolerance2D.get()) {
                     pos = choosePosition(t0, curve.t1());
                 }
                 point = curve.point(pos);
@@ -366,7 +365,7 @@ public abstract class Curves2D {
             if (Vector2D.isColinear(tangent, vector)) {
                 // condition on the curvature (close to zero = cusp point)
                 double curv = curve.curvature(position);
-                if (Math.abs(curv) > Shape2D.ACCURACY) {
+                if (Math.abs(curv) > Tolerance2D.get()) {
                     continue;
                 }
             }
@@ -440,7 +439,7 @@ public abstract class Curves2D {
                 continue;
             }
             // avoid values before
-            if (positions[i] - pos < Shape2D.ACCURACY) {
+            if (positions[i] - pos < Tolerance2D.get()) {
                 continue;
             }
 
@@ -461,7 +460,7 @@ public abstract class Curves2D {
             if (java.lang.Double.isNaN(positions[i])) {
                 continue;
             }
-            if (positions[i] - posMin < Shape2D.ACCURACY) {
+            if (positions[i] - posMin < Tolerance2D.get()) {
                 ind = i;
                 posMin = positions[i];
             }

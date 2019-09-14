@@ -33,7 +33,7 @@ import java.util.Iterator;
 import junit.framework.TestCase;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
 import math.geom2d.line.StraightLine2D;
 
@@ -65,7 +65,7 @@ public class Ellipse2DTest extends TestCase {
 		double chord = base.semiMajorAxisLength()*2;
 		Ellipse2D created = Ellipse2D.create(focus1, focus2, chord);
 		
-		assertTrue(base.almostEquals(created, Shape2D.ACCURACY));
+		assertTrue(base.almostEquals(created, Tolerance2D.get()));
 	}
 	
 	public void testReduceCentered(){
@@ -86,7 +86,7 @@ public class Ellipse2DTest extends TestCase {
 				AffineTransform2D.createRotation(theta));
 		Ellipse2D ellRot = Ellipse2D.reduceCentered(rotCoefs);
 		Ellipse2D expected = new Ellipse2D(0, 0, 20, 10, theta);
-		assertTrue(ellRot.almostEquals(expected, Shape2D.ACCURACY));
+		assertTrue(ellRot.almostEquals(expected, Tolerance2D.get()));
 	}
 	
 	public void testTransformCentered(){
@@ -97,24 +97,24 @@ public class Ellipse2DTest extends TestCase {
 		AffineTransform2D rot60 = AffineTransform2D.createRotation(theta);
 		Ellipse2D resRot = Ellipse2D.transformCentered(ell0, rot60);
 		Ellipse2D expRot = new Ellipse2D(0, 0, 20, 10, theta);
-		assertTrue(resRot.almostEquals(expRot, Shape2D.ACCURACY));
+		assertTrue(resRot.almostEquals(expRot, Tolerance2D.get()));
 		
 		// Check scaling of an ellipse
 		double sx = 2.5; double sy = 3;
 		AffineTransform2D sca = AffineTransform2D.createScaling(sx, sy);
 		Ellipse2D resSca = Ellipse2D.transformCentered(ell0, sca);
 		Ellipse2D expSca = new Ellipse2D(0, 0, 20.*sx, 10.*sy, 0);
-		assertTrue(resSca.almostEquals(expSca, Shape2D.ACCURACY));
+		assertTrue(resSca.almostEquals(expSca, Tolerance2D.get()));
 
 		// Check scaling and rotation
 		Ellipse2D resBoth = Ellipse2D.transformCentered(resSca, rot60);
 		Ellipse2D expBoth = new Ellipse2D(0, 0, 20.*sx, 10.*sy, theta);
-		assertTrue(resBoth.almostEquals(expBoth, Shape2D.ACCURACY));
+		assertTrue(resBoth.almostEquals(expBoth, Tolerance2D.get()));
 	}
 	
 	public void testGetProjectedPoint(){
 		Ellipse2D el1 = new Ellipse2D(0, 0, 10, 10);
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		assertPointAlmostEquals(new Point2D(10, 0), 
 				el1.projectedPoint(new Point2D(20, 0)), eps);
@@ -125,7 +125,7 @@ public class Ellipse2DTest extends TestCase {
 	}
 	
 	public void testGetTangent() {
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		Ellipse2D el1 = new Ellipse2D(0, 0, 20, 10);
 		assertVectorAlmostEquals(new Vector2D(0, 10), el1.tangent(0), eps);
@@ -149,9 +149,9 @@ public class Ellipse2DTest extends TestCase {
 		double b = 10;
 		Ellipse2D el1 = new Ellipse2D(0, 0, a, b);
 		double k1 = el1.curvature(0);
-		assertEquals(k1, a/b/b, Shape2D.ACCURACY);
+		assertEquals(k1, a/b/b, Tolerance2D.get());
 		double k2 = el1.curvature(Math.PI/2);
-		assertEquals(k2, b/a/a, Shape2D.ACCURACY);
+		assertEquals(k2, b/a/a, Tolerance2D.get());
 	}
 	
 	public void testGetType() {
@@ -223,10 +223,10 @@ public class Ellipse2DTest extends TestCase {
 
 	public void testGetSignedDistance(){
 		Ellipse2D el1 = new Ellipse2D(0, 0, 20, 10);
-		assertEquals(el1.signedDistance(new Point2D(25, 0)), 5, Shape2D.ACCURACY);
-		assertEquals(el1.signedDistance(new Point2D(0, 15)), 5, Shape2D.ACCURACY);
-//		assertEquals(el1.getSignedDistance(new Point2D(15, 0)), -5, Shape2D.ACCURACY);
-//		assertEquals(el1.getSignedDistance(new Point2D(0, 5)), -5, Shape2D.ACCURACY);
+		assertEquals(el1.signedDistance(new Point2D(25, 0)), 5, Tolerance2D.get());
+		assertEquals(el1.signedDistance(new Point2D(0, 15)), 5, Tolerance2D.get());
+//		assertEquals(el1.getSignedDistance(new Point2D(15, 0)), -5, Tolerance2D.get());
+//		assertEquals(el1.getSignedDistance(new Point2D(0, 5)), -5, Tolerance2D.get());
 	}
 
 	public void testIsInside(){
@@ -247,8 +247,8 @@ public class Ellipse2DTest extends TestCase {
 
 	public void testGetDistance(){
 		Ellipse2D el1 = new Ellipse2D(0, 0, 20, 10);
-		assertEquals(el1.distance(new Point2D(30, 0)), 10, Shape2D.ACCURACY);
-		assertEquals(el1.distance(new Point2D(0, 20)), 10, Shape2D.ACCURACY);
+		assertEquals(el1.distance(new Point2D(30, 0)), 10, Tolerance2D.get());
+		assertEquals(el1.distance(new Point2D(0, 20)), 10, Tolerance2D.get());
 		
 		double pos = .3;
 		Point2D p0 = el1.point(pos);
@@ -265,7 +265,7 @@ public class Ellipse2DTest extends TestCase {
 	 * then computing position of the point, gives the initial position.
 	 */
 	public void testGetPosition(){
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		Ellipse2D el1 = new Ellipse2D(0, 0, 20, 10);
 		assertEquals(el1.position(el1.point(.4)), .4, eps);
@@ -291,7 +291,7 @@ public class Ellipse2DTest extends TestCase {
 	 * then computing the location of the point, gives the initial position.
 	 */
 	public void testProject(){
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		Ellipse2D el1 = new Ellipse2D(0, 0, 20, 10);
 		assertEquals(el1.project(el1.point(.4)), .4, eps);
@@ -317,7 +317,7 @@ public class Ellipse2DTest extends TestCase {
 	 * then computing position of the point, gives the initial position.
 	 */
 	public void testGetPoint(){
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		Ellipse2D el1 = new Ellipse2D(0, 0, 20, 10);
 		Point2D point = el1.point(Math.PI/2);
@@ -354,7 +354,7 @@ public class Ellipse2DTest extends TestCase {
 		Collection<Point2D> points = el1.intersections(line);
 		Iterator<Point2D> iter = points.iterator();
 		
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		assertPointAlmostEquals(point1, iter.next(), eps);
 		assertPointAlmostEquals(point2, iter.next(), eps);		
 	}
@@ -403,7 +403,7 @@ public class Ellipse2DTest extends TestCase {
 		ellipse = new Ellipse2D(100, 100, 50, 30, Math.PI/3);
 		AffineTransform2D aff3 = new AffineTransform2D(1, 0, 0, 0, 1, 0);
 		EllipseShape2D ell3 = ellipse.transform(aff3);
-		assertTrue(ell3.almostEquals(ellipse, Shape2D.ACCURACY));
+		assertTrue(ell3.almostEquals(ellipse, Tolerance2D.get()));
 	}
 	
 }

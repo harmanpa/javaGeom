@@ -12,7 +12,6 @@ import java.util.Collection;
 
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
 import math.geom2d.conic.Circle2D;
 import math.geom2d.conic.CircleArc2D;
 import math.geom2d.curve.SmoothCurve2D;
@@ -21,6 +20,7 @@ import math.geom2d.domain.Domain2D;
 import math.geom2d.line.LineSegment2D;
 import math.geom2d.transform.CircleInversion2D;
 import junit.framework.TestCase;
+import math.geom2d.Tolerance2D;
 
 
 /**
@@ -37,7 +37,7 @@ public class CirculinearCurveArray2DTest extends TestCase {
 		LineSegment2D line2 = new LineSegment2D(100, 50, 100, 150);
 		CirculinearCurveSet2D<LineSegment2D> set = 
 			CirculinearCurveArray2D.create(line1, line2);
-		assertEquals(set.length(), 200, Shape2D.ACCURACY);
+		assertEquals(set.length(), 200, Tolerance2D.get());
 	}
 
 	/**

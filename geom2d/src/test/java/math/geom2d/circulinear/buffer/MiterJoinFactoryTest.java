@@ -4,7 +4,6 @@
 package math.geom2d.circulinear.buffer;
 
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
 import math.geom2d.curve.Curve2D;
 import math.geom2d.domain.Boundary2D;
 import math.geom2d.domain.Domain2D;
@@ -12,6 +11,7 @@ import math.geom2d.line.LineSegment2D;
 import math.geom2d.polygon.LinearRing2D;
 import math.geom2d.polygon.Polyline2D;
 import junit.framework.TestCase;
+import math.geom2d.Tolerance2D;
 
 /**
  * @author David
@@ -76,7 +76,7 @@ public class MiterJoinFactoryTest extends TestCase {
 		
 		assertEquals(3, poly.vertexNumber());
 		Point2D vertex = poly.vertex(1);
-		assertTrue(vertex.distance(new Point2D(80, 10)) < Shape2D.ACCURACY);
+		assertTrue(vertex.distance(new Point2D(80, 10)) < Tolerance2D.get());
 	}
 
 	/**

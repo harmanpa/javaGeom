@@ -56,11 +56,6 @@ public interface Shape2D extends GeometricObject2D {
     // constants
 
     /**
-     * The constant used for testing results.
-     */
-    public final static double  ACCURACY  = 1e-12;
-
-    /**
      * Checks if the shape contains the planar point defined by (x,y).
      */
     public abstract boolean contains(double x, double y);

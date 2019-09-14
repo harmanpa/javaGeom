@@ -262,9 +262,9 @@ implements SmoothOrientedCurve2D {
 
 	@Override
     public boolean isSingular(double pos) {
-        if (Math.abs(pos-t0)<Shape2D.ACCURACY)
+        if (Math.abs(pos-t0)<Tolerance2D.get())
             return true;
-        if (Math.abs(pos-t1)<Shape2D.ACCURACY)
+        if (Math.abs(pos-t1)<Tolerance2D.get())
             return true;
         return false;
     }
@@ -325,9 +325,9 @@ implements SmoothOrientedCurve2D {
         // compute position on the line
         double t = positionOnLine(xp, yp);
 
-		if (t - t0 < -ACCURACY)
+		if (t - t0 < -Tolerance2D.get())
 			return false;
-		if (t - t1 > ACCURACY)
+		if (t - t1 > Tolerance2D.get())
 			return false;
 
         return true;

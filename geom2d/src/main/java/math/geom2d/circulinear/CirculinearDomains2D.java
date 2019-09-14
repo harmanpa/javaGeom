@@ -11,7 +11,7 @@ package math.geom2d.circulinear;
 import java.util.ArrayList;
 import java.util.Collection;
 
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 
 /**
  * Some utilities for working with circulinear curves.
@@ -97,7 +97,7 @@ public class CirculinearDomains2D {
                         curve, split.singularPoints());
 
                 // check if distance condition is verified
-                if (dist - d < -Shape2D.ACCURACY) {
+                if (dist - d < -Tolerance2D.get()) {
                     continue;
                 }
 

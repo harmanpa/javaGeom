@@ -468,7 +468,7 @@ public class SimplePolygon2D implements Polygon2D {
     // methods inherited from Shape interface
     /**
      * Returns true if the point p lies inside the polygon, with precision given
-     * by Shape2D.ACCURACY.
+     * by Tolerance2D.get().
      */
     public boolean contains(Point2D p) {
         return contains(p.x(), p.y());
@@ -476,7 +476,7 @@ public class SimplePolygon2D implements Polygon2D {
 
     /**
      * Returns true if the point (x, y) lies inside the polygon, with precision
-     * given by Shape2D.ACCURACY.
+     * given by Tolerance2D.get().
      */
     public boolean contains(double x, double y) {
         if (this.boundary().contains(x, y)) {

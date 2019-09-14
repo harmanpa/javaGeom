@@ -9,7 +9,7 @@ import static java.lang.Math.*;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Angle2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.domain.ContourArray2D;
 import math.geom2d.exceptions.NonInvertibleTransform2DException;
 import math.geom2d.line.StraightLine2D;
@@ -31,7 +31,7 @@ public class Conics2D {
         boolean debug = false;
 
         // precision for tests
-        double eps = Shape2D.ACCURACY;
+        double eps = Tolerance2D.get();
 
         // Extract coefficients
         double a = coefs[0];

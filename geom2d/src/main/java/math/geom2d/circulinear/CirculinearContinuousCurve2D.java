@@ -27,6 +27,7 @@ extends CirculinearCurve2D, ContinuousOrientedCurve2D {
 	// ===================================================================
     // redefines declaration of CirculinearCurve2D interfaces
 
+        @Override
 	public CirculinearContinuousCurve2D parallel(double d);
 	public CirculinearContinuousCurve2D transform(CircleInversion2D inv);
 	

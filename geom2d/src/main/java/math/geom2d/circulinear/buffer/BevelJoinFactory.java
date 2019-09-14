@@ -22,6 +22,7 @@ public class BevelJoinFactory implements JoinFactory {
 	/* (non-Javadoc)
 	 * @see math.geom2d.circulinear.buffer.JoinFactory#createJoin(math.geom2d.circulinear.CirculinearElement2D, math.geom2d.circulinear.CirculinearElement2D, double)
 	 */
+        @Override
 	public LineSegment2D createJoin(CirculinearElement2D curve1,
 			CirculinearElement2D curve2, double dist) {
 		Point2D p1 = curve1.lastPoint();

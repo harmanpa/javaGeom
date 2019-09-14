@@ -33,7 +33,7 @@ import java.util.Collection;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.GeometricObject2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.circulinear.*;
 import math.geom2d.circulinear.buffer.BufferCalculator;
 import math.geom2d.line.LineSegment2D;
@@ -165,7 +165,7 @@ public class LinearRing2D extends LinearCurve2D implements CirculinearRing2D {
 		Point2D pn = vertices.get(n - 1);
 		
 		// TODO: should not make the test...
-		if (pn.distance(p0) > Shape2D.ACCURACY)
+		if (pn.distance(p0) > Tolerance2D.get())
 			edges.add(new LineSegment2D(pn, p0));
 
 		// return resulting array
@@ -297,7 +297,7 @@ public class LinearRing2D extends LinearCurve2D implements CirculinearRing2D {
 		int n = vertices.size();
 
 		// index of vertex before point
-		int ind0 = (int) Math.floor(t + Shape2D.ACCURACY);
+		int ind0 = (int) Math.floor(t + Tolerance2D.get());
 		double tl = t - ind0;
 
 		if (ind0 == n)
@@ -305,7 +305,7 @@ public class LinearRing2D extends LinearCurve2D implements CirculinearRing2D {
 		Point2D p0 = vertices.get(ind0);
 
 		// check if equal to a vertex
-		if (Math.abs(t - ind0) < Shape2D.ACCURACY)
+		if (Math.abs(t - ind0) < Tolerance2D.get())
 			return p0;
 
 		// index of vertex after point
@@ -387,8 +387,8 @@ public class LinearRing2D extends LinearCurve2D implements CirculinearRing2D {
         t1 = Math.min(Math.max(t1, 0), indMax);
 
 		// find curves index
-		int ind0 = (int) Math.floor(t0 + Shape2D.ACCURACY);
-		int ind1 = (int) Math.floor(t1 + Shape2D.ACCURACY);
+		int ind0 = (int) Math.floor(t0 + Tolerance2D.get());
+		int ind1 = (int) Math.floor(t1 + Tolerance2D.get());
 
 		// need to subdivide only one line segment
 		if (ind0 == ind1 && t0 < t1) {

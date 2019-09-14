@@ -141,9 +141,9 @@ implements SmoothOrientedCurve2D {
         if (!this.branch.contains(point))
 			return Double.NaN;
 		double t = this.branch.position(point);
-		if (t - t0 < -ACCURACY)
+		if (t - t0 < -Tolerance2D.get())
 			return Double.NaN;
-		if (t1 - t < ACCURACY)
+		if (t1 - t < Tolerance2D.get())
 			return Double.NaN;
 		return t;
     }

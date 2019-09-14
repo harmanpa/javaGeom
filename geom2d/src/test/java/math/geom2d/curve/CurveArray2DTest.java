@@ -30,7 +30,7 @@ import java.util.*;
 
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.conic.CircleArc2D;
 import math.geom2d.line.LineSegment2D;
 
@@ -91,10 +91,10 @@ public class CurveArray2DTest extends TestCase {
 		set.add(arc1);
 		set.add(arc2);
 		
-		assertEquals(set.localPosition(0), 0, Shape2D.ACCURACY);
-		assertEquals(set.localPosition(1), extent, Shape2D.ACCURACY);
-		assertEquals(set.localPosition(2), 0, Shape2D.ACCURACY);
-		assertEquals(set.localPosition(3), extent, Shape2D.ACCURACY);
+		assertEquals(set.localPosition(0), 0, Tolerance2D.get());
+		assertEquals(set.localPosition(1), extent, Tolerance2D.get());
+		assertEquals(set.localPosition(2), 0, Tolerance2D.get());
+		assertEquals(set.localPosition(3), extent, Tolerance2D.get());
 	}
 
 	public void testGetGlobalPosition() {
@@ -106,10 +106,10 @@ public class CurveArray2DTest extends TestCase {
 		set.add(arc1);
 		set.add(arc2);
 		
-		assertEquals(set.globalPosition(0, 0), 0, Shape2D.ACCURACY);
-		assertEquals(set.globalPosition(0, extent), 1, Shape2D.ACCURACY);
-		assertEquals(set.globalPosition(1, 0), 2, Shape2D.ACCURACY);
-		assertEquals(set.globalPosition(1, extent), 3, Shape2D.ACCURACY);
+		assertEquals(set.globalPosition(0, 0), 0, Tolerance2D.get());
+		assertEquals(set.globalPosition(0, extent), 1, Tolerance2D.get());
+		assertEquals(set.globalPosition(1, 0), 2, Tolerance2D.get());
+		assertEquals(set.globalPosition(1, extent), 3, Tolerance2D.get());
 	}
 	
 	/*
@@ -141,9 +141,9 @@ public class CurveArray2DTest extends TestCase {
 		assertEquals(subset.size(), 2);
 		Iterator<?> iter = subset.curves().iterator();
 		sub1 = (Curve2D) iter.next();
-		assertTrue(arc1h1.almostEquals(sub1, Shape2D.ACCURACY));
+		assertTrue(arc1h1.almostEquals(sub1, Tolerance2D.get()));
 		sub1 = (Curve2D) iter.next();
-		assertTrue(arc2h1.almostEquals(sub1, Shape2D.ACCURACY));
+		assertTrue(arc2h1.almostEquals(sub1, Tolerance2D.get()));
 		
 		sub1 = set.subCurve(pos1, pos0);
 		assertTrue(sub1 instanceof CurveSet2D<?>);
@@ -151,9 +151,9 @@ public class CurveArray2DTest extends TestCase {
 		assertEquals(subset.size(), 2);
 		iter = subset.curves().iterator();
 		sub1 = (Curve2D) iter.next();
-		assertTrue(arc2h2.almostEquals(sub1, Shape2D.ACCURACY));
+		assertTrue(arc2h2.almostEquals(sub1, Tolerance2D.get()));
 		sub1 = (Curve2D) iter.next();
-		assertTrue(arc1h2.almostEquals(sub1, Shape2D.ACCURACY));
+		assertTrue(arc1h2.almostEquals(sub1, Tolerance2D.get()));
 	}
 	
 	public void testIsSingular() {

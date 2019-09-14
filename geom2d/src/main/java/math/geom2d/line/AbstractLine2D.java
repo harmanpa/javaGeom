@@ -70,7 +70,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
             AbstractLine2D line2) {
         // Compute denominator, and tests its validity
         double denom = line1.dx * line2.dy - line1.dy * line2.dx;
-        if (Math.abs(denom) < Shape2D.ACCURACY) {
+        if (Math.abs(denom) < Tolerance2D.get()) {
             return null;
         }
 
@@ -85,7 +85,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     public static boolean isColinear(AbstractLine2D line1, AbstractLine2D line2) {
         // test if the two lines are parallel
-        if (Math.abs(line1.dx * line2.dy - line1.dy * line2.dx) > ACCURACY) {
+        if (Math.abs(line1.dx * line2.dy - line1.dy * line2.dx) > Tolerance2D.get()) {
             return false;
         }
 
@@ -93,14 +93,14 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
         // method for details on tests)
         return (Math.abs((line2.y0 - line1.y0) * line2.dx
                 - (line2.x0 - line1.x0) * line2.dy)
-                / Math.hypot(line2.dx, line2.dy) < Shape2D.ACCURACY);
+                / Math.hypot(line2.dx, line2.dy) < Tolerance2D.get());
     }
 
     /**
      * Tests if the two linear objects are parallel.
      */
     public static boolean isParallel(AbstractLine2D line1, AbstractLine2D line2) {
-        return (Math.abs(line1.dx * line2.dy - line1.dy * line2.dx) < Shape2D.ACCURACY);
+        return (Math.abs(line1.dx * line2.dy - line1.dy * line2.dx) < Tolerance2D.get());
     }
 
     // ===================================================================
@@ -146,13 +146,13 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
         // method for details on tests)
         StraightLine2D line = linear.supportingLine();
         if (Math.abs(dx) > Math.abs(dy)) {
-            if (Math.abs((line.x0 - x0) * dy / dx + y0 - line.y0) > Shape2D.ACCURACY) {
+            if (Math.abs((line.x0 - x0) * dy / dx + y0 - line.y0) > Tolerance2D.get()) {
                 return false;
             } else {
                 return true;
             }
         } else {
-            if (Math.abs((line.y0 - y0) * dx / dy + x0 - line.x0) > Shape2D.ACCURACY) {
+            if (Math.abs((line.y0 - y0) * dx / dy + x0 - line.x0) > Tolerance2D.get()) {
                 return false;
             } else {
                 return true;
@@ -169,14 +169,14 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
 
     /**
      * Returns true if the point (x, y) lies on the line covering the object,
-     * with precision given by Shape2D.ACCURACY.
+     * with precision given by Tolerance2D.get().
      */
     protected boolean supportContains(double x, double y) {
         double denom = Math.hypot(dx, dy);
-        if (denom < Shape2D.ACCURACY) {
+        if (denom < Tolerance2D.get()) {
             throw new DegeneratedLine2DException(this);
         }
-        return (Math.abs((x - x0) * dy - (y - y0) * dx) / (denom * denom) < Shape2D.ACCURACY);
+        return (Math.abs((x - x0) * dy - (y - y0) * dx) / (denom * denom) < Tolerance2D.get());
     }
 
     /**
@@ -266,7 +266,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     public double positionOnLine(double x, double y) {
         double denom = dx * dx + dy * dy;
-        if (Math.abs(denom) < Shape2D.ACCURACY) {
+        if (Math.abs(denom) < Tolerance2D.get()) {
             throw new DegeneratedLine2DException(this);
         }
         return ((y - y0) * dy + (x - x0) * dx) / denom;
@@ -388,7 +388,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
 
         // test if two lines are parallel
         double denom = this.dx * dy2 - this.dy * dx2;
-        if (Math.abs(denom) < Shape2D.ACCURACY) {
+        if (Math.abs(denom) < Tolerance2D.get()) {
             return null;
         }
 
@@ -420,7 +420,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     public boolean containsProjection(Point2D point) {
         try {
             double pos = this.positionOnLine(point);
-            return pos > (this.t0() - Shape2D.ACCURACY) && pos < (this.t1() + Shape2D.ACCURACY);
+            return pos > (this.t0() - Tolerance2D.get()) && pos < (this.t1() + Tolerance2D.get());
         } catch (DegeneratedLine2DException ex) {
             return false;
         }
@@ -453,7 +453,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     public double position(double distance) {
         double delta = Math.hypot(dx, dy);
-        if (delta < Shape2D.ACCURACY) {
+        if (delta < Tolerance2D.get()) {
             throw new DegeneratedLine2DException(this);
         }
         return distance / delta;
@@ -481,7 +481,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
 
         // Degenerate case of a line passing through the center.
         // returns the line itself.
-        if (Math.abs(d) < Shape2D.ACCURACY) {
+        if (Math.abs(d) < Tolerance2D.get()) {
             if (inf0) {
                 if (inf1) {
                     // case of a straight line, which transform into itself
@@ -602,7 +602,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     public double signedDistance(double x, double y) {
         double delta = Math.hypot(dx, dy);
-        if (delta < Shape2D.ACCURACY) {
+        if (delta < Tolerance2D.get()) {
             return 0.0;
         }
         return ((x - x0) * dy - (y - y0) * dx) / delta;
@@ -695,7 +695,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
         double pos = this.positionOnLine(point);
 
         // compute a threshold depending on line slope
-        double eps = Math.hypot(dx, dy) * Shape2D.ACCURACY;
+        double eps = Math.hypot(dx, dy) * Tolerance2D.get();
 
         // return either pos or NaN
         if (pos < this.t0() - eps) {
@@ -819,7 +819,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     @Override
     public boolean isEmpty() {
-        return Math.hypot(dx, dy) < Shape2D.ACCURACY;
+        return Math.hypot(dx, dy) < Tolerance2D.get();
     }
 
     /* (non-Javadoc)

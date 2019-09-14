@@ -134,7 +134,7 @@ public class Point2D
         dy2 = p3.y - p1.y;
 
         // tests if the two lines are parallel
-        return Math.abs(dx1 * dy2 - dy1 * dx2) < Shape2D.ACCURACY;
+        return Math.abs(dx1 * dy2 - dy1 * dx2) < Tolerance2D.get();
     }
 
     /**
@@ -648,7 +648,7 @@ public class Point2D
 
     /**
      * Two points are considered equal if their Euclidean distance is less than
-     * Shape2D.ACCURACY.
+     * Tolerance2D.get().
      */
     @Override
     public boolean equals(Object obj) {

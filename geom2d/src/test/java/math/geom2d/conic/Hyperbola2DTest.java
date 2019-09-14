@@ -4,7 +4,7 @@ import junit.framework.TestCase;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.curve.Curve2D;
 import math.geom2d.curve.CurveSet2D;
 
@@ -28,15 +28,15 @@ public class Hyperbola2DTest extends TestCase {
 	public void testReduceCentered(){
 		double[] coefs = {1./400., 0, -1./100.};
 		Hyperbola2D hyp0 = Hyperbola2D.reduceCentered(coefs);
-		assertTrue(hyp0.almostEquals(new Hyperbola2D(0, 0, 20, 10, 0, true), Shape2D.ACCURACY));
+		assertTrue(hyp0.almostEquals(new Hyperbola2D(0, 0, 20, 10, 0, true), Tolerance2D.get()));
 		
 		double[] coefs2 = {1./400., 0, -1./100., 0, 0, -1};
 		Hyperbola2D hyp2 = Hyperbola2D.reduceCentered(coefs2);
-		assertTrue(hyp2.almostEquals(new Hyperbola2D(0, 0, 20, 10, 0, true), Shape2D.ACCURACY));
+		assertTrue(hyp2.almostEquals(new Hyperbola2D(0, 0, 20, 10, 0, true), Tolerance2D.get()));
 		
 		double[] coefs3 = {1., 0, -4., 0, 0, -400};
 		Hyperbola2D hyp3 = Hyperbola2D.reduceCentered(coefs3);
-		assertTrue(hyp3.almostEquals(new Hyperbola2D(0, 0, 20, 10, 0, true), Shape2D.ACCURACY));
+		assertTrue(hyp3.almostEquals(new Hyperbola2D(0, 0, 20, 10, 0, true), Tolerance2D.get()));
 //		double theta = Math.PI/3;
 //		double[] rotCoefs = Conic2DUtils.transformCentered(coefs,
 //				AffineTransform2D.createRotation(theta));
@@ -52,19 +52,19 @@ public class Hyperbola2DTest extends TestCase {
 		AffineTransform2D rot60 = AffineTransform2D.createRotation(Math.PI/3);
 		Hyperbola2D hypRot = Hyperbola2D.transformCentered(hyp0, rot60);
 		Hyperbola2D expRot = new Hyperbola2D(0, 0, 20, 10, theta, true);
-		assertTrue(hypRot.almostEquals(expRot, Shape2D.ACCURACY));
+		assertTrue(hypRot.almostEquals(expRot, Tolerance2D.get()));
 		
 		// Check scaling of an ellipse
 		double sx = 2.5; double sy = 3;
 		AffineTransform2D sca = AffineTransform2D.createScaling(sx, sy);
 		Hyperbola2D hypSca = Hyperbola2D.transformCentered(hyp0, sca);
 		Hyperbola2D expSca = new Hyperbola2D(0, 0, 20.*sx, 10.*sy, 0, true);
-		assertTrue(hypSca.almostEquals(expSca, Shape2D.ACCURACY));
+		assertTrue(hypSca.almostEquals(expSca, Tolerance2D.get()));
 
 		// Check scaling and rotation
 		Hyperbola2D hypBoth = Hyperbola2D.transformCentered(hypSca, rot60);
 		Hyperbola2D expBoth = new Hyperbola2D(0, 0, 20.*sx, 10.*sy, theta, true);
-		assertTrue(hypBoth.almostEquals(expBoth, Shape2D.ACCURACY));
+		assertTrue(hypBoth.almostEquals(expBoth, Tolerance2D.get()));
 
 	}
 	
@@ -77,7 +77,7 @@ public class Hyperbola2DTest extends TestCase {
 		Hyperbola2D hyperbola, hyperbola2;
 		Conic2D conic;
 		
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		Point2D origin = new Point2D(0, 0);
 		Point2D center = new Point2D(xc, yc);

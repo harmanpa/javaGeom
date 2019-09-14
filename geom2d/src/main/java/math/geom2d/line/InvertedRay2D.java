@@ -122,7 +122,7 @@ public class InvertedRay2D extends AbstractLine2D {
         super(x1, y1, dx, dy);
         
         // enforce condition on direction vector
-        if (Math.hypot(dx, dy) < Shape2D.ACCURACY)
+        if (Math.hypot(dx, dy) < Tolerance2D.get())
         {
             throw new IllegalArgumentException("Rays can not have direction vector with zero norm");
         }
@@ -136,7 +136,7 @@ public class InvertedRay2D extends AbstractLine2D {
         super(line.origin(), line.direction());
         
         // enforce condition on direction vector
-        if (Math.hypot(dx, dy) < Shape2D.ACCURACY)
+        if (Math.hypot(dx, dy) < Tolerance2D.get())
         {
             throw new IllegalArgumentException("Rays can not have direction vector with zero norm");
         }
@@ -226,7 +226,7 @@ public class InvertedRay2D extends AbstractLine2D {
         if (!this.supportContains(x, y))
             return false;
         double t = this.positionOnLine(x, y);
-        return t < Shape2D.ACCURACY;
+        return t < Tolerance2D.get();
     }
 
     public Box2D boundingBox() {

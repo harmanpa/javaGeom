@@ -1,13 +1,13 @@
 package math.geom2d.conic;
 
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
 import math.geom2d.Vector2D;
 import math.geom2d.curve.Curve2D;
 import math.geom2d.curve.CurveSet2D;
 import math.geom2d.curve.Curves2D;
 import math.geom2d.line.StraightLine2D;
 import junit.framework.TestCase;
+import math.geom2d.Tolerance2D;
 
 public class HyperbolaBranch2DTest extends TestCase {
 
@@ -65,7 +65,7 @@ public class HyperbolaBranch2DTest extends TestCase {
 		double y0 	= 50;
 		double a  	= 10;
 		double b 	= 10;
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		Hyperbola2D hyper = new Hyperbola2D(x0, y0, a, b, 0, true);
 		HyperbolaBranch2D branch = new HyperbolaBranch2D(hyper, true);

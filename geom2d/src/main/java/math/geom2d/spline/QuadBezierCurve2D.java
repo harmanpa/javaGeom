@@ -528,22 +528,22 @@ public class QuadBezierCurve2D extends AbstractSmoothCurve2D
         QuadBezierCurve2D bezier = (QuadBezierCurve2D) obj;
 
         // Compare each field
-        if (Math.abs(this.x1 - bezier.x1) > Shape2D.ACCURACY) {
+        if (Math.abs(this.x1 - bezier.x1) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.y1 - bezier.y1) > Shape2D.ACCURACY) {
+        if (Math.abs(this.y1 - bezier.y1) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.ctrlx - bezier.ctrlx) > Shape2D.ACCURACY) {
+        if (Math.abs(this.ctrlx - bezier.ctrlx) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.ctrly - bezier.ctrly) > Shape2D.ACCURACY) {
+        if (Math.abs(this.ctrly - bezier.ctrly) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.x2 - bezier.x2) > Shape2D.ACCURACY) {
+        if (Math.abs(this.x2 - bezier.x2) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.y2 - bezier.y2) > Shape2D.ACCURACY) {
+        if (Math.abs(this.y2 - bezier.y2) > Tolerance2D.get()) {
             return false;
         }
 

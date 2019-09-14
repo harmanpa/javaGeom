@@ -11,7 +11,7 @@ import math.geom2d.Box2D;
 import math.geom2d.Point2D;
 import math.geom2d.point.PointArray2D;
 import math.geom2d.point.PointSet2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.line.LineSegment2D;
 
 /**
@@ -136,11 +136,11 @@ public class SquareGrid2D implements Grid2D {
     ArrayList<LineSegment2D> array = new ArrayList<LineSegment2D>();
 
         // add horizontal lines
-		for (y = yi; y - ymax < Shape2D.ACCURACY; y += sy)
+		for (y = yi; y - ymax < Tolerance2D.get(); y += sy)
             array.add(new LineSegment2D(xmin, y, xmax, y));
 
         // add vertical lines
-		for (x = xi; x - xmax < Shape2D.ACCURACY; x += sx)
+		for (x = xi; x - xmax < Tolerance2D.get(); x += sx)
             array.add(new LineSegment2D(x, ymin, x, ymax));
 
         // return the set of lines
@@ -170,8 +170,8 @@ public class SquareGrid2D implements Grid2D {
         ArrayList<Point2D> array = new ArrayList<Point2D>();
 
         // iterate on lines in each direction
-        for (y = yi; y-ymax<Shape2D.ACCURACY; y += sy)
-            for (x = xi; x-xmax<Shape2D.ACCURACY; x += sx)
+        for (y = yi; y-ymax<Tolerance2D.get(); y += sy)
+            for (x = xi; x-xmax<Tolerance2D.get(); x += sx)
                 array.add(new Point2D(x, y));
 
         // return the set of lines

@@ -433,7 +433,7 @@ public class CurveArray2D<T extends Curve2D>
     public Collection<Point2D> singularPoints() {
         // create array for result
         ArrayList<Point2D> points = new ArrayList<Point2D>();
-        double eps = Shape2D.ACCURACY;
+        double eps = Tolerance2D.get();
 
         // iterate on curves composing the array
         for (Curve2D curve : curves) {
@@ -485,7 +485,7 @@ public class CurveArray2D<T extends Curve2D>
     }
 
     public boolean isSingular(double pos) {
-        if (Math.abs(pos - Math.round(pos)) < Shape2D.ACCURACY) {
+        if (Math.abs(pos - Math.round(pos)) < Tolerance2D.get()) {
             return true;
         }
 

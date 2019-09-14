@@ -51,32 +51,32 @@ public class LineSegment2D extends AbstractLine2D
     public static double getEdgeAngle(LineSegment2D edge1, LineSegment2D edge2) {
         double x0, y0, x1, y1, x2, y2;
 
-        if (Math.abs(edge1.x0 - edge2.x0) < Shape2D.ACCURACY
-                && Math.abs(edge1.y0 - edge2.y0) < Shape2D.ACCURACY) {
+        if (Math.abs(edge1.x0 - edge2.x0) < Tolerance2D.get()
+                && Math.abs(edge1.y0 - edge2.y0) < Tolerance2D.get()) {
             x0 = edge1.x0;
             y0 = edge1.y0;
             x1 = edge1.x0 + edge1.dx;
             y1 = edge1.y0 + edge1.dy;
             x2 = edge2.x0 + edge2.dx;
             y2 = edge2.y0 + edge2.dy;
-        } else if (Math.abs(edge1.x0 + edge1.dx - edge2.x0) < Shape2D.ACCURACY
-                && Math.abs(edge1.y0 + edge1.dy - edge2.y0) < Shape2D.ACCURACY) {
+        } else if (Math.abs(edge1.x0 + edge1.dx - edge2.x0) < Tolerance2D.get()
+                && Math.abs(edge1.y0 + edge1.dy - edge2.y0) < Tolerance2D.get()) {
             x0 = edge1.x0 + edge1.dx;
             y0 = edge1.y0 + edge1.dy;
             x1 = edge1.x0;
             y1 = edge1.y0;
             x2 = edge2.x0 + edge2.dx;
             y2 = edge2.y0 + edge2.dy;
-        } else if (Math.abs(edge1.x0 + edge1.dx - edge2.x0 - edge2.dx) < Shape2D.ACCURACY
-                && Math.abs(edge1.y0 + edge1.dy - edge2.y0 - edge2.dy) < Shape2D.ACCURACY) {
+        } else if (Math.abs(edge1.x0 + edge1.dx - edge2.x0 - edge2.dx) < Tolerance2D.get()
+                && Math.abs(edge1.y0 + edge1.dy - edge2.y0 - edge2.dy) < Tolerance2D.get()) {
             x0 = edge1.x0 + edge1.dx;
             y0 = edge1.y0 + edge1.dy;
             x1 = edge1.x0;
             y1 = edge1.y0;
             x2 = edge2.x0;
             y2 = edge2.y0;
-        } else if (Math.abs(edge1.x0 - edge2.x0 - edge2.dx) < Shape2D.ACCURACY
-                && Math.abs(edge1.y0 - edge2.y0 - edge2.dy) < Shape2D.ACCURACY) {
+        } else if (Math.abs(edge1.x0 - edge2.x0 - edge2.dx) < Tolerance2D.get()
+                && Math.abs(edge1.y0 - edge2.y0 - edge2.dy) < Tolerance2D.get()) {
             x0 = edge1.x0;
             y0 = edge1.y0;
             x1 = edge1.x0 + edge1.dx;
@@ -172,7 +172,7 @@ public class LineSegment2D extends AbstractLine2D
     public LineSegment2D parallel(double d) {
         // Checks line segment has a valid length
         double d2 = Math.hypot(dx, dy);
-        if (Math.abs(d2) < Shape2D.ACCURACY) {
+        if (Math.abs(d2) < Tolerance2D.get()) {
             return this;
 //            throw new DegeneratedLine2DException(
 //                    "Can not compute parallel of degenerated edge", this);
@@ -268,10 +268,10 @@ public class LineSegment2D extends AbstractLine2D
         // compute position on the line
         double t = positionOnLine(xp, yp);
 
-        if (t < -ACCURACY) {
+        if (t < -Tolerance2D.get()) {
             return false;
         }
-        if (t - 1 > ACCURACY) {
+        if (t - 1 > Tolerance2D.get()) {
             return false;
         }
 
@@ -284,7 +284,7 @@ public class LineSegment2D extends AbstractLine2D
     @Override
     public double distance(double x, double y) {
         // In case of line segment with same extremities, computes distance to initial point 
-        if (length() < Shape2D.ACCURACY) {
+        if (length() < Tolerance2D.get()) {
             return Point2D.distance(this.x0, this.y0, x, y);
         }
 

@@ -83,7 +83,7 @@ public class Vector2D implements GeometricObject2D {
 	public static boolean isColinear(Vector2D v1, Vector2D v2) {
 		v1 = v1.normalize();
 		v2 = v2.normalize();
-		return abs(v1.x * v2.y - v1.y * v2.x) < Shape2D.ACCURACY;
+		return abs(v1.x * v2.y - v1.y * v2.x) < Tolerance2D.get();
 	}
 
     /**
@@ -94,7 +94,7 @@ public class Vector2D implements GeometricObject2D {
     public static boolean isOrthogonal(Vector2D v1, Vector2D v2) {
         v1 = v1.normalize();
 		v2 = v2.normalize();
-		return abs(v1.x * v2.x + v1.y * v2.y) < Shape2D.ACCURACY;
+		return abs(v1.x * v2.x + v1.y * v2.y) < Tolerance2D.get();
 	}
 
 

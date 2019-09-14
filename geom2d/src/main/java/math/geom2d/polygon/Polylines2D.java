@@ -8,7 +8,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.line.LineSegment2D;
 import math.geom2d.point.PointSets2D;
 
@@ -143,7 +143,7 @@ public abstract class Polylines2D {
     	if (closed) {
     		Point2D p1 = polyline.firstPoint();
     		Point2D p2 = polyline.lastPoint();
-    		if (p1.distance(p2) < Shape2D.ACCURACY)
+    		if (p1.distance(p2) < Tolerance2D.get())
     			return true;
     	}
     	

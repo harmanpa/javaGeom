@@ -260,7 +260,7 @@ public class GeneralPath2D implements Curve2D {
         int index = (int) Math.floor(t);
 
         // Special case of last point
-        if (index == this.segments.size() - 1 && Math.abs(t - index) < Shape2D.ACCURACY) {
+        if (index == this.segments.size() - 1 && Math.abs(t - index) < Tolerance2D.get()) {
             return this.lastPoint();
         }
 
@@ -332,7 +332,7 @@ public class GeneralPath2D implements Curve2D {
 
     @Override
     public boolean isSingular(double pos) {
-        return Math.abs(pos - Math.round(pos)) < Shape2D.ACCURACY;
+        return Math.abs(pos - Math.round(pos)) < Tolerance2D.get();
     }
 
     @Override

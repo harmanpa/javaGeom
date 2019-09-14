@@ -74,7 +74,7 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
 
         // Compute orientation angle of the hyperbola
         double theta;
-        if (abs(A - C) < Shape2D.ACCURACY) {
+        if (abs(A - C) < Tolerance2D.get()) {
             theta = PI / 4;
         } else {
             theta = atan2(B, (A - C)) / 2.0;
@@ -94,7 +94,7 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
             f = abs(coefs[5]);
         }
 
-        assert abs(coefs2[1] / f) < Shape2D.ACCURACY :
+        assert abs(coefs2[1] / f) < Tolerance2D.get() :
                 "Second conic coefficient should be zero";
 
         assert coefs2[0] * coefs2[2] < 0 :

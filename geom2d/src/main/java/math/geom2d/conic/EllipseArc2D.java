@@ -624,7 +624,7 @@ public static EllipseArc2D create(Ellipse2D ell, double start, double end,
      * @see java.awt.Shape#contains(double, double)
      */
     public boolean contains(double x, double y) {
-		return distance(x, y) > Shape2D.ACCURACY;
+		return distance(x, y) > Tolerance2D.get();
     }
 
     /*

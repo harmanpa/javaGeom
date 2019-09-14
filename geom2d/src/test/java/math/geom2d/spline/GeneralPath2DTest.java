@@ -7,11 +7,11 @@ import java.util.Collection;
 
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
 import math.geom2d.curve.ContinuousCurve2D;
 import math.geom2d.curve.Curve2D;
 import math.geom2d.line.StraightLine2D;
 import junit.framework.TestCase;
+import math.geom2d.Tolerance2D;
 
 /**
  * @author dlegland
@@ -53,7 +53,7 @@ public class GeneralPath2DTest extends TestCase {
 	public void testGeneralPath2DAlmostEquals() {
 		GeneralPath2D path = createDefaultPath();
 		GeneralPath2D path2 = new GeneralPath2D(path);
-		assertTrue(path.almostEquals(path2, Shape2D.ACCURACY));
+		assertTrue(path.almostEquals(path2, Tolerance2D.get()));
 	}
 
 	/**
@@ -86,7 +86,7 @@ public class GeneralPath2DTest extends TestCase {
 
 		Point2D p = new Point2D(400, 100);
 		double dist = path.distance(p);
-		assertEquals(dist, 100, Shape2D.ACCURACY);
+		assertEquals(dist, 100, Tolerance2D.get());
 	}
 
 	/**
@@ -125,7 +125,7 @@ public class GeneralPath2DTest extends TestCase {
 		path.lineTo(new Point2D(300, 200));
 		
 		Point2D p = path.point(.5);
-		assertTrue(p.almostEquals(new Point2D(250, 200), Shape2D.ACCURACY));
+		assertTrue(p.almostEquals(new Point2D(250, 200), Tolerance2D.get()));
 	}
 	
 	public void testPointDoubleLast() {
@@ -134,7 +134,7 @@ public class GeneralPath2DTest extends TestCase {
 		path.lineTo(new Point2D(300, 200));
 		
 		Point2D p = path.point(1);
-		assertTrue(p.almostEquals(new Point2D(300, 200), Shape2D.ACCURACY));
+		assertTrue(p.almostEquals(new Point2D(300, 200), Tolerance2D.get()));
 	}
 	
 	public void testContinuousCurves() {

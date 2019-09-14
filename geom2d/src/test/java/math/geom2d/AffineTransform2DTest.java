@@ -436,7 +436,7 @@ public class AffineTransform2DTest extends TestCase {
     }
     
 	public void testInvert() throws NonInvertibleTransform2DException{
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		AffineTransform2D trans1  = new AffineTransform2D(1, 0, 5, 0, 1, 10);	
 		AffineTransform2D trans1i = trans1.invert();
@@ -505,12 +505,12 @@ public class AffineTransform2DTest extends TestCase {
 		    AffineTransform2D.createScaling(center, s1, s2);
 		
 		double[][] matrix = trans.affineMatrix();
-		assertEquals(s1, 			matrix[0][0], Shape2D.ACCURACY);
-		assertEquals(0,				matrix[0][1], Shape2D.ACCURACY);
-		assertEquals((1-s1) * xc, 	matrix[0][2], Shape2D.ACCURACY);
-		assertEquals(0, 			matrix[1][0], Shape2D.ACCURACY);
-		assertEquals(s2, 			matrix[1][1], Shape2D.ACCURACY);
-		assertEquals((1-s2) * yc, 	matrix[1][2], Shape2D.ACCURACY);
+		assertEquals(s1, 			matrix[0][0], Tolerance2D.get());
+		assertEquals(0,				matrix[0][1], Tolerance2D.get());
+		assertEquals((1-s1) * xc, 	matrix[0][2], Tolerance2D.get());
+		assertEquals(0, 			matrix[1][0], Tolerance2D.get());
+		assertEquals(s2, 			matrix[1][1], Tolerance2D.get());
+		assertEquals((1-s2) * yc, 	matrix[1][2], Tolerance2D.get());
 	}
 	
 	public void testConcatenateAffineTransform2D() throws NonInvertibleTransform2DException{
@@ -527,7 +527,7 @@ public class AffineTransform2DTest extends TestCase {
 		AffineTransform2D rot = AffineTransform2D.createRotation(theta);
 		AffineTransform2D trans = tra.concatenate(rot).concatenate(tra.invert());
 		
-		assertTrue(ref.almostEquals(trans, Shape2D.ACCURACY));		
+		assertTrue(ref.almostEquals(trans, Tolerance2D.get()));		
 	}
 	
 	public void testChainAffineTransform2D() throws NonInvertibleTransform2DException{
@@ -544,7 +544,7 @@ public class AffineTransform2DTest extends TestCase {
 		AffineTransform2D rot = AffineTransform2D.createRotation(theta);
 		AffineTransform2D trans = tra.invert().chain(rot).chain(tra);
 		
-		assertTrue(ref.almostEquals(trans, Shape2D.ACCURACY));		
+		assertTrue(ref.almostEquals(trans, Tolerance2D.get()));		
 	}
 	
 	public void testToString(){

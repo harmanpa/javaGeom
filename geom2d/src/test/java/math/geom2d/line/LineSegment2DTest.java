@@ -31,7 +31,7 @@ import java.util.Collection;
 import junit.framework.TestCase;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.circulinear.CirculinearCurve2D;
 import math.geom2d.conic.Circle2D;
 import math.geom2d.conic.CircleArc2D;
@@ -114,9 +114,9 @@ public class LineSegment2DTest extends TestCase {
 		assertTrue(res instanceof CircleArc2D);
 		
 		Point2D pt1 = p1.transform(inv);
-		assertTrue(pt1.distance(res.firstPoint()) < Shape2D.ACCURACY);
+		assertTrue(pt1.distance(res.firstPoint()) < Tolerance2D.get());
 		Point2D pt2 = p2.transform(inv);
-		assertTrue(pt2.distance(res.lastPoint()) < Shape2D.ACCURACY);
+		assertTrue(pt2.distance(res.lastPoint()) < Tolerance2D.get());
 		
 	}
 	
@@ -135,10 +135,10 @@ public class LineSegment2DTest extends TestCase {
 		
 		Point2D pt1 = p1.transform(inv);
 		Point2D res0 = res.firstPoint();
-		assertTrue(pt1.distance(res0) < Shape2D.ACCURACY);
+		assertTrue(pt1.distance(res0) < Tolerance2D.get());
 		Point2D pt2 = p2.transform(inv);
 		Point2D res1 = res.lastPoint();
-		assertTrue(pt2.distance(res1) < Shape2D.ACCURACY);	
+		assertTrue(pt2.distance(res1) < Tolerance2D.get());	
 	}
 
 	public void testIsBounded() {
@@ -301,67 +301,67 @@ public class LineSegment2DTest extends TestCase {
     	// basic
     	LineSegment2D edge = new LineSegment2D(1, 1, 4, 3);
     	
-    	assertEquals(edge.distance(1, 1), 0, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(2.5, 2), 0, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(4, 3), 0, Shape2D.ACCURACY);
+    	assertEquals(edge.distance(1, 1), 0, Tolerance2D.get());
+    	assertEquals(edge.distance(2.5, 2), 0, Tolerance2D.get());
+    	assertEquals(edge.distance(4, 3), 0, Tolerance2D.get());
     
     	double d1 = Math.sqrt(13)/2;
-    	assertEquals(edge.distance(-.5, 0), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(2, -.5), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(3.5, .5), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(5, 1.5), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(5.5, 4), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(3, 4.5), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(1.5, 3.5), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(0, 2.5), d1, Shape2D.ACCURACY);
+    	assertEquals(edge.distance(-.5, 0), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(2, -.5), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(3.5, .5), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(5, 1.5), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(5.5, 4), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(3, 4.5), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(1.5, 3.5), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(0, 2.5), d1, Tolerance2D.get());
     
     	double d2 = Math.sqrt(26)/2;
-    	assertEquals(edge.distance(0.5, -1.5), d2, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(-1.5, 1.5), d2, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(6.5, 2.5), d2, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(4.5, 5.5), d2, Shape2D.ACCURACY);
+    	assertEquals(edge.distance(0.5, -1.5), d2, Tolerance2D.get());
+    	assertEquals(edge.distance(-1.5, 1.5), d2, Tolerance2D.get());
+    	assertEquals(edge.distance(6.5, 2.5), d2, Tolerance2D.get());
+    	assertEquals(edge.distance(4.5, 5.5), d2, Tolerance2D.get());
     	
     	// horizontal edge
     	edge = new LineSegment2D(1, 1, 4, 1);
-    	assertEquals(edge.distance(1, 1), 0, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(2.5, 1), 0, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(4, 1), 0, Shape2D.ACCURACY);
+    	assertEquals(edge.distance(1, 1), 0, Tolerance2D.get());
+    	assertEquals(edge.distance(2.5, 1), 0, Tolerance2D.get());
+    	assertEquals(edge.distance(4, 1), 0, Tolerance2D.get());
     	
     	d1 = 1;
-    	assertEquals(edge.distance(0, 1), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(5, 1), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(1, 0), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(2.5, 0), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(4, 0), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(1, 2), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(2.5, 2), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(4, 2), d1, Shape2D.ACCURACY);
+    	assertEquals(edge.distance(0, 1), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(5, 1), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(1, 0), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(2.5, 0), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(4, 0), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(1, 2), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(2.5, 2), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(4, 2), d1, Tolerance2D.get());
     	
     	d2=Math.sqrt(2);
-    	assertEquals(edge.distance(0, 0), d2, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(0, 2), d2, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(5, 0), d2, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(5, 2), d2, Shape2D.ACCURACY);
+    	assertEquals(edge.distance(0, 0), d2, Tolerance2D.get());
+    	assertEquals(edge.distance(0, 2), d2, Tolerance2D.get());
+    	assertEquals(edge.distance(5, 0), d2, Tolerance2D.get());
+    	assertEquals(edge.distance(5, 2), d2, Tolerance2D.get());
     	
     	// vertical edge
     	edge = new LineSegment2D(1, 1, 1, 4);
-    	assertEquals(edge.distance(1, 1), 0, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(1, 2.5), 0, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(1, 4), 0, Shape2D.ACCURACY);
+    	assertEquals(edge.distance(1, 1), 0, Tolerance2D.get());
+    	assertEquals(edge.distance(1, 2.5), 0, Tolerance2D.get());
+    	assertEquals(edge.distance(1, 4), 0, Tolerance2D.get());
     	
-    	assertEquals(edge.distance(1, 0), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(1, 5), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(0, 1), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(0, 2.5), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(0, 4), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(2, 1), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(2, 2.5), d1, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(2, 4), d1, Shape2D.ACCURACY);
+    	assertEquals(edge.distance(1, 0), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(1, 5), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(0, 1), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(0, 2.5), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(0, 4), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(2, 1), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(2, 2.5), d1, Tolerance2D.get());
+    	assertEquals(edge.distance(2, 4), d1, Tolerance2D.get());
     
-    	assertEquals(edge.distance(0, 0), d2, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(2, 0), d2, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(2, 5), d2, Shape2D.ACCURACY);
-    	assertEquals(edge.distance(0, 5), d2, Shape2D.ACCURACY);
+    	assertEquals(edge.distance(0, 0), d2, Tolerance2D.get());
+    	assertEquals(edge.distance(2, 0), d2, Tolerance2D.get());
+    	assertEquals(edge.distance(2, 5), d2, Tolerance2D.get());
+    	assertEquals(edge.distance(0, 5), d2, Tolerance2D.get());
     }
 
 	public void testContainsPoint()
@@ -420,15 +420,15 @@ public class LineSegment2DTest extends TestCase {
 		LineSegment2D edge2d = new LineSegment2D(p2, p3);
 		LineSegment2D edge2i = new LineSegment2D(p3, p2);
 		
-		assertEquals(LineSegment2D.getEdgeAngle(edge1d, edge2d), Math.PI*3/4, Shape2D.ACCURACY);
-		assertEquals(LineSegment2D.getEdgeAngle(edge1d, edge2i), Math.PI*3/4, Shape2D.ACCURACY);
-		assertEquals(LineSegment2D.getEdgeAngle(edge1i, edge2d), Math.PI*3/4, Shape2D.ACCURACY);
-		assertEquals(LineSegment2D.getEdgeAngle(edge1i, edge2i), Math.PI*3/4, Shape2D.ACCURACY);
+		assertEquals(LineSegment2D.getEdgeAngle(edge1d, edge2d), Math.PI*3/4, Tolerance2D.get());
+		assertEquals(LineSegment2D.getEdgeAngle(edge1d, edge2i), Math.PI*3/4, Tolerance2D.get());
+		assertEquals(LineSegment2D.getEdgeAngle(edge1i, edge2d), Math.PI*3/4, Tolerance2D.get());
+		assertEquals(LineSegment2D.getEdgeAngle(edge1i, edge2i), Math.PI*3/4, Tolerance2D.get());
 
-		assertEquals(LineSegment2D.getEdgeAngle(edge2d, edge1d), Math.PI*5/4, Shape2D.ACCURACY);
-		assertEquals(LineSegment2D.getEdgeAngle(edge2d, edge1i), Math.PI*5/4, Shape2D.ACCURACY);
-		assertEquals(LineSegment2D.getEdgeAngle(edge2i, edge1d), Math.PI*5/4, Shape2D.ACCURACY);
-		assertEquals(LineSegment2D.getEdgeAngle(edge2i, edge1i), Math.PI*5/4, Shape2D.ACCURACY);
+		assertEquals(LineSegment2D.getEdgeAngle(edge2d, edge1d), Math.PI*5/4, Tolerance2D.get());
+		assertEquals(LineSegment2D.getEdgeAngle(edge2d, edge1i), Math.PI*5/4, Tolerance2D.get());
+		assertEquals(LineSegment2D.getEdgeAngle(edge2i, edge1d), Math.PI*5/4, Tolerance2D.get());
+		assertEquals(LineSegment2D.getEdgeAngle(edge2i, edge1i), Math.PI*5/4, Tolerance2D.get());
 	}
 	
 	/*

@@ -30,7 +30,7 @@ import java.util.Iterator;
 
 import junit.framework.TestCase;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.curve.Curve2D;
 import math.geom2d.curve.Curves2D;
 import math.geom2d.curve.CurveSet2D;
@@ -136,10 +136,10 @@ public class ParabolaArc2DTest extends TestCase {
 		Parabola2D parabola = new Parabola2D(0, 0, 1, 0);
 		
 		Point2D point1 = new Point2D(-2, 4);
-		assertEquals(parabola.position(point1), -2, Shape2D.ACCURACY);
+		assertEquals(parabola.position(point1), -2, Tolerance2D.get());
 		
 		Point2D point2 = new Point2D(2, 4);
-		assertEquals(parabola.position(point2), 2, Shape2D.ACCURACY);
+		assertEquals(parabola.position(point2), 2, Tolerance2D.get());
 		
 	}
 
@@ -160,11 +160,11 @@ public class ParabolaArc2DTest extends TestCase {
 		inter = iter.next();
 		assertEquals(inter, new Point2D(-2, 4));
 		assertTrue(arc.contains(inter));
-		assertEquals(arc.position(inter), -2, Shape2D.ACCURACY);
+		assertEquals(arc.position(inter), -2, Tolerance2D.get());
 		inter = iter.next();
 		assertEquals(inter, new Point2D(2, 4));
 		assertTrue(arc.contains(inter));
-		assertEquals(arc.position(inter), 2, Shape2D.ACCURACY);
+		assertEquals(arc.position(inter), 2, Tolerance2D.get());
 	}
 	
 	public void testClipLine2D(){

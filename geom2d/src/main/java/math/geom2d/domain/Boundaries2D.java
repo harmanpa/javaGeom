@@ -9,7 +9,7 @@ import java.util.Iterator;
 
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.exceptions.UnboundedBox2DException;
 import math.geom2d.curve.ContinuousCurve2D;
 import math.geom2d.curve.Curve2D;
@@ -289,7 +289,7 @@ public abstract class Boundaries2D {
             if (java.lang.Double.isNaN(positions[i]))
                 continue;
             // avoid values before
-            if (positions[i]-pos<Shape2D.ACCURACY)
+            if (positions[i]-pos<Tolerance2D.get())
                 continue;
 
             // test if closer that other points
@@ -307,7 +307,7 @@ public abstract class Boundaries2D {
         for (int i = 0; i<positions.length; i++) {
             if (java.lang.Double.isNaN(positions[i]))
                 continue;
-            if (positions[i]-posMin<Shape2D.ACCURACY) {
+            if (positions[i]-posMin<Tolerance2D.get()) {
                 ind = i;
                 posMin = positions[i];
             }

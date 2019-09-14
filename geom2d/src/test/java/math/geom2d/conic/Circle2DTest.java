@@ -30,7 +30,7 @@ import junit.framework.TestCase;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
 import math.geom2d.circulinear.CirculinearCurve2D;
 import math.geom2d.curve.CurveSet2D;
@@ -204,7 +204,7 @@ public class Circle2DTest extends TestCase {
 	public void testGetTangent() {
 		Point2D center = new Point2D(10, 20);
 	    double r = 10;
-	    double eps = Shape2D.ACCURACY;
+	    double eps = Tolerance2D.get();
 	    
 	    Circle2D circle = new Circle2D(center, r);
 	    assertVectorEquals(circle.tangent(0), new Vector2D(0, r), eps);
@@ -245,7 +245,7 @@ public class Circle2DTest extends TestCase {
 		double x0 = 20;
 		double y0 = 30;
 		double r = 10;
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		// Standard circle
 		circle = new Circle2D(x0, y0, 10);
@@ -313,7 +313,7 @@ public class Circle2DTest extends TestCase {
 	public void testGetIntersectionsStraightLine2D() {
 		Circle2D circle = new Circle2D(2, 3, 4);
 		Collection<Point2D> points;
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		// horizontal line through touching circle on one point
 		StraightLine2D line0 = new StraightLine2D(6, 0, 0, 1);
@@ -342,7 +342,7 @@ public class Circle2DTest extends TestCase {
 	public void testGetIntersectionsLineSegment2D() {
 		// Test with a centered circle and 4 edges in each main direction
 		Circle2D circle = new Circle2D(0, 0, 10);
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 		
 		Collection<Point2D> points1 = circle.intersections(new LineSegment2D(0, 0, 20, 0));
 		Collection<Point2D> points2 = circle.intersections(new LineSegment2D(0, 0, 0, 20));
@@ -362,7 +362,7 @@ public class Circle2DTest extends TestCase {
 		Circle2D circle1, circle2;
 		Collection<Point2D> inters;
 		Iterator<Point2D> iter;
-		double eps = Shape2D.ACCURACY;
+		double eps = Tolerance2D.get();
 
 		// 2 circles one inside another
 		circle1 = new Circle2D(-1, 0, 5);

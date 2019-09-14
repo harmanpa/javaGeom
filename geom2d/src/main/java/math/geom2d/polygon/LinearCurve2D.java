@@ -10,7 +10,7 @@ import java.util.Iterator;
 
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
 import math.geom2d.circulinear.CirculinearContinuousCurve2D;
 import math.geom2d.circulinear.CirculinearDomain2D;
@@ -350,7 +350,7 @@ implements CirculinearContinuousCurve2D {
 	 */
 	public Vector2D leftTangent(double t) {
 		int index = (int) Math.floor(t);
-		if(Math.abs(t-index) < Shape2D.ACCURACY)
+		if(Math.abs(t-index) < Tolerance2D.get())
 			index--;
 		return this.edge(index).tangent(0);
 	}
@@ -368,7 +368,7 @@ implements CirculinearContinuousCurve2D {
 	 */
 	public double curvature(double t) {
 		double index = Math.round(t);
-		if (Math.abs(index - t) > Shape2D.ACCURACY)
+		if (Math.abs(index - t) > Tolerance2D.get())
 			return 0;
 		else
 			return Double.POSITIVE_INFINITY;
@@ -416,7 +416,7 @@ implements CirculinearContinuousCurve2D {
     }
 
     public boolean isSingular(double pos) {
-        if (Math.abs(pos - Math.round(pos)) < Shape2D.ACCURACY)
+        if (Math.abs(pos - Math.round(pos)) < Tolerance2D.get())
             return true;
         return false;
     }

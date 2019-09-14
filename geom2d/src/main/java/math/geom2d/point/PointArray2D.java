@@ -35,7 +35,7 @@ import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.GeometricObject2D;
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.circulinear.CirculinearDomain2D;
 import math.geom2d.circulinear.CirculinearShape2D;
 import math.geom2d.circulinear.buffer.BufferCalculator;
@@ -329,7 +329,7 @@ public class PointArray2D
      */
     public boolean contains(double x, double y) {
         for (Point2D point : points) {
-            if (point.distance(x, y) < Shape2D.ACCURACY) {
+            if (point.distance(x, y) < Tolerance2D.get()) {
                 return true;
             }
         }

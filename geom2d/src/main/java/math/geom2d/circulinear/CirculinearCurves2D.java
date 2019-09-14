@@ -16,6 +16,7 @@ import java.util.TreeSet;
 
 import math.geom2d.Point2D;
 import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
 import math.geom2d.conic.Circle2D;
 import math.geom2d.conic.CircularShape2D;
@@ -278,7 +279,7 @@ public class CirculinearCurves2D {
     private static boolean isCommonVertex(Point2D inter,
             CirculinearCurve2D elem1, CirculinearCurve2D elem2) {
 
-        double eps = Shape2D.ACCURACY;
+        double eps = Tolerance2D.get();
 
         // Test end of elem1 and start of elem2
         if (!Double.isInfinite(elem1.t1())

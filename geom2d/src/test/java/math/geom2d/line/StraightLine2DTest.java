@@ -29,7 +29,7 @@ package math.geom2d.line;
 import junit.framework.TestCase;
 
 import math.geom2d.Point2D;
-import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
 import math.geom2d.circulinear.CircleLine2D;
 import math.geom2d.circulinear.CirculinearDomain2D;
@@ -252,34 +252,34 @@ public class StraightLine2DTest extends TestCase {
 		StraightLine2D line;
 		
 		line = new StraightLine2D(1, 2, 1, 1);
-		assertEquals(line.signedDistance(2, 3), 0, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(1, 3), -Math.sqrt(2)/2, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(2, 2), Math.sqrt(2)/2, Shape2D.ACCURACY);
+		assertEquals(line.signedDistance(2, 3), 0, Tolerance2D.get());
+		assertEquals(line.signedDistance(1, 3), -Math.sqrt(2)/2, Tolerance2D.get());
+		assertEquals(line.signedDistance(2, 2), Math.sqrt(2)/2, Tolerance2D.get());
 		
 		line = new StraightLine2D(1, 2, -1, -1);
-		assertEquals(line.signedDistance(2, 3), 0, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(1, 3), Math.sqrt(2)/2, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(2, 2), -Math.sqrt(2)/2, Shape2D.ACCURACY);
+		assertEquals(line.signedDistance(2, 3), 0, Tolerance2D.get());
+		assertEquals(line.signedDistance(1, 3), Math.sqrt(2)/2, Tolerance2D.get());
+		assertEquals(line.signedDistance(2, 2), -Math.sqrt(2)/2, Tolerance2D.get());
 		
 		line = new StraightLine2D(1, 2, 1, 0);
-		assertEquals(line.signedDistance(1, 3), -1, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(1, 1), 1, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(2, 2), 0, Shape2D.ACCURACY);
+		assertEquals(line.signedDistance(1, 3), -1, Tolerance2D.get());
+		assertEquals(line.signedDistance(1, 1), 1, Tolerance2D.get());
+		assertEquals(line.signedDistance(2, 2), 0, Tolerance2D.get());
 
 		line = new StraightLine2D(1, 2, -1, 0);
-		assertEquals(line.signedDistance(1, 3), 1, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(1, 1), -1, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(2, 2), 0, Shape2D.ACCURACY);
+		assertEquals(line.signedDistance(1, 3), 1, Tolerance2D.get());
+		assertEquals(line.signedDistance(1, 1), -1, Tolerance2D.get());
+		assertEquals(line.signedDistance(2, 2), 0, Tolerance2D.get());
 
 		line = new StraightLine2D(1, 2, 0, 1);
-		assertEquals(line.signedDistance(1, 3), 0, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(0, 2), -1, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(2, 2), 1, Shape2D.ACCURACY);
+		assertEquals(line.signedDistance(1, 3), 0, Tolerance2D.get());
+		assertEquals(line.signedDistance(0, 2), -1, Tolerance2D.get());
+		assertEquals(line.signedDistance(2, 2), 1, Tolerance2D.get());
 
 		line = new StraightLine2D(1, 2, 0, -1);
-		assertEquals(line.signedDistance(1, 3), 0, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(0, 2), 1, Shape2D.ACCURACY);
-		assertEquals(line.signedDistance(2, 2), -1, Shape2D.ACCURACY);
+		assertEquals(line.signedDistance(1, 3), 0, Tolerance2D.get());
+		assertEquals(line.signedDistance(0, 2), 1, Tolerance2D.get());
+		assertEquals(line.signedDistance(2, 2), -1, Tolerance2D.get());
 	}
 
 	/*
@@ -355,33 +355,33 @@ public class StraightLine2DTest extends TestCase {
 		
 		line = new StraightLine2D(1, 2, 1, 1);
 		tab = line.polarCoefficients();
-		assertEquals(tab[0], Math.sqrt(2)/2, Shape2D.ACCURACY);
-		assertEquals(tab[1], 5*Math.PI/4, Shape2D.ACCURACY);
+		assertEquals(tab[0], Math.sqrt(2)/2, Tolerance2D.get());
+		assertEquals(tab[1], 5*Math.PI/4, Tolerance2D.get());
 
 		line = new StraightLine2D(1, 2, -1, -1);
 		tab = line.polarCoefficients();
-		assertEquals(tab[0], Math.sqrt(2)/2, Shape2D.ACCURACY);
-		assertEquals(tab[1], 5*Math.PI/4, Shape2D.ACCURACY);
+		assertEquals(tab[0], Math.sqrt(2)/2, Tolerance2D.get());
+		assertEquals(tab[1], 5*Math.PI/4, Tolerance2D.get());
 
 		line = new StraightLine2D(1, 2, 1, 0);
 		tab = line.polarCoefficients();
-		assertEquals(tab[0], 2, Shape2D.ACCURACY);
-		assertEquals(tab[1], Math.PI, Shape2D.ACCURACY);
+		assertEquals(tab[0], 2, Tolerance2D.get());
+		assertEquals(tab[1], Math.PI, Tolerance2D.get());
 
 		line = new StraightLine2D(1, 2, -1, 0);
 		tab = line.polarCoefficients();
-		assertEquals(tab[0], 2, Shape2D.ACCURACY);
-		assertEquals(tab[1], Math.PI, Shape2D.ACCURACY);
+		assertEquals(tab[0], 2, Tolerance2D.get());
+		assertEquals(tab[1], Math.PI, Tolerance2D.get());
 
 		line = new StraightLine2D(1, 2, 0, 1);
 		tab = line.polarCoefficients();
-		assertEquals(tab[0], 1, Shape2D.ACCURACY);
-		assertEquals(tab[1], Math.PI/2, Shape2D.ACCURACY);
+		assertEquals(tab[0], 1, Tolerance2D.get());
+		assertEquals(tab[1], Math.PI/2, Tolerance2D.get());
 
 		line = new StraightLine2D(1, 2, 0, -1);
 		tab = line.polarCoefficients();
-		assertEquals(tab[0], 1, Shape2D.ACCURACY);
-		assertEquals(tab[1], Math.PI/2, Shape2D.ACCURACY);
+		assertEquals(tab[0], 1, Tolerance2D.get());
+		assertEquals(tab[1], Math.PI/2, Tolerance2D.get());
 	
 	}
 	

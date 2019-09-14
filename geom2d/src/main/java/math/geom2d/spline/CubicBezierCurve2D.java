@@ -524,28 +524,28 @@ public class CubicBezierCurve2D extends AbstractSmoothCurve2D
         CubicBezierCurve2D bezier = (CubicBezierCurve2D) obj;
 
         // compare each field
-        if (Math.abs(this.x1 - bezier.x1) > Shape2D.ACCURACY) {
+        if (Math.abs(this.x1 - bezier.x1) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.y1 - bezier.y1) > Shape2D.ACCURACY) {
+        if (Math.abs(this.y1 - bezier.y1) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.ctrlx1 - bezier.ctrlx1) > Shape2D.ACCURACY) {
+        if (Math.abs(this.ctrlx1 - bezier.ctrlx1) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.ctrly1 - bezier.ctrly1) > Shape2D.ACCURACY) {
+        if (Math.abs(this.ctrly1 - bezier.ctrly1) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.ctrlx2 - bezier.ctrlx2) > Shape2D.ACCURACY) {
+        if (Math.abs(this.ctrlx2 - bezier.ctrlx2) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.ctrly2 - bezier.ctrly2) > Shape2D.ACCURACY) {
+        if (Math.abs(this.ctrly2 - bezier.ctrly2) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.x2 - bezier.x2) > Shape2D.ACCURACY) {
+        if (Math.abs(this.x2 - bezier.x2) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(this.y2 - bezier.y2) > Shape2D.ACCURACY) {
+        if (Math.abs(this.y2 - bezier.y2) > Tolerance2D.get()) {
             return false;
         }
 
