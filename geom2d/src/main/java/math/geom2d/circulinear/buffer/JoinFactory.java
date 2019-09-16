@@ -8,6 +8,7 @@
  */
 package math.geom2d.circulinear.buffer;
 
+import math.geom2d.Point2D;
 import math.geom2d.circulinear.CirculinearContinuousCurve2D;
 import math.geom2d.circulinear.CirculinearElement2D;
 
@@ -27,9 +28,13 @@ public interface JoinFactory {
      * @param previous
      * @param next
      * @param dist
+     * @param previousParallelEnd
+     * @param nextParallelStart
      * @return
      */
     public CirculinearContinuousCurve2D createJoin(
             CirculinearElement2D previous,
-            CirculinearElement2D next, double dist);
+            CirculinearElement2D next, double dist,
+            Point2D previousParallelEnd,
+            Point2D nextParallelStart);
 }

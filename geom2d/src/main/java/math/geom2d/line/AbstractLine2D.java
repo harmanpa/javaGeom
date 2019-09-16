@@ -692,19 +692,26 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     @Override
     public double position(Point2D point) {
-        double pos = this.positionOnLine(point);
+        try {
+            double pos = this.positionOnLine(point);
 
-        // compute a threshold depending on line slope
-        double eps = Math.hypot(dx, dy) * Tolerance2D.get();
+            // compute a threshold depending on line slope
+            double eps = Math.hypot(dx, dy) * Tolerance2D.get();
 
-        // return either pos or NaN
-        if (pos < this.t0() - eps) {
+            // return either pos or NaN
+            if (pos < this.t0() - eps) {
+                return Double.NaN;
+            }
+            if (pos > this.t1() + eps) {
+                return Double.NaN;
+            }
+            return pos;
+        } catch (DegeneratedLine2DException ex) {
+            if (point.distance(x0, y0) < Tolerance2D.get()) {
+                return t0();
+            }
             return Double.NaN;
         }
-        if (pos > this.t1() + eps) {
-            return Double.NaN;
-        }
-        return pos;
     }
 
     /**

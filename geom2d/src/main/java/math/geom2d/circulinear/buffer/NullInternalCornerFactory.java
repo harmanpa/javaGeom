@@ -7,6 +7,7 @@ package math.geom2d.circulinear.buffer;
 
 import java.util.Deque;
 import math.geom2d.circulinear.CirculinearContinuousCurve2D;
+import math.geom2d.circulinear.CirculinearElement2D;
 
 /**
  *
@@ -15,7 +16,7 @@ import math.geom2d.circulinear.CirculinearContinuousCurve2D;
 public class NullInternalCornerFactory implements InternalCornerFactory {
 
     @Override
-    public boolean createInternalCorner(Deque<CirculinearContinuousCurve2D> parallelElementQueue, CirculinearContinuousCurve2D currentParallelElement) {
+    public boolean createInternalCorner(Deque<CirculinearElement2D> parallelElementQueue, CirculinearContinuousCurve2D currentParallelElement) {
         return false;
     }
 

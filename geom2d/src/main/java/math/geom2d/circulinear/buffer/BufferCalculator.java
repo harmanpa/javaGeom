@@ -164,11 +164,11 @@ public class BufferCalculator {
         }
 
         // extract collection of parallel curves, that connect each other
-        Collection<CirculinearContinuousCurve2D> parallelCurves
+        Collection<CirculinearElement2D> parallelCurves
                 = getParallelElements(contour, dist);
 
         // Create a new boundary with the set of parallel curves
-        return BoundaryPolyCirculinearCurve2D.create(parallelCurves.toArray(new CirculinearContinuousCurve2D[0]),
+        return BoundaryPolyCirculinearCurve2D.create(parallelCurves.toArray(new CirculinearElement2D[0]),
                 contour.isClosed());
     }
 
@@ -189,148 +189,20 @@ public class BufferCalculator {
         }
 
         // extract collection of parallel curves, that connect each other
-        Collection<CirculinearContinuousCurve2D> parallelCurves
-                = getParallelElements(curve, dist);
-
-        // Create a new circulinear continuous curve with the set of parallel
-        // curves
-        return PolyCirculinearCurve2D.create(parallelCurves.toArray(new CirculinearContinuousCurve2D[0]), curve.isClosed());
-    }
-
-    /**
-     * Compute the parallel curve of a Circulinear and continuous curve. The
-     * result is itself an instance of CirculinearContinuousCurve2D.
-     *
-     * @param curve
-     * @param dist
-     * @return
-     */
-    public CirculinearContinuousCurve2D createContinuousParallel2(
-            CirculinearContinuousCurve2D curve, double dist) {
-
-        // For circulinear elements, getParallel() is already implemented
-        if (curve instanceof CirculinearElement2D) {
-            return ((CirculinearElement2D) curve).parallel(dist);
-        }
-
-        // extract collection of parallel curves, that connect each other
         Collection<CirculinearElement2D> parallelCurves
-                = getParallelElements2(curve, dist);
+                = getParallelElements(curve, dist);
 
         // Create a new circulinear continuous curve with the set of parallel
         // curves
         return PolyCirculinearCurve2D.create(parallelCurves.toArray(new CirculinearElement2D[0]), curve.isClosed());
     }
 
-    private Collection<CirculinearContinuousCurve2D> getParallelElements(
+    private Collection<CirculinearElement2D> getParallelElements(
             CirculinearContinuousCurve2D curve, double dist) {
 
         // extract collection of circulinear elements
         Iterator<? extends CirculinearElement2D> iterator
-                = curve.smoothPieces().stream()
-                        .filter(e -> Math.pow(e.length(), 2) > Tolerance2D.get()).iterator();
-
-        // previous curve
-        CirculinearElement2D previous;
-        CirculinearElement2D current;
-
-        // create array for storing result
-        Deque<CirculinearContinuousCurve2D> parallelCurves
-                = new ArrayDeque<>();
-
-        // check if curve is empty
-        if (!iterator.hasNext()) {
-            return parallelCurves;
-        }
-
-        // add parallel to the first curve
-        current = iterator.next();
-        CirculinearElement2D parallel = current.parallel(dist);
-//        while (Math.pow(parallel.length(), 2) < Tolerance2D.get()) {
-//            current = iterator.next();
-//            parallel = current.parallel(dist);
-//        }
-        if (!(parallel instanceof PointElement2D)) {
-            parallelCurves.add(parallel);
-        }
-        CirculinearElement2D first = current;
-
-        // iterate on circulinear element couples
-        CirculinearContinuousCurve2D join;
-        while (iterator.hasNext()) {
-            // update the couple of circulinear elements
-            previous = current;
-            current = iterator.next();
-
-            // create the parallel curve for the current curve
-            CirculinearElement2D currentParallel = current.parallel(dist);
-//            while (currentParallel.length() < Tolerance2D.get() && iterator.hasNext()) {
-//                current = iterator.next();
-//                currentParallel = current.parallel(dist);
-//            }
-
-            // check if this is an internal corner
-            boolean internalCorner = dist < 0 ? previous.isInside(current.point(0.01)) : !previous.isInside(current.point(0.01));
-
-            // if it is an internal corner, check if the internalCornerFactory wishes to handle it. if not handle as normal.
-            if (!internalCorner || !internalCornerFactory.createInternalCorner(parallelCurves, currentParallel)) {
-                // add circle arc between the two curve elements
-                // This is bollocks
-                // Need the parallel lines. They might have a gap, they might intersect, or one might be the wrong side of the other.
-
-                join = joinFactory.createJoin(previous, current, dist);
-
-                if (join.length() > 0) {
-                    parallelCurves.add(join);
-                }
-
-                // add parallel to set of parallels
-                if (!(currentParallel instanceof PointElement2D)) {
-                    parallelCurves.add(currentParallel);
-                }
-            }
-        }
-
-        // Add eventually a circle arc to close the parallel curve
-        if (curve.isClosed()) {
-            previous = current;
-            current = first;
-            CirculinearContinuousCurve2D currentParallel = parallelCurves.getFirst();
-
-            // check if this is an internal corner
-            boolean internalCorner = dist < 0 ? previous.isInside(current.point(0.01)) : !previous.isInside(current.point(0.01));
-
-            // if it is an internal corner, check if the internalCornerFactory wishes to handle it. if not handle as normal.
-            if (internalCorner) {
-                if (internalCornerFactory.createInternalCorner(parallelCurves, currentParallel)) {
-                    parallelCurves.removeFirst();
-                } else {
-                    // add circle arc between the two curve elements
-                    join = joinFactory.createJoin(previous, current, dist);
-
-                    if (join.length() > 0) {
-                        parallelCurves.add(join);
-                    }
-                }
-            } else {
-                // add circle arc between the two curve elements
-                join = joinFactory.createJoin(previous, current, dist);
-
-                if (join.length() > 0) {
-                    parallelCurves.add(join);
-                }
-            }
-        }
-
-        return parallelCurves;
-    }
-
-    private Collection<CirculinearElement2D> getParallelElements2(
-            CirculinearContinuousCurve2D curve, double dist) {
-
-        // extract collection of circulinear elements
-        Iterator<? extends CirculinearElement2D> iterator
-                = curve.smoothPieces().stream().iterator();
+                = curve.smoothPieces().iterator();
 
         // previous curve
         CirculinearElement2D previous;
@@ -348,10 +220,18 @@ public class BufferCalculator {
         // add parallel to the first curve
         current = iterator.next();
         CirculinearElement2D currentParallel = current.parallel(dist);
+//        while (Math.pow(parallel.length(), 2) < Tolerance2D.get()) {
+//            current = iterator.next();
+//            parallel = current.parallel(dist);
+//        }
+        if (!(currentParallel instanceof PointElement2D)) {
+            parallelCurves.add(currentParallel);
+        }
         CirculinearElement2D first = current;
-        CirculinearElement2D previousParallel;
+
         // iterate on circulinear element couples
         CirculinearContinuousCurve2D join;
+        CirculinearElement2D previousParallel;
         while (iterator.hasNext()) {
             // update the couple of circulinear elements
             previous = current;
@@ -360,91 +240,66 @@ public class BufferCalculator {
 
             // create the parallel curve for the current curve
             currentParallel = current.parallel(dist);
+//            while (currentParallel.length() < Tolerance2D.get() && iterator.hasNext()) {
+//                current = iterator.next();
+//                currentParallel = current.parallel(dist);
+//            }
 
-            // Handle the join between them
-            handleJoin(previous, current, previousParallel, currentParallel, dist, parallelCurves);
+            // check if this is an internal corner
+            boolean internalCorner = dist < 0 ? previous.isInside(current.point(0.01)) : !previous.isInside(current.point(0.01));
+
+            // if it is an internal corner, check if the internalCornerFactory wishes to handle it. if not handle as normal.
+            if (!internalCorner || !internalCornerFactory.createInternalCorner(parallelCurves, currentParallel)) {
+                // add circle arc between the two curve elements
+                // This is bollocks
+                // Need the parallel lines. They might have a gap, they might intersect, or one might be the wrong side of the other.
+
+                join = joinFactory.createJoin(previous, current, dist, previousParallel.lastPoint(), currentParallel.firstPoint());
+
+                if (join.length() > 0) {
+                    parallelCurves.addAll(join.smoothPieces());
+                }
+
+                // add parallel to set of parallels
+                if (!(currentParallel instanceof PointElement2D)) {
+                    parallelCurves.add(currentParallel);
+                }
+            }
         }
 
         // Add eventually a circle arc to close the parallel curve
-        if (curve.isClosed()) {
+        if (curve.isClosed() && !parallelCurves.isEmpty()) {
             previous = current;
             previousParallel = currentParallel;
             current = first;
-            currentParallel = parallelCurves.removeFirst();
-            // Handle the join between them
-            handleJoin(previous, current, previousParallel, currentParallel, dist, parallelCurves);
+            currentParallel = parallelCurves.getFirst();
+
+            // check if this is an internal corner
+            boolean internalCorner = dist < 0 ? previous.isInside(current.point(0.01)) : !previous.isInside(current.point(0.01));
+
+            // if it is an internal corner, check if the internalCornerFactory wishes to handle it. if not handle as normal.
+            if (internalCorner) {
+                if (internalCornerFactory.createInternalCorner(parallelCurves, currentParallel)) {
+                    parallelCurves.removeFirst();
+                } else {
+                    // add circle arc between the two curve elements
+                    join = joinFactory.createJoin(previous, current, dist, previousParallel.lastPoint(), currentParallel.firstPoint());
+
+                    if (join.length() > 0) {
+                        parallelCurves.addAll(join.smoothPieces());
+                    }
+                }
+            } else {
+                // add circle arc between the two curve elements
+                join = joinFactory.createJoin(previous, current, dist, previousParallel.lastPoint(), currentParallel.firstPoint());
+
+                if (join.length() > 0) {
+                    parallelCurves.addAll(join.smoothPieces());
+                }
+            }
         }
 
         return parallelCurves;
-    }
-
-    private void handleJoin(CirculinearElement2D previous, CirculinearElement2D current,
-            CirculinearElement2D previousParallel, CirculinearElement2D currentParallel,
-            double dist, Deque<CirculinearElement2D> parallelCurves) {
-        if (previousParallel instanceof PointElement2D) {
-            if (currentParallel instanceof PointElement2D) {
-                // Do the lines meet?
-                if (previousParallel.lastPoint().almostEquals(currentParallel.firstPoint(), Tolerance2D.get())) {
-                    return;
-                } else {
-                    parallelCurves.add(makeArc(previous.lastPoint(), previousParallel.lastPoint(), currentParallel.firstPoint()));
-                    return;
-                }
-            } else {
-                // Do the lines meet?
-                if (previousParallel.lastPoint().almostEquals(currentParallel.firstPoint(), Tolerance2D.get())) {
-                    return;
-                } else {
-                    parallelCurves.add(makeArc(previous.lastPoint(), previousParallel.lastPoint(), currentParallel.firstPoint()));
-                    parallelCurves.add(currentParallel);
-                    return;
-                }
-            }
-        } else {
-            if (currentParallel instanceof PointElement2D) {
-                // Do the lines meet?
-                if (previousParallel.lastPoint().almostEquals(currentParallel.firstPoint(), Tolerance2D.get())) {
-                    return;
-                } else {
-                    parallelCurves.add(previousParallel);
-                    parallelCurves.add(makeArc(previous.lastPoint(), previousParallel.lastPoint(), currentParallel.firstPoint()));
-                    return;
-                }
-            } else {
-                // Do the lines meet?
-                if (previousParallel.lastPoint().almostEquals(currentParallel.firstPoint(), Tolerance2D.get())) {
-                    parallelCurves.add(previousParallel);
-                    parallelCurves.add(currentParallel);
-                    return;
-                }
-
-                // Do the lines intersect?
-                Collection<Point2D> intersections = CirculinearCurves2D.findIntersections(previousParallel, currentParallel);
-                switch (intersections.size()) {
-                    case 1:
-                        // Trim each line and add them
-                        Point2D intersection = intersections.iterator().next();
-                        parallelCurves.add(previousParallel.subCurve(previousParallel.t0(), previousParallel.position(intersection)));
-                        parallelCurves.add(currentParallel.subCurve(currentParallel.position(intersection), currentParallel.t1()));
-                        return;
-                    case 0:
-                        // Are the lines the wrong side of each other?
-                        // TODO: Reject both
-                        parallelCurves.add(previousParallel);
-                        parallelCurves.add(makeArc(previous.lastPoint(), previousParallel.lastPoint(), currentParallel.firstPoint()));
-                        parallelCurves.add(currentParallel);
-                    default:
-                    // Something wrong...
-
-                }
-            }
-        }
-    }
-
-    private CirculinearElement2D makeArc(Point2D centre, Point2D start, Point2D end) {
-        return new CircleArc2D(centre, centre.distance(start),
-                Angle2D.horizontalAngle(centre, start), Angle2D.horizontalAngle(centre, end),
-                new LineSegment2D(start, centre).signedDistance(end) > 0);
     }
 
     /**
@@ -499,7 +354,7 @@ public class BufferCalculator {
             vertices = curve.vertices();
             intersects.removeAll(vertices);
 
-            if (intersects.size() > 0) {
+            if (intersects.size() > 0 || contour.isEmpty()) {
                 continue;
             }
 

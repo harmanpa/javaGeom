@@ -69,7 +69,7 @@ public class MiterJoinFactoryTest extends TestCase {
 		LineSegment2D line1 = new LineSegment2D(new Point2D(10, 30), new Point2D(60, 30));
 		LineSegment2D line2 = new LineSegment2D(new Point2D(60, 30), new Point2D(60, 80));
 		
-		Curve2D join = jf.createJoin(line1, line2, 20);
+		Curve2D join = jf.createJoin(line1, line2, 20, line1.parallel(20).lastPoint(), line2.parallel(20).firstPoint());
 		
 		assertTrue(join instanceof Polyline2D);
 		Polyline2D poly = (Polyline2D) join;
@@ -88,7 +88,7 @@ public class MiterJoinFactoryTest extends TestCase {
 		LineSegment2D line1 = new LineSegment2D(new Point2D(10, 80), new Point2D(60, 80));
 		LineSegment2D line2 = new LineSegment2D(new Point2D(60, 80), new Point2D(60, 30));
 		
-		Curve2D join = jf.createJoin(line1, line2, 20);
+		Curve2D join = jf.createJoin(line1, line2, 20, line1.parallel(20).lastPoint(), line2.parallel(20).firstPoint());
 		
 		assertTrue(join instanceof Polyline2D);
 		Polyline2D poly = (Polyline2D) join;

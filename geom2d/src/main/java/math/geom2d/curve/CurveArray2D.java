@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Iterator;
 
 import math.geom2d.*;
+import math.geom2d.exceptions.DegeneratedLine2DException;
 import math.geom2d.line.LinearShape2D;
 
 /**
@@ -510,8 +511,8 @@ public class CurveArray2D<T extends Curve2D>
         for (Curve2D curve : curves) {
             dist = curve.distance(x, y);
             if (dist < minDist) {
-                minDist = dist;
                 pos = curve.position(point);
+                minDist = dist;
                 // format position
                 t0 = curve.t0();
                 t1 = curve.t1();

@@ -30,7 +30,9 @@ public class MiterJoinFactory implements JoinFactory {
 	 */
         @Override
 	public CirculinearContinuousCurve2D createJoin(CirculinearElement2D curve1,
-			CirculinearElement2D curve2, double dist) {
+			CirculinearElement2D curve2, double dist,
+            Point2D previousParallelEnd,
+            Point2D nextParallelStart) {
 		
 		// extremity of each curve
 		Point2D pc1 = curve1.lastPoint();

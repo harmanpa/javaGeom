@@ -62,6 +62,7 @@ public interface Domain2D extends Shape2D {
      * Returns the set of contours that enclose this domain. 
      * The result is a collection of shapes that implement the Contour2D
      * interface. 
+     * @return 
      * @see math.geom2d.domain.Contour2D
      */
     public abstract Collection<? extends Contour2D> contours();
