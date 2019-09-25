@@ -41,6 +41,7 @@ extends CirculinearCurve2D, ContinuousOrientedCurve2D {
     public abstract Collection<? extends CirculinearElement2D> smoothPieces();
 
     public CurveSet2D<? extends CirculinearContinuousCurve2D> clip(Box2D box);
+        @Override
 	public CirculinearContinuousCurve2D subCurve(double t0, double t1);
 	public CirculinearContinuousCurve2D reverse();
 }

@@ -5,6 +5,10 @@
  */
 package math.geom2d;
 
+import java.math.BigDecimal;
+import java.math.MathContext;
+import java.math.RoundingMode;
+
 /**
  *
  * @author peter
@@ -12,6 +16,13 @@ package math.geom2d;
 public class Tolerance2D {
 
     private static Double ACCURACY = 1e-12;
+    private static final ThreadLocal<Integer> SCALE = new ThreadLocal<Integer>() {
+        @Override
+        protected Integer initialValue() {
+            return new BigDecimal(Tolerance2D.get().toString()).scale();
+        }
+    };
+
     private static final ThreadLocal<Double> THREAD_ACCURACY = new ThreadLocal<Double>() {
         @Override
         protected Double initialValue() {
@@ -26,6 +37,7 @@ public class Tolerance2D {
 
     public static void set(Double accuracy) {
         THREAD_ACCURACY.set(accuracy);
+        SCALE.remove();
     }
 
     public static Double get() {
@@ -34,5 +46,18 @@ public class Tolerance2D {
 
     public static void reset() {
         THREAD_ACCURACY.remove();
+        SCALE.remove();
+    }
+
+    public static BigDecimal round(BigDecimal bd) {
+        return bd.setScale(scale(), RoundingMode.HALF_UP);
+    }
+
+    public static BigDecimal round(Double d) {
+        return round(new BigDecimal(d, MathContext.UNLIMITED));
+    }
+
+    static Integer scale() {
+        return SCALE.get();
     }
 }

@@ -82,6 +82,6 @@ public class RoundJoinFactory implements JoinFactory {
 
         // otherwise add a circle arc to the polycurve
         return new CircleArc2D(
-                center, Math.abs(dist), startAngle, endAngle, dist > 0);
+                center, Math.abs(dist), startAngle2, endAngle2, dist > 0);
     }
 }

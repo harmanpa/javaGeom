@@ -738,7 +738,7 @@ public class CirculinearCurves2D {
         // Populate the two arrays with empty trees
         for (int i = 0; i < nCurves; i++) {
             twinIndices.add(i, new TreeMap<>());
-            twinPositions.add(i, new TreeMap<>(Double::compare));
+            twinPositions.add(i, new TreeMap<>());
         }
 
         // Create array of tree sets for storing positions of intersections
@@ -764,6 +764,9 @@ public class CirculinearCurves2D {
                     // position on each curve
                     pos1 = couples[k][0];
                     pos2 = couples[k][1];
+                    
+                    // check there isn't a really close intersection
+                    
 
                     // add positions in their tree sets
                     positions.get(i).add(pos1);
@@ -852,7 +855,8 @@ public class CirculinearCurves2D {
         }
 
         // Process other curves, while there are intersections left
-        while (!isAllEmpty(twinPositions)) {
+        boolean abort = false;
+        while (!abort && !isAllEmpty(twinPositions)) {
             // create new empty array of elements for current contour
             List<CirculinearElement2D> elements = new ArrayList<>();
 
@@ -873,31 +877,36 @@ public class CirculinearCurves2D {
             }
 
             if (ind0 == 0) {
-                System.out.println("No more intersections, but was not detected");
+                abort = true;
+            } else {
+
+                pos1 = pos0;
+                ind = ind0;
+                do {
+                    pos2 = nextValue(positions.get(ind), pos1);
+
+                    // add a portion of the first curve
+                    addElements(elements, curveArray[ind].subCurve(pos1, pos2));
+
+                    // get the position of end intersection on second curve
+                    try {
+                        pos1 = twinPositions.get(ind).remove(pos2);
+                        ind = twinIndices.get(ind).remove(pos2);
+                    } catch (NullPointerException ex) {
+                        pos1 = pos0;
+                        ind = ind0;
+                        abort = true;
+                    }
+                } while (pos1 != pos0 || ind != ind0);
+                // create continuous curve formed only by circulinear elements
+                // and add it to the set of curves
+                contours.add(BoundaryPolyCirculinearCurve2D.create(elements.toArray(new CirculinearElement2D[0]), true));
             }
-
-            pos1 = pos0;
-            ind = ind0;
-
-            do {
-                pos2 = nextValue(positions.get(ind), pos1);
-
-                // add a portion of the first curve
-                addElements(elements, curveArray[ind].subCurve(pos1, pos2));
-
-                // get the position of end intersection on second curve
-                pos1 = twinPositions.get(ind).remove(pos2);
-                ind = twinIndices.get(ind).remove(pos2);
-            } while (pos1 != pos0 || ind != ind0);
-
-            // create continuous curve formed only by circulinear elements
-            // and add it to the set of curves
-            contours.add(BoundaryPolyCirculinearCurve2D.create(elements.toArray(new CirculinearElement2D[0]), true));
         }
 
         return contours;
     }
-
+    
     /**
      * Add all circulinear elements of the given curve to the collection of
      * circulinear elements.

@@ -377,6 +377,76 @@ public class BufferCalculator {
     }
 
     /**
+     * Compute the buffer of a circulinear continuous non self-intersecting
+     * curve.<p>
+     * The algorithm is as follow:
+     * <ol>
+     * <li> compute the contour of the curve buffer
+     * <li> split self-intersecting contours into set of disjoint contours
+     * <li> split all contour which intersect each other to disjoint contours
+     * <li> remove contours which are too close from the original curve
+     * <li> create a new domain with the final set of contours
+     * </ol>
+     *
+     * @param curve
+     * @param dist
+     * @return
+     */
+    public CirculinearDomain2D computeBufferNonIntersecting(
+            CirculinearCurve2D curve, double dist) {
+
+        List<CirculinearContour2D> contours
+                = new ArrayList<>();
+
+        // iterate on all continuous curves
+        for (CirculinearContinuousCurve2D cont : curve.continuousCurves()) {
+            // compute the rings composing the simple curve buffer
+            contours.addAll(computeBufferSimpleCurve(cont, dist));
+        }
+
+        // split contours which intersect each others
+        contours = new ArrayList<>(
+                CirculinearCurves2D.splitIntersectingContours(contours));
+
+        // Remove contours that cross or that are too close from base curve
+        ArrayList<CirculinearContour2D> contours2
+                = new ArrayList<>(contours.size());
+        Collection<Point2D> intersects;
+        Collection<Point2D> vertices;
+
+        for (CirculinearContour2D contour : contours) {
+
+            // do not keep contours which cross original curve
+            intersects = CirculinearCurves2D.findIntersections(curve, contour);
+
+            // remove intersection points that are vertices of the reference curve
+            //vertices = curve.singularPoints();
+            vertices = curve.vertices();
+            intersects.removeAll(vertices);
+
+            if (intersects.size() > 0 || contour.isEmpty()) {
+                continue;
+            }
+
+            // check that vertices of contour are not too close from original
+            // curve
+            double distCurves
+                    = getDistanceCurveSingularPoints(curve, contour);
+            if (distCurves < dist - Tolerance2D.get()) {
+                continue;
+            }
+
+            // keep the contours that meet the above conditions
+            contours2.add(contour);
+        }
+
+        // All the rings are created, we can now create a new domain with the
+        // set of rings
+        return new GenericCirculinearDomain2D(
+                CirculinearContourArray2D.create(contours2.toArray(new CirculinearContour2D[0])));
+    }
+
+    /**
      * Compute buffer of a point set.
      *
      * @param set

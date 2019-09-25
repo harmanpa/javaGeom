@@ -276,10 +276,11 @@ public class CircleArc2D extends AbstractSmoothCurve2D
         if (r2 > -Tolerance2D.get()) {
             return new PointElement2D(supportingCircle().center());
         }
-        // If radius is less than zero the center moves away
+        // If it is connected (i.e. a circle) there isn't a parallel
         if (firstPoint().distance(lastPoint()) <= Tolerance2D.get()) {
             return null;
         }
+        // If radius is less than zero the center moves away
         double dist2 = Math.signum(dist) * Math.sqrt(Math.pow(dist, 2) - Math.pow(firstPoint().distance(lastPoint()) / 2, 2));
         Point2D point = StraightLine2D.createMedian(firstPoint(), lastPoint()).intersection(StraightLine2D.createParallel(new LineSegment2D(firstPoint(), lastPoint()), dist2));
         return new PointElement2D(point);
