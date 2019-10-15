@@ -310,25 +310,27 @@ public class CirculinearCurves2D {
     /**
      * Compute the set of intersection points between the two curves.
      *
+     * @param curve1
+     * @param curve2
      * @return a collection of intersection points
      */
     public static Collection<Point2D> findIntersections(
             CirculinearCurve2D curve1, CirculinearCurve2D curve2) {
 
         // create array of circulinear elements
-        ArrayList<CirculinearElement2D> elements1 = new ArrayList<CirculinearElement2D>();
-        ArrayList<CirculinearElement2D> elements2 = new ArrayList<CirculinearElement2D>();
+        List<CirculinearElement2D> elements1 = new ArrayList<>();
+        List<CirculinearElement2D> elements2 = new ArrayList<>();
 
         // extract all circulinear elements of the curve
-        for (CirculinearContinuousCurve2D cont : curve1.continuousCurves()) {
+        curve1.continuousCurves().forEach((cont) -> {
             elements1.addAll(cont.smoothPieces());
-        }
-        for (CirculinearContinuousCurve2D cont : curve2.continuousCurves()) {
+        });
+        curve2.continuousCurves().forEach((cont) -> {
             elements2.addAll(cont.smoothPieces());
-        }
+        });
 
         // create array for storing result
-        ArrayList<Point2D> result = new ArrayList<Point2D>(0);
+        List<Point2D> result = new ArrayList<>(0);
 
         // iterate on each couple of elements
         int n1 = elements1.size();
@@ -354,25 +356,28 @@ public class CirculinearCurves2D {
      * double, where N is the number of intersections. For each row, the first
      * element is the position on the first curve, and the second element is the
      * position on the second curve.
+     * @param curve1
+     * @param curve2
+     * @return 
      */
     public static double[][] locateIntersections(CirculinearCurve2D curve1,
             CirculinearCurve2D curve2) {
 
         // create array for storing result
-        ArrayList<Double> list1 = new ArrayList<Double>(0);
-        ArrayList<Double> list2 = new ArrayList<Double>(0);
+        List<Double> list1 = new ArrayList<>(0);
+        List<Double> list2 = new ArrayList<>(0);
 
         // create array of circulinear elements
-        ArrayList<CirculinearElement2D> elements1 = new ArrayList<CirculinearElement2D>();
-        ArrayList<CirculinearElement2D> elements2 = new ArrayList<CirculinearElement2D>();
+        List<CirculinearElement2D> elements1 = new ArrayList<>();
+        List<CirculinearElement2D> elements2 = new ArrayList<>();
 
         // extract all circulinear elements of the curve
-        for (CirculinearContinuousCurve2D cont : curve1.continuousCurves()) {
+        curve1.continuousCurves().forEach((cont) -> {
             elements1.addAll(cont.smoothPieces());
-        }
-        for (CirculinearContinuousCurve2D cont : curve2.continuousCurves()) {
+        });
+        curve2.continuousCurves().forEach((cont) -> {
             elements2.addAll(cont.smoothPieces());
-        }
+        });
 
         // iterate on each couple of elements
         int n1 = elements1.size();
@@ -409,9 +414,16 @@ public class CirculinearCurves2D {
 
     /**
      * Computes the intersections, if they exist, of two circulinear elements.
+     * @param elem1
+     * @param elem2
+     * @return 
      */
     public static Collection<Point2D> findIntersections(
             CirculinearElement2D elem1, CirculinearElement2D elem2) {
+        
+        if(elem1==null || elem2==null) {
+            return new ArrayList<>(0);
+        }
 
         // find which shapes are linear
         boolean b1 = elem1 instanceof LinearShape2D;
@@ -424,10 +436,11 @@ public class CirculinearCurves2D {
             LinearShape2D line2 = (LinearShape2D) elem2;
 
             // test parallel elements
+            
             Vector2D v1 = line1.direction();
             Vector2D v2 = line2.direction();
             if (Vector2D.isColinear(v1, v2)) {
-                return new ArrayList<Point2D>(0);
+                return new ArrayList<>(0);
             }
 
             return line1.intersections(line2);
@@ -447,15 +460,14 @@ public class CirculinearCurves2D {
         Circle2D circ2 = ((CircularShape2D) elem2).supportingCircle();
 
         // create array for storing result (max 2 possible intersections)
-        ArrayList<Point2D> pts = new ArrayList<Point2D>(2);
+        List<Point2D> pts = new ArrayList<>(2);
 
         // for each of the circle intersections, check if they belong to
         // both elements
-        for (Point2D inter : Circle2D.circlesIntersections(circ1, circ2)) {
-            if (elem1.contains(inter) && elem2.contains(inter)) {
-                pts.add(inter);
-            }
-        }
+        Circle2D.circlesIntersections(circ1, circ2).stream()
+                .filter((inter) -> (elem1.contains(inter) && elem2.contains(inter))).forEachOrdered((inter) -> {
+            pts.add(inter);
+        });
 
         // return found intersections
         return pts;
@@ -876,7 +888,7 @@ public class CirculinearCurves2D {
                 break;
             }
 
-            if (ind0 == 0) {
+            if (ind0 == 0 || Double.isNaN(pos0)) {
                 abort = true;
             } else {
 
@@ -897,7 +909,7 @@ public class CirculinearCurves2D {
                         ind = ind0;
                         abort = true;
                     }
-                } while (pos1 != pos0 || ind != ind0);
+                } while ((pos1 != pos0 || ind != ind0) && !Double.isNaN(pos1) && !Double.isNaN(pos2));
                 // create continuous curve formed only by circulinear elements
                 // and add it to the set of curves
                 contours.add(BoundaryPolyCirculinearCurve2D.create(elements.toArray(new CirculinearElement2D[0]), true));

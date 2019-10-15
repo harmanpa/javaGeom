@@ -515,6 +515,9 @@ public class BufferCalculator {
         // some contours may intersect, so we split them
         Collection<CirculinearContour2D> contours2
                 = removeIntersectingContours(contours, curve, d);
+        
+        // Remove empty contours
+        contours2.removeIf(c -> c.smoothPieces().isEmpty());
 
         // return the set of created contours
         return contours2;
