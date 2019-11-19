@@ -475,14 +475,16 @@ public class Circle2D extends AbstractSmoothCurve2D
      * direct circle, distance is positive outside of the circle, and negative
      * inside. This is the contrary for indirect circles.
      */
+    @Override
     public Circle2D parallel(double d) {
         double rp = max(direct ? r + d : r - d, 0);
-        return new Circle2D(xc, yc, rp, direct);
+        return new Circle2D(xc, yc, rp, direct, theta);
     }
 
     /**
      * Returns perimeter of the circle (equal to 2*PI*radius).
      */
+    @Override
     public double length() {
         return PI * 2 * r;
     }
@@ -709,10 +711,7 @@ public class Circle2D extends AbstractSmoothCurve2D
      * and 2*Math.PI.
      */
     public Point2D point(double t) {
-        double angle = theta + t;
-        if (!direct) {
-            angle = theta - t;
-        }
+        double angle = direct ? theta + t : theta - t;
         return new Point2D(xc + r * cos(angle), yc + r * sin(angle));
     }
 
@@ -735,6 +734,17 @@ public class Circle2D extends AbstractSmoothCurve2D
     }
 
     public double position(Point2D point) {
+        if (Math.abs(point.distance(xc, yc) - r) > Tolerance2D.get()) {
+            return Double.NaN;
+        }
+        return project(point);
+    }
+
+    /**
+     * Computes the projection position of the point on the circle, by computing
+     * angle with horizonrtal
+     */
+    public double project(Point2D point) {
         double angle = Angle2D.horizontalAngle(xc, yc, point.x(), point.y());
         if (direct) {
             return Angle2D.formatAngle(angle - theta);
@@ -744,23 +754,11 @@ public class Circle2D extends AbstractSmoothCurve2D
     }
 
     /**
-     * Computes the projection position of the point on the circle, by computing
-     * angle with horizonrtal
-     */
-    public double project(Point2D point) {
-        double xp = point.x() - this.xc;
-        double yp = point.y() - this.yc;
-
-        // compute angle
-        return Angle2D.horizontalAngle(xp, yp);
-    }
-
-    /**
      * Returns the circle with same center and same radius, but with the
      * opposite orientation.
      */
     public Circle2D reverse() {
-        return new Circle2D(this.xc, this.yc, this.r, !this.direct);
+        return new Circle2D(this.xc, this.yc, this.r, !this.direct, this.theta);
     }
 
     /**
@@ -769,11 +767,11 @@ public class Circle2D extends AbstractSmoothCurve2D
     public CircleArc2D subCurve(double t0, double t1) {
         double startAngle, extent;
         if (this.direct) {
-            startAngle = t0;
+            startAngle = Angle2D.formatAngle(theta + t0);
             extent = Angle2D.formatAngle(t1 - t0);
         } else {
             extent = -Angle2D.formatAngle(t1 - t0);
-            startAngle = Angle2D.formatAngle(-t0);
+            startAngle = Angle2D.formatAngle(theta - t0);
         }
         return new CircleArc2D(this, startAngle, extent);
     }
@@ -941,7 +939,7 @@ public class Circle2D extends AbstractSmoothCurve2D
         Point2D center = this.center().transform(trans);
         Point2D p1 = this.firstPoint().transform(trans);
         double angle = Angle2D.horizontalAngle(center, p1);
-        
+
         boolean direct = !this.direct ^ trans.isDirect();
         Circle2D result = new Circle2D(center, center.distance(p1), direct, angle);
         return result;
@@ -977,7 +975,9 @@ public class Circle2D extends AbstractSmoothCurve2D
             if (this.direct != that.direct) {
                 return false;
             }
-
+            if (!EqualUtils.areEqual(this.theta, that.theta)) {
+                return false;
+            }
             return true;
         }
         return super.equals(obj);

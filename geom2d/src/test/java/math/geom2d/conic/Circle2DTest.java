@@ -229,12 +229,12 @@ public class Circle2DTest extends TestCase {
 		double eps = 1e-12;
 		
 		// Standard circle
-		circle = new Circle2D(x0, y0, 10);
+		circle = new Circle2D(x0, y0, 2);
 		point = new Point2D(x0+r2, y0+r2);
 		assertEquals(circle.position(point), Math.PI/4, eps);
 		
 		// inverted circle
-		circle = new Circle2D(x0, y0, 10, false);
+		circle = new Circle2D(x0, y0, 2, false);
 		point = new Point2D(x0+r2, y0-r2);
 		assertEquals(circle.position(point), Math.PI/4, eps);
 	}
