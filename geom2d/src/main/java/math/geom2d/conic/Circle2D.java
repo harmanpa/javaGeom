@@ -266,23 +266,23 @@ public class Circle2D extends AbstractSmoothCurve2D
     /**
      * Coordinate of center.
      */
-    protected double xc;
-    protected double yc;
+    protected final double xc;
+    protected final double yc;
 
     /**
      * the radius of the circle.
      */
-    protected double r = 0;
+    protected final double r;
 
     /**
      * Directed circle or not
      */
-    protected boolean direct = true;
+    protected final boolean direct;
 
     /**
      * Orientation of major semi-axis, in radians, between 0 and 2*PI.
      */
-    protected double theta = 0;
+    protected final double theta;
 
     // ===================================================================
     // Constructors
@@ -307,6 +307,10 @@ public class Circle2D extends AbstractSmoothCurve2D
         this(center.x(), center.y(), radius, direct);
     }
 
+    Circle2D(Point2D center, double radius, boolean direct, double theta) {
+        this(center.x(), center.y(), radius, direct, theta);
+    }
+
     /**
      * Create a new circle with specified center and radius
      */
@@ -319,10 +323,16 @@ public class Circle2D extends AbstractSmoothCurve2D
      */
     public Circle2D(double xcenter, double ycenter, double radius,
             boolean direct) {
+        this(xcenter, ycenter, radius, direct, 0.0);
+    }
+
+    Circle2D(double xcenter, double ycenter, double radius,
+            boolean direct, double theta) {
         this.xc = xcenter;
         this.yc = ycenter;
         this.r = radius;
         this.direct = direct;
+        this.theta = theta;
     }
 
     // ===================================================================
@@ -931,12 +941,9 @@ public class Circle2D extends AbstractSmoothCurve2D
         Point2D center = this.center().transform(trans);
         Point2D p1 = this.firstPoint().transform(trans);
         double angle = Angle2D.horizontalAngle(center, p1);
-        if(Math.abs(angle) > Tolerance2D.get()) {
-            CircleArc2D arc = new CircleArc2D(center, center.distance(p1), angle, Math.PI * 2);
-            return arc;
-        }
+        
         boolean direct = !this.direct ^ trans.isDirect();
-        Circle2D result = new Circle2D(center, center.distance(p1), direct);
+        Circle2D result = new Circle2D(center, center.distance(p1), direct, angle);
         return result;
     }
 
