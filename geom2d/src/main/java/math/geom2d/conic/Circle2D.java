@@ -930,7 +930,11 @@ public class Circle2D extends AbstractSmoothCurve2D
         // If transform is a similarity, the result is a circle
         Point2D center = this.center().transform(trans);
         Point2D p1 = this.firstPoint().transform(trans);
-
+        double angle = Angle2D.horizontalAngle(center, p1);
+        if(Math.abs(angle) > Tolerance2D.get()) {
+            CircleArc2D arc = new CircleArc2D(center, center.distance(p1), angle, Math.PI * 2);
+            return arc;
+        }
         boolean direct = !this.direct ^ trans.isDirect();
         Circle2D result = new Circle2D(center, center.distance(p1), direct);
         return result;

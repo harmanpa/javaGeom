@@ -39,6 +39,7 @@ public interface EllipseShape2D extends SmoothContour2D, Conic2D {
 	// ===================================================================
     // methods of Curve2D interface
 
+        @Override
     public EllipseShape2D reverse();
 
     public Collection<? extends EllipseShape2D> continuousCurves();
@@ -46,6 +47,7 @@ public interface EllipseShape2D extends SmoothContour2D, Conic2D {
     // ===================================================================
     // methods of Shape2D interface
 
+        @Override
     public EllipseShape2D transform(AffineTransform2D trans);
     
 }

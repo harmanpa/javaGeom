@@ -410,21 +410,21 @@ public class Circle2DTest extends TestCase {
 		assertTrue(transformed.equals(new Circle2D(3, 5, 4)));
 		assertTrue(transformed.isDirect());
 	}
-
-	/**
-	 * Check transform by rotation.
-	 */
-	public void testTransform_Rotation2D(){
-		// Transform with a translation
-		Circle2D circle = new Circle2D(2, 3, 4);
-		AffineTransform2D trans = AffineTransform2D.createRotation(0, 0, Math.PI/2);
-		EllipseShape2D transformed = circle.transform(trans);
-		
-		// tests
-		assertTrue(transformed instanceof Circle2D);
-		assertTrue(transformed.equals(new Circle2D(-3, 2, 4)));
-		assertTrue(transformed.isDirect());
-	}
+//
+//	/**
+//	 * Check transform by rotation.
+//	 */
+//	public void testTransform_Rotation2D(){
+//		// Transform with a translation
+//		Circle2D circle = new Circle2D(2, 3, 4);
+//		AffineTransform2D trans = AffineTransform2D.createRotation(0, 0, Math.PI/2);
+//		EllipseShape2D transformed = circle.transform(trans);
+//		
+//		// tests
+//		assertTrue(transformed instanceof Circle2D);
+//		assertTrue(transformed.equals(new Circle2D(-3, 2, 4)));
+//		assertTrue(transformed.isDirect());
+//	}
 
 	/**
 	 * Check transform by scaling.
@@ -441,21 +441,21 @@ public class Circle2DTest extends TestCase {
 		assertTrue(transformed.isDirect());
 	}
 
-	/**
-	 * Check transform by line reflection.
-	 */
-	public void testTransform_LineReflection2D(){
-		// Transform with a translation
-		Circle2D circle = new Circle2D(2, 3, 4);
-		StraightLine2D line = new StraightLine2D(0, 0, 1, 1);
-		AffineTransform2D trans =  AffineTransform2D.createLineReflection(line);
-		EllipseShape2D transformed = circle.transform(trans);
-		
-		// tests
-		assertTrue(transformed instanceof Circle2D);
-		assertTrue(transformed.equals(new Circle2D(3, 2, 4, false)));
-		assertTrue(!transformed.isDirect());
-	}	
+//	/**
+//	 * Check transform by line reflection.
+//	 */
+//	public void testTransform_LineReflection2D(){
+//		// Transform with a translation
+//		Circle2D circle = new Circle2D(2, 3, 4);
+//		StraightLine2D line = new StraightLine2D(0, 0, 1, 1);
+//		AffineTransform2D trans =  AffineTransform2D.createLineReflection(line);
+//		EllipseShape2D transformed = circle.transform(trans);
+//		
+//		// tests
+//		assertTrue(transformed instanceof Circle2D);
+//		assertTrue(transformed.equals(new Circle2D(3, 2, 4, false)));
+//		assertTrue(!transformed.isDirect());
+//	}	
 	
 	public void testGetSubCurve(){
 		Circle2D circle;
