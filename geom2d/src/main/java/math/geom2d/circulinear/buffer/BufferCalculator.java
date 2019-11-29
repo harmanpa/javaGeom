@@ -11,18 +11,18 @@ package math.geom2d.circulinear.buffer;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.Deque;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
-import math.geom2d.Angle2D;
+import java.util.Map;
 
 import math.geom2d.Point2D;
 import math.geom2d.Tolerance2D;
 import math.geom2d.circulinear.*;
 import math.geom2d.conic.Circle2D;
-import math.geom2d.conic.CircleArc2D;
 import math.geom2d.curve.Curves2D;
-import math.geom2d.line.LineSegment2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.point.PointSet2D;
 
@@ -189,15 +189,12 @@ public class BufferCalculator {
         }
 
         // extract collection of parallel curves, that connect each other
-        Collection<CirculinearElement2D> parallelCurves
-                = getParallelElements(curve, dist);
+        Collection<CirculinearElement2D> parallelCurves = getParallelElements(curve, dist);
 
-        // Create a new circulinear continuous curve with the set of parallel
-        // curves
         return PolyCirculinearCurve2D.create(parallelCurves.toArray(new CirculinearElement2D[0]), curve.isClosed());
     }
 
-    private Collection<CirculinearElement2D> getParallelElements(
+    protected Collection<CirculinearElement2D> getParallelElements(
             CirculinearContinuousCurve2D curve, double dist) {
 
         // extract collection of circulinear elements
@@ -515,7 +512,7 @@ public class BufferCalculator {
         // some contours may intersect, so we split them
         Collection<CirculinearContour2D> contours2
                 = removeIntersectingContours(contours, curve, d);
-        
+
         // Remove empty contours
         contours2.removeIf(c -> c.smoothPieces().isEmpty());
 

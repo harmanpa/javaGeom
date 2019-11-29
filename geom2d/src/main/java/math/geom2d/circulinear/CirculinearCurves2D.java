@@ -281,7 +281,7 @@ public class CirculinearCurves2D {
     /**
      * Checks if the point is a common extremity between the two curve elements.
      */
-    private static boolean isCommonVertex(Point2D inter,
+    public static boolean isCommonVertex(Point2D inter,
             CirculinearCurve2D elem1, CirculinearCurve2D elem2) {
 
         double eps = Tolerance2D.get();

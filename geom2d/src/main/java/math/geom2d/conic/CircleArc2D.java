@@ -699,17 +699,17 @@ public class CircleArc2D extends AbstractSmoothCurve2D
         // compute parameters of new circle arc
         double xc = center.x(), yc = center.y();
         double r2 = circle.radius() * factor;
-        double startAngle = angle1;
-        double angleExtent = Angle2D.formatAngle(angle2 - angle1);
+        double newStartAngle = angle1;
+        double newAngleExtent = Angle2D.formatAngle(angle2 - angle1);
 
         boolean b1 = AffineTransform2D.isDirect(trans);
         boolean b2 = this.isDirect();
         if (b1 && !b2 || !b1 && b2) {
-            angleExtent = angleExtent - 2 * Math.PI;
+            newAngleExtent = newAngleExtent - 2 * Math.PI;
         }
 
         // return new CircleArc
-        return new CircleArc2D(xc, yc, r2, startAngle, angleExtent);
+        return new CircleArc2D(xc, yc, r2, newStartAngle, newAngleExtent);
     }
 
     public boolean contains(Point2D p) {
