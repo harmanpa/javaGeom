@@ -945,6 +945,10 @@ public class Circle2D extends AbstractSmoothCurve2D
         return result;
     }
 
+    public Circle2D rotate(double angle) {
+        return new Circle2D(xc, yc, r, direct, theta + angle);
+    }
+
     // ===================================================================
     // methods of Object interface
     @Override
