@@ -577,6 +577,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
      * Returns a new CircleArc2D. Variables t0 and t1 must be comprised between
      * 0 and the angle extent of the arc.
      */
+    @Override
     public CircleArc2D subCurve(double t0, double t1) {
         // convert position to angle
         if (angleExtent > 0) {
@@ -604,7 +605,9 @@ public class CircleArc2D extends AbstractSmoothCurve2D
     /**
      * Returns the circle arc which refers to the same parent circle, but with
      * exchanged extremities.
+     * @return 
      */
+    @Override
     public CircleArc2D reverse() {
         double newStart = Angle2D.formatAngle(startAngle + angleExtent);
         return new CircleArc2D(this.circle, newStart, -angleExtent);
@@ -733,10 +736,12 @@ public class CircleArc2D extends AbstractSmoothCurve2D
     /**
      * Returns false.
      */
+    @Override
     public boolean isEmpty() {
         return false;
     }
 
+    @Override
     public Box2D boundingBox() {
 
         // first get ending points

@@ -1,11 +1,11 @@
 /**
- * 
+ *
  */
-
 package math.geom3d.line;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import math.geom2d.Tolerance2D;
 
 import math.geom3d.Box3D;
 import math.geom3d.Point3D;
@@ -21,7 +21,6 @@ public class LineSegment3D implements ContinuousCurve3D {
 
     // ===================================================================
     // class variables
-
     protected double x1 = 0;
     protected double y1 = 0;
     protected double z1 = 0;
@@ -31,7 +30,6 @@ public class LineSegment3D implements ContinuousCurve3D {
 
     // ===================================================================
     // constructors
-
     public LineSegment3D(Point3D p1, Point3D p2) {
         this.x1 = p1.getX();
         this.y1 = p1.getY();
@@ -43,9 +41,8 @@ public class LineSegment3D implements ContinuousCurve3D {
 
     // ===================================================================
     // methods specific to StraightLine3D
-
     public StraightLine3D supportingLine() {
-        return new StraightLine3D(x1, y1, z1, x2-x1, y2-y1, z2-z1);
+        return new StraightLine3D(x1, y1, z1, x2 - x1, y2 - y1, z2 - z1);
     }
 
     // ===================================================================
@@ -87,23 +84,25 @@ public class LineSegment3D implements ContinuousCurve3D {
      */
     public Point3D point(double t) {
         t = Math.max(Math.min(t, 1), 0);
-		return new Point3D(
-				x1 + (x2 - x1) * t, 
-				y1 + (y2 - y1) * t, 
-				z1 + (z2 - z1) * t);
+        return new Point3D(
+                x1 + (x2 - x1) * t,
+                y1 + (y2 - y1) * t,
+                z1 + (z2 - z1) * t);
     }
 
     /**
      * If point does not project on the line segment, return Double.NaN.
-     * 
+     *
      * @see math.geom3d.curve.Curve3D#position(math.geom3d.Point3D)
      */
     public double position(Point3D point) {
         double t = this.supportingLine().position(point);
-        if (t>1)
+        if (t > 1) {
             return Double.NaN;
-        if (t<0)
+        }
+        if (t < 0) {
             return Double.NaN;
+        }
         return t;
     }
 
@@ -118,7 +117,7 @@ public class LineSegment3D implements ContinuousCurve3D {
 
     /**
      * Returns the2 end points.
-     * 
+     *
      * @see math.geom3d.curve.Curve3D#singularPoints()
      */
     public Collection<Point3D> singularPoints() {
@@ -141,7 +140,7 @@ public class LineSegment3D implements ContinuousCurve3D {
 
     /**
      * Return 0, by definition of LineSegment.
-     * 
+     *
      * @see math.geom3d.curve.Curve3D#getT0()
      */
     public double getT0() {
@@ -150,7 +149,7 @@ public class LineSegment3D implements ContinuousCurve3D {
 
     /**
      * Return 1, by definition of LineSegment.
-     * 
+     *
      * @see math.geom3d.curve.Curve3D#getT1()
      */
     public double getT1() {
@@ -197,13 +196,16 @@ public class LineSegment3D implements ContinuousCurve3D {
      */
     public boolean contains(Point3D point) {
         StraightLine3D line = this.supportingLine();
-        if (!line.contains(point))
+        if (!line.contains(point)) {
             return false;
+        }
         double t = line.position(point);
-        if (t<-Shape3D.ACCURACY)
+        if (t < -Tolerance2D.get()) {
             return false;
-        if (t>1+Shape3D.ACCURACY)
+        }
+        if (t > 1 + Tolerance2D.get()) {
             return false;
+        }
         return true;
     }
 
@@ -228,7 +230,7 @@ public class LineSegment3D implements ContinuousCurve3D {
 
     /**
      * Returns true, as a LineSegment3D is always bounded.
-     * 
+     *
      * @see math.geom3d.Shape3D#isBounded()
      */
     public boolean isBounded() {
@@ -237,7 +239,7 @@ public class LineSegment3D implements ContinuousCurve3D {
 
     /**
      * Returns false, as a LineSegment3D is never empty.
-     * 
+     *
      * @see math.geom3d.Shape3D#isEmpty()
      */
     public boolean isEmpty() {

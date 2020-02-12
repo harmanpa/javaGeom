@@ -198,8 +198,10 @@ public class BufferCalculator {
             CirculinearContinuousCurve2D curve, double dist) {
 
         // extract collection of circulinear elements
-        Iterator<? extends CirculinearElement2D> iterator
-                = curve.smoothPieces().iterator();
+        Iterator<? extends CirculinearElement2D> iterator = curve
+                .smoothPieces().stream()
+                .filter(sp -> !(sp instanceof PointElement2D))
+                .iterator();
 
         // previous curve
         CirculinearElement2D previous;
@@ -266,6 +268,12 @@ public class BufferCalculator {
 
         // Add eventually a circle arc to close the parallel curve
         if (curve.isClosed() && !parallelCurves.isEmpty()) {
+            double distance = current.lastPoint().distance(first.firstPoint());
+            boolean reallyClosed = distance <= Tolerance2D.get();
+            if (!reallyClosed) {
+                System.out.println("Closing a buffer when the original curve wasn't closed");
+            }
+            
             previous = current;
             previousParallel = currentParallel;
             current = first;

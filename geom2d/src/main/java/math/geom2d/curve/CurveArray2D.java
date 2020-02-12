@@ -25,11 +25,13 @@ package math.geom2d.curve;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 
 import math.geom2d.*;
-import math.geom2d.exceptions.DegeneratedLine2DException;
 import math.geom2d.line.LinearShape2D;
 
 /**
@@ -45,6 +47,7 @@ import math.geom2d.line.LinearShape2D;
  * </p>
  *
  * @author Legland
+ * @param <T>
  */
 public class CurveArray2D<T extends Curve2D>
         implements CurveSet2D<T>, Iterable<T> {
@@ -55,22 +58,27 @@ public class CurveArray2D<T extends Curve2D>
      * Static factory for creating a new CurveArray2D from a collection of
      * curves.
      *
+     * @param <T>
+     * @param curves
+     * @return
      * @since 0.8.1
      */
-    public static <T extends Curve2D> CurveArray2D<T> create(
-            Collection<T> curves) {
-        return new CurveArray2D<T>(curves);
+    public static <T extends Curve2D> CurveArray2D<T> create(Collection<T> curves) {
+        return new CurveArray2D<>(curves);
     }
 
     /**
      * Static factory for creating a new CurveArray2D from an array of curves.
      *
+     * @param <T>
+     * @param curves
+     * @return 
      * @since 0.8.1
      */
     @SafeVarargs
     public static <T extends Curve2D> CurveArray2D<T> create(
             T... curves) {
-        return new CurveArray2D<T>(curves);
+        return new CurveArray2D<>(curves);
     }
 
     // ===================================================================
@@ -86,15 +94,16 @@ public class CurveArray2D<T extends Curve2D>
      * Empty constructor. Initializes an empty array of curves.
      */
     public CurveArray2D() {
-        this.curves = new ArrayList<T>();
+        this.curves = new ArrayList<>();
     }
 
     /**
      * Empty constructor. Initializes an empty array of curves, with a given
      * size for allocating memory.
+     * @param n
      */
     public CurveArray2D(int n) {
-        this.curves = new ArrayList<T>(n);
+        this.curves = new ArrayList<>(n);
     }
 
     /**
@@ -105,9 +114,7 @@ public class CurveArray2D<T extends Curve2D>
     @SafeVarargs
     public CurveArray2D(T... curves) {
         this(curves.length);
-        for (T element : curves) {
-            this.curves.add(element);
-        }
+        this.curves.addAll(Arrays.asList(curves));
     }
 
     public CurveArray2D(CurveSet2D<? extends T> set) {
@@ -124,7 +131,7 @@ public class CurveArray2D<T extends Curve2D>
      * @param curves the collection of curves to add to the set
      */
     public CurveArray2D(Collection<? extends T> curves) {
-        this.curves = new ArrayList<T>(curves.size());
+        this.curves = new ArrayList<>(curves.size());
         this.curves.addAll(curves);
     }
 
@@ -141,6 +148,7 @@ public class CurveArray2D<T extends Curve2D>
      * @param t the position on the curve set
      * @return the position on the subcurve
      */
+    @Override
     public double localPosition(double t) {
         int i = this.curveIndex(t);
         T curve = curves.get(i);
@@ -159,6 +167,7 @@ public class CurveArray2D<T extends Curve2D>
      * @param t the position on the curve
      * @return the position on the curve set, between 0 and 2*Nc-1
      */
+    @Override
     public double globalPosition(int i, double t) {
         T curve = curves.get(i);
         double t0 = curve.t0();
@@ -173,10 +182,11 @@ public class CurveArray2D<T extends Curve2D>
      * number of curves minus 1
      * @return the index of the curve which contains position t
      */
+    @Override
     public int curveIndex(double t) {
 
         // check bounds
-        if (curves.size() == 0) {
+        if (curves.isEmpty()) {
             return 0;
         }
         if (t > curves.size() * 2 - 1) {
@@ -203,6 +213,7 @@ public class CurveArray2D<T extends Curve2D>
      *
      * @param curve the curve to add
      */
+    @Override
     public boolean add(T curve) {
         if (curves.contains(curve)) {
             return false;
@@ -210,6 +221,7 @@ public class CurveArray2D<T extends Curve2D>
         return curves.add(curve);
     }
 
+    @Override
     public void add(int index, T curve) {
         this.curves.add(index, curve);
     }
@@ -219,10 +231,12 @@ public class CurveArray2D<T extends Curve2D>
      *
      * @param curve the curve to remove
      */
+    @Override
     public boolean remove(T curve) {
         return curves.remove(curve);
     }
 
+    @Override
     public T remove(int index) {
         return this.curves.remove(index);
     }
@@ -230,6 +244,7 @@ public class CurveArray2D<T extends Curve2D>
     /**
      * Checks if the curve set contains the given curve.
      */
+    @Override
     public boolean contains(T curve) {
         return curves.contains(curve);
     }
@@ -237,6 +252,7 @@ public class CurveArray2D<T extends Curve2D>
     /**
      * Returns index of the given curve within the inner array.
      */
+    @Override
     public int indexOf(T curve) {
         return this.curves.indexOf(curve);
     }
@@ -244,6 +260,7 @@ public class CurveArray2D<T extends Curve2D>
     /**
      * Clears the inner curve collection.
      */
+    @Override
     public void clear() {
         curves.clear();
     }
@@ -253,6 +270,7 @@ public class CurveArray2D<T extends Curve2D>
      *
      * @return the inner collection of curves
      */
+    @Override
     public Collection<T> curves() {
         return curves;
     }
@@ -264,6 +282,7 @@ public class CurveArray2D<T extends Curve2D>
      * @return the i-th inner curve
      * @since 0.6.3
      */
+    @Override
     public T get(int index) {
         return curves.get(index);
     }
@@ -276,8 +295,9 @@ public class CurveArray2D<T extends Curve2D>
      * @return the curve corresponding to the position.
      * @since 0.6.3
      */
+    @Override
     public T childCurve(double t) {
-        if (curves.size() == 0) {
+        if (curves.isEmpty()) {
             return null;
         }
         return curves.get(curveIndex(t));
@@ -288,8 +308,9 @@ public class CurveArray2D<T extends Curve2D>
      *
      * @return the first curve of the collection
      */
+    @Override
     public T firstCurve() {
-        if (curves.size() == 0) {
+        if (curves.isEmpty()) {
             return null;
         }
         return curves.get(0);
@@ -300,8 +321,9 @@ public class CurveArray2D<T extends Curve2D>
      *
      * @return the last curve of the collection
      */
+    @Override
     public T lastCurve() {
-        if (curves.size() == 0) {
+        if (curves.isEmpty()) {
             return null;
         }
         return curves.get(curves.size() - 1);
@@ -312,6 +334,7 @@ public class CurveArray2D<T extends Curve2D>
      *
      * @return the number of curves in the collection
      */
+    @Override
     public int size() {
         return curves.size();
     }
@@ -319,57 +342,38 @@ public class CurveArray2D<T extends Curve2D>
     /**
      * Returns true if the CurveSet does not contain any curve.
      */
+    @Override
     public boolean isEmpty() {
-        return curves.size() == 0;
+        return curves.isEmpty();
     }
 
     // ===================================================================
     // methods inherited from interface Curve2D
+    @Override
     public Collection<Point2D> intersections(LinearShape2D line) {
-        ArrayList<Point2D> intersect = new ArrayList<Point2D>();
+        List<Point2D> intersect = new ArrayList<>();
 
         // add intersections with each curve
-        for (Curve2D curve : curves) {
+        curves.forEach((curve) -> {
             intersect.addAll(curve.intersections(line));
-        }
+        });
 
         return intersect;
     }
 
-    /**
-     * Returns 0.
-     */
+    @Override
     public double t0() {
         return 0;
     }
 
-    /**
-     * @deprecated replaced by t0() (since 0.11.1).
-     */
-    @Deprecated
-    public double getT0() {
-        return t0();
-    }
-
+    @Override
     public double t1() {
         return Math.max(curves.size() * 2 - 1, 0);
     }
 
-    /**
-     * @deprecated replaced by t1() (since 0.11.1).
-     */
-    @Deprecated
-    public double getT1() {
-        return t1();
-    }
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see math.geom2d.Curve2D#point(double)
-     */
+    @Override
     public Point2D point(double t) {
-        if (curves.size() == 0) {
+        if (curves.isEmpty()) {
             return null;
         }
         if (t < t0()) {
@@ -400,59 +404,45 @@ public class CurveArray2D<T extends Curve2D>
         }
     }
 
-    /**
-     * Returns the first point of the curve.
-     *
-     * @return the first point of the curve
-     */
+    @Override
     public Point2D firstPoint() {
-        if (curves.size() == 0) {
+        if (curves.isEmpty()) {
             return null;
         }
         return firstCurve().firstPoint();
     }
 
-    /**
-     * Returns the last point of the curve.
-     *
-     * @return the last point of the curve.
-     */
+    @Override
     public Point2D lastPoint() {
-        if (curves.size() == 0) {
+        if (curves.isEmpty()) {
             return null;
         }
         return lastCurve().lastPoint();
     }
 
-    /**
-     * Computes the set of singular points as the set of singular points of each
-     * curve, plus the extremities of each curve. Each point is referenced only
-     * once.
-     *
-     * @see #vertices()
-     */
+    @Override
     public Collection<Point2D> singularPoints() {
         // create array for result
-        ArrayList<Point2D> points = new ArrayList<Point2D>();
+        List<Point2D> points = new ArrayList<>();
         double eps = Tolerance2D.get();
 
         // iterate on curves composing the array
-        for (Curve2D curve : curves) {
+        curves.stream().map((curve) -> {
             // Add singular points inside curve
-            for (Point2D point : curve.singularPoints()) {
+            curve.singularPoints().forEach((point) -> {
                 addPointWithGuardDistance(points, point, eps);
-            }
-
+            });
+            return curve;
+        }).map((curve) -> {
             // add first extremity
             if (!Curves2D.isLeftInfinite(curve)) {
                 addPointWithGuardDistance(points, curve.firstPoint(), eps);
             }
-
             // add last extremity
-            if (!Curves2D.isRightInfinite(curve)) {
-                addPointWithGuardDistance(points, curve.lastPoint(), eps);
-            }
-        }
+            return curve;
+        }).filter((curve) -> (!Curves2D.isRightInfinite(curve))).forEachOrdered((curve) -> {
+            addPointWithGuardDistance(points, curve.lastPoint(), eps);
+        });
         // return the set of singular points
         return points;
     }
@@ -475,16 +465,12 @@ public class CurveArray2D<T extends Curve2D>
         pointSet.add(point);
     }
 
-    /**
-     * Implementation of getVertices() for curve returns the same result as the
-     * method getSingularPoints().
-     *
-     * @see #singularPoints()
-     */
+    @Override
     public Collection<Point2D> vertices() {
         return this.singularPoints();
     }
 
+    @Override
     public boolean isSingular(double pos) {
         if (Math.abs(pos - Math.round(pos)) < Tolerance2D.get()) {
             return true;
@@ -502,8 +488,9 @@ public class CurveArray2D<T extends Curve2D>
         return curve.isSingular(this.localPosition(pos));
     }
 
+    @Override
     public double position(Point2D point) {
-        double minDist = Double.MAX_VALUE, dist = minDist;
+        double minDist = Double.MAX_VALUE, dist;
         double x = point.x(), y = point.y();
         double pos = 0, t0, t1;
 
@@ -523,8 +510,9 @@ public class CurveArray2D<T extends Curve2D>
         return pos;
     }
 
+    @Override
     public double project(Point2D point) {
-        double minDist = Double.MAX_VALUE, dist = minDist;
+        double minDist = Double.MAX_VALUE, dist;
         double x = point.x(), y = point.y();
         double pos = 0, t0, t1;
 
@@ -544,6 +532,7 @@ public class CurveArray2D<T extends Curve2D>
         return pos;
     }
 
+    @Override
     public Curve2D reverse() {
         // create array of reversed curves
         int n = curves.size();
@@ -555,18 +544,16 @@ public class CurveArray2D<T extends Curve2D>
         }
 
         // create the reversed final curve
-        return new CurveArray2D<Curve2D>(curves2);
+        return new CurveArray2D<>(curves2);
     }
 
-    /**
-     * Return an instance of CurveArray2D.
-     */
+    @Override
     public CurveSet2D<? extends Curve2D> subCurve(double t0, double t1) {
         // number of curves in the set
         int nc = curves.size();
 
         // create a new empty curve set
-        CurveArray2D<Curve2D> res = new CurveArray2D<Curve2D>();
+        CurveArray2D<Curve2D> res = new CurveArray2D<>();
         Curve2D curve;
 
         // format to ensure t is between T0 and T1
@@ -635,12 +622,12 @@ public class CurveArray2D<T extends Curve2D>
         return res;
     }
 
-    // ===================================================================
-    // methods inherited from interface Shape2D
+    @Override
     public double distance(Point2D p) {
         return distance(p.x(), p.y());
     }
 
+    @Override
     public double distance(double x, double y) {
         double dist = Double.POSITIVE_INFINITY;
         for (Curve2D curve : curves) {
@@ -649,32 +636,18 @@ public class CurveArray2D<T extends Curve2D>
         return dist;
     }
 
-    /**
-     * return true, if all curve pieces are bounded
-     */
+    @Override
     public boolean isBounded() {
-        for (Curve2D curve : curves) {
-            if (!curve.isBounded()) {
-                return false;
-            }
-        }
-        return true;
+        return curves.stream().noneMatch((curve) -> (!curve.isBounded()));
     }
 
-    /**
-     * Clips a curve, and return a CurveArray2D. If the curve is totally outside
-     * the box, return a CurveArray2D with 0 curves inside. If the curve is
-     * totally inside the box, return a CurveArray2D with only one curve, which
-     * is the original curve.
-     */
+    @Override
     public CurveSet2D<? extends Curve2D> clip(Box2D box) {
         // Simply calls the generic method in Curve2DUtils
         return Curves2D.clipCurveSet(this, box);
     }
 
-    /**
-     * Returns bounding box for the CurveArray2D.
-     */
+    @Override
     public Box2D boundingBox() {
         double xmin = Double.POSITIVE_INFINITY;
         double ymin = Double.POSITIVE_INFINITY;
@@ -693,58 +666,44 @@ public class CurveArray2D<T extends Curve2D>
         return new Box2D(xmin, xmax, ymin, ymax);
     }
 
-    /**
-     * Transforms each curve, and build a new CurveArray2D with the set of
-     * transformed curves.
-     */
+    @Override
     public CurveArray2D<? extends Curve2D> transform(AffineTransform2D trans) {
         // Allocate array for result
-        CurveArray2D<Curve2D> result = new CurveArray2D<Curve2D>(curves.size());
+        CurveArray2D<Curve2D> result = new CurveArray2D<>(curves.size());
 
         // add each transformed curve
-        for (Curve2D curve : curves) {
+        curves.forEach((curve) -> {
             result.add(curve.transform(trans));
-        }
+        });
         return result;
     }
 
+    @Override
     public Collection<? extends ContinuousCurve2D> continuousCurves() {
         // create array for storing result
-        ArrayList<ContinuousCurve2D> continuousCurves
-                = new ArrayList<ContinuousCurve2D>();
+        List<ContinuousCurve2D> continuousCurves = new ArrayList<>();
 
         // Iterate on curves, and add either the curve itself, or the set of
         // continuous curves making the curve
-        for (Curve2D curve : curves) {
+        curves.forEach((curve) -> {
             if (curve instanceof ContinuousCurve2D) {
                 continuousCurves.add((ContinuousCurve2D) curve);
             } else {
                 continuousCurves.addAll(curve.continuousCurves());
             }
-        }
+        });
 
         return continuousCurves;
     }
 
-    // ===================================================================
-    // methods inherited from interface Shape2D
-    /**
-     * Returns true if one of the curves contains the point
-     */
+    @Override
     public boolean contains(Point2D p) {
         return contains(p.x(), p.y());
     }
 
-    /**
-     * Returns true if one of the curves contains the point
-     */
+    @Override
     public boolean contains(double x, double y) {
-        for (Curve2D curve : curves) {
-            if (curve.contains(x, y)) {
-                return true;
-            }
-        }
-        return false;
+        return curves.stream().anyMatch((curve) -> (curve.contains(x, y)));
     }
 
     public java.awt.geom.GeneralPath getGeneralPath() {
@@ -752,7 +711,7 @@ public class CurveArray2D<T extends Curve2D>
         java.awt.geom.GeneralPath path = new java.awt.geom.GeneralPath();
 
         // check case of empty curve set
-        if (curves.size() == 0) {
+        if (curves.isEmpty()) {
             return path;
         }
 
@@ -768,25 +727,19 @@ public class CurveArray2D<T extends Curve2D>
         return path;
     }
 
-    /* (non-Javadoc)
-     * @see math.geom2d.curve.Curve2D#getAsAWTShape()
-     */
+    @Override
     public Shape asAwtShape() {
         return this.getGeneralPath();
     }
 
+    @Override
     public void draw(Graphics2D g2) {
-        for (Curve2D curve : curves) {
+        curves.forEach((curve) -> {
             curve.draw(g2);
-        }
+        });
     }
 
-    // ===================================================================
-    // methods implementing GeometricObject2D interface
-
-    /* (non-Javadoc)
-	 * @see math.geom2d.GeometricObject2D#almostEquals(math.geom2d.GeometricObject2D, double)
-     */
+    @Override
     public boolean almostEquals(GeometricObject2D obj, double eps) {
         if (this == obj) {
             return true;
@@ -814,12 +767,6 @@ public class CurveArray2D<T extends Curve2D>
         return true;
     }
 
-    // ===================================================================
-    // methods inherited from interface Object
-    /**
-     * Returns true if obj is a CurveArray2D with the same number of curves, and
-     * such that each curve belongs to both objects.
-     */
     @Override
     public boolean equals(Object obj) {
         // check class, and cast type
@@ -844,26 +791,14 @@ public class CurveArray2D<T extends Curve2D>
         return true;
     }
 
-    /**
-     * @deprecated use copy constructor instead (0.11.2)
-     */
-    @Deprecated
-    public CurveArray2D<? extends Curve2D> clone() {
-        ArrayList<Curve2D> array = new ArrayList<Curve2D>(curves.size());
-        for (T curve : curves) {
-            array.add(curve);
-        }
-        return new CurveArray2D<Curve2D>(array);
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.curves);
+        return hash;
     }
 
-    // ===================================================================
-    // methods implementing the Iterable interface
-
-    /*
-     * (non-Javadoc)
-     * 
-     * @see java.lang.Iterable#iterator()
-     */
+    @Override
     public Iterator<T> iterator() {
         return curves.iterator();
     }

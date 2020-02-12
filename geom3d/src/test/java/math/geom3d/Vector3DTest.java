@@ -1,6 +1,11 @@
 package math.geom3d;
 
 import junit.framework.TestCase;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.MatrixUtils;
+import org.apache.commons.math3.linear.QRDecomposition;
+import org.apache.commons.math3.linear.RealVector;
 
 public class Vector3DTest extends TestCase {
 
@@ -38,6 +43,11 @@ public class Vector3DTest extends TestCase {
 		assertTrue(Vector3D.isOrthogonal(v1, v3));
 		assertTrue(Vector3D.isOrthogonal(v2, v3));
 	}
+        
+        public void testMakeOrthogonal() {
+            Vector3D v1 = new Vector3D(1, 0, 0);
+            
+        }
 
 	public void testPlus() {
 		Vector3D v1 = new Vector3D(1, 2, 3);

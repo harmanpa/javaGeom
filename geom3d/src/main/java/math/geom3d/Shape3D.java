@@ -35,8 +35,6 @@ import math.geom3d.transform.*;
  */
 public interface Shape3D {
 
-    public final static double  ACCURACY  = 1e-12;
-
     public abstract boolean isEmpty();
 
     /**

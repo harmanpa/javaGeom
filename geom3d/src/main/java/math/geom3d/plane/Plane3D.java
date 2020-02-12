@@ -1,16 +1,20 @@
 /**
- * 
+ *
  */
-
 package math.geom3d.plane;
 
 import math.geom2d.Point2D;
+import math.geom2d.Tolerance2D;
 import math.geom3d.Box3D;
 import math.geom3d.Point3D;
 import math.geom3d.Shape3D;
 import math.geom3d.Vector3D;
 import math.geom3d.line.StraightLine3D;
 import math.geom3d.transform.AffineTransform3D;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.QRDecomposition;
+import org.apache.commons.math3.linear.RealVector;
 
 /**
  * @author dlegland
@@ -19,10 +23,9 @@ public class Plane3D implements Shape3D {
 
     // ===================================================================
     // class variables
-
-    protected double x0  = 0;
-    protected double y0  = 0;
-    protected double z0  = 0;
+    protected double x0 = 0;
+    protected double y0 = 0;
+    protected double z0 = 0;
     protected double dx1 = 1;
     protected double dy1 = 0;
     protected double dz1 = 0;
@@ -32,7 +35,6 @@ public class Plane3D implements Shape3D {
 
     // ===================================================================
     // static methods
-
     public final static Plane3D createXYPlane() {
         return new Plane3D(new Point3D(0, 0, 0), new Vector3D(1, 0, 0),
                 new Vector3D(0, 1, 0));
@@ -50,8 +52,11 @@ public class Plane3D implements Shape3D {
 
     // ===================================================================
     // constructors
-
     public Plane3D() {
+    }
+    
+    public Plane3D(Point3D point, Vector3D normal) {
+        
     }
 
     public Plane3D(Point3D point, Vector3D vector1, Vector3D vector2) {
@@ -68,7 +73,6 @@ public class Plane3D implements Shape3D {
 
     // ===================================================================
     // methods specific to Plane3D
-
     public Point3D origin() {
         return new Point3D(x0, y0, z0);
     }
@@ -82,8 +86,9 @@ public class Plane3D implements Shape3D {
     }
 
     /**
-     * Returns a normal vector that points towards the outside part of the plane.
-     * 
+     * Returns a normal vector that points towards the outside part of the
+     * plane.
+     *
      * @return the outer normal vector.
      */
     public Vector3D normal() {
@@ -95,7 +100,7 @@ public class Plane3D implements Shape3D {
      * Compute intersection of a line with this plane. Uses algorithm 1 given
      * in: <a href="http://local.wasp.uwa.edu.au/~pbourke/geometry/planeline/">
      * http://local.wasp.uwa.edu.au/~pbourke/geometry/planeline/</a>.
-     * 
+     *
      * @param line the line which intersects the plane
      * @return the intersection point
      */
@@ -109,7 +114,7 @@ public class Plane3D implements Shape3D {
         // compute ratio of dot products,
         // see http://local.wasp.uwa.edu.au/~pbourke/geometry/planeline/
         double t = Vector3D.dotProduct(n, dp)
-                /Vector3D.dotProduct(n, line.direction());
+                / Vector3D.dotProduct(n, line.direction());
 
         return line.point(t);
     }
@@ -120,20 +125,22 @@ public class Plane3D implements Shape3D {
     }
 
     public Vector3D projectVector(Vector3D vect) {
-        Point3D point = new Point3D(x0+vect.getX(), y0+vect.getY(), z0
-                +vect.getZ());
+        Point3D point = new Point3D(x0 + vect.getX(), y0 + vect.getY(), z0
+                + vect.getZ());
         point = this.projectPoint(point);
-        return new Vector3D(point.getX()-x0, point.getY()-y0, point.getZ()-z0);
+        return new Vector3D(point.getX() - x0, point.getY() - y0, point.getZ() - z0);
     }
 
     public Point3D point(double u, double v) {
-        return new Point3D(x0+u*dx1+v*dx2, y0+u*dy1+v*dy2, z0+u*dz1+v*dz2);
+        return new Point3D(x0 + u * dx1 + v * dx2, y0 + u * dy1 + v * dy2, z0 + u * dz1 + v * dz2);
     }
 
     public Point2D pointPosition(Point3D point) {
-        point = this.projectPoint(point);
-        // TODO: complete it
-        return null;
+        RealVector xy = new QRDecomposition(
+                new Array2DRowRealMatrix(new double[][]{{dx1, dx2}, {dy1, dy2}, {dz1, dz2}}))
+                .getSolver()
+                .solve(new ArrayRealVector(new double[]{point.getX() - x0, point.getY() - y0, point.getZ() - z0}));
+        return new Point2D(xy.getEntry(0), xy.getEntry(1));
     }
 
     // ===================================================================
@@ -156,7 +163,7 @@ public class Plane3D implements Shape3D {
      */
     public boolean contains(Point3D point) {
         Point3D proj = this.projectPoint(point);
-        return (point.distance(proj)<Shape3D.ACCURACY);
+        return (point.distance(proj) < Tolerance2D.get());
     }
 
     /*
@@ -166,22 +173,25 @@ public class Plane3D implements Shape3D {
      */
     public Box3D boundingBox() {
         // plane parallel to XY plane
-        if (Math.abs(dz1)<Shape3D.ACCURACY&&Math.abs(dz2)<Shape3D.ACCURACY)
+        if (Math.abs(dz1) < Tolerance2D.get() && Math.abs(dz2) < Tolerance2D.get()) {
             return new Box3D(Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY, z0, z0);
+        }
 
         // plane parallel to YZ plane
-        if (Math.abs(dx1)<Shape3D.ACCURACY&&Math.abs(dx2)<Shape3D.ACCURACY)
+        if (Math.abs(dx1) < Tolerance2D.get() && Math.abs(dx2) < Tolerance2D.get()) {
             return new Box3D(x0, x0, Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY);
+        }
 
         // plane parallel to XZ plane
-        if (Math.abs(dy1)<Shape3D.ACCURACY&&Math.abs(dy2)<Shape3D.ACCURACY)
+        if (Math.abs(dy1) < Tolerance2D.get() && Math.abs(dy2) < Tolerance2D.get()) {
             return new Box3D(Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY, y0, y0, Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY);
+        }
 
         return new Box3D(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
                 Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
@@ -227,32 +237,38 @@ public class Plane3D implements Shape3D {
 
     // ===================================================================
     // methods overriding Object superclass
-
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Plane3D))
+        if (!(obj instanceof Plane3D)) {
             return false;
+        }
         Plane3D plane = (Plane3D) obj;
 
-        if (Math.abs(this.x0-plane.x0)>Shape3D.ACCURACY)
+        if (Math.abs(this.x0 - plane.x0) > Tolerance2D.get()) {
             return false;
-        if (Math.abs(this.y0-plane.y0)>Shape3D.ACCURACY)
+        }
+        if (Math.abs(this.y0 - plane.y0) > Tolerance2D.get()) {
             return false;
-        if (Math.abs(this.z0-plane.z0)>Shape3D.ACCURACY)
+        }
+        if (Math.abs(this.z0 - plane.z0) > Tolerance2D.get()) {
             return false;
-        if (Math.abs(this.dx1-plane.dx1)>Shape3D.ACCURACY)
+        }
+        if (Math.abs(this.dx1 - plane.dx1) > Tolerance2D.get()) {
             return false;
-        if (Math.abs(this.dy1-plane.dy1)>Shape3D.ACCURACY)
+        }
+        if (Math.abs(this.dy1 - plane.dy1) > Tolerance2D.get()) {
             return false;
-        if (Math.abs(this.dz1-plane.dz1)>Shape3D.ACCURACY)
+        }
+        if (Math.abs(this.dz1 - plane.dz1) > Tolerance2D.get()) {
             return false;
-        if (Math.abs(this.dx2-plane.dx2)>Shape3D.ACCURACY)
+        }
+        if (Math.abs(this.dx2 - plane.dx2) > Tolerance2D.get()) {
             return false;
-        if (Math.abs(this.dy2-plane.dy2)>Shape3D.ACCURACY)
+        }
+        if (Math.abs(this.dy2 - plane.dy2) > Tolerance2D.get()) {
             return false;
-        if (Math.abs(this.dz2-plane.dz2)>Shape3D.ACCURACY)
-            return false;
-        return true;
+        }
+        return Math.abs(this.dz2 - plane.dz2) <= Tolerance2D.get();
     }
 
 }

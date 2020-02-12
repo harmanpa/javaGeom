@@ -1,12 +1,12 @@
 /**
- * 
+ *
  */
-
 package math.geom3d;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import math.geom2d.Tolerance2D;
 
 import math.geom3d.transform.AffineTransform3D;
 
@@ -19,13 +19,14 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
 
     public PointSet3D() {
     }
-    
+
     /**
      * Creates a new point set and allocate memory for storing the points.
+     *
      * @param n the number of points to store
      */
     public PointSet3D(int n) {
-    	this.points = new ArrayList<Point3D>(n);
+        this.points = new ArrayList<Point3D>(n);
     }
 
     /**
@@ -33,15 +34,16 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      * Point3D with the same location.
      */
     public PointSet3D(Point3D[] points) {
-        for (Point3D element : points)
+        for (Point3D element : points) {
             this.points.add(element);
+        }
     }
 
     /**
      * Points must be a collection of java.awt.Point. Instances of Point3D are
      * directly added, other Point are converted to Point3D with the same
      * location.
-     * 
+     *
      * @param points
      */
     public PointSet3D(Collection<? extends Point3D> points) {
@@ -53,7 +55,7 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
     /**
      * Adds a new point to the set of point. If point is not an instance of
      * Point3D, a Point3D with same location is added instead of point.
-     * 
+     *
      * @param point
      */
     public void addPoint(Point3D point) {
@@ -62,12 +64,13 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
 
     /**
      * Add a series of points
-     * 
+     *
      * @param points an array of points
      */
     public void addPoints(Point3D[] points) {
-        for (Point3D element : points)
+        for (Point3D element : points) {
             this.addPoint(element);
+        }
     }
 
     public void addPoints(Collection<Point3D> points) {
@@ -76,7 +79,7 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
 
     /**
      * Returns an iterator on the internal point collection.
-     * 
+     *
      * @return the collection of points
      */
     public Iterator<Point3D> getPoints() {
@@ -92,7 +95,7 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
 
     /**
      * Returns the number of points in the set.
-     * 
+     *
      * @return the number of points
      */
     public int pointNumber() {
@@ -112,8 +115,9 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
         Shape3D clipped;
         for (Point3D point : points) {
             clipped = point.clip(box);
-            if (clipped != null)
+            if (clipped != null) {
                 res.addPoint(point);
+            }
         }
         return res;
     }
@@ -143,23 +147,27 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      * @see math.geom3d.Shape3D#getDistance(math.geom3d.Point3D)
      */
     public double distance(Point3D p) {
-        if (points.isEmpty())
+        if (points.isEmpty()) {
             return Double.POSITIVE_INFINITY;
+        }
         double dist = Double.POSITIVE_INFINITY;
-        for (Point3D point : points)
+        for (Point3D point : points) {
             dist = Math.min(dist, point.distance(p));
+        }
         return dist;
     }
 
     public boolean contains(Point3D point) {
-        for (Point3D p : points)
-            if (point.distance(p)<Shape3D.ACCURACY)
+        for (Point3D p : points) {
+            if (point.distance(p) < Tolerance2D.get()) {
                 return true;
+            }
+        }
         return false;
     }
 
     public boolean isEmpty() {
-        return points.size()==0;
+        return points.size() == 0;
     }
 
     public boolean isBounded() {
@@ -173,8 +181,9 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      */
     public Shape3D transform(AffineTransform3D trans) {
         PointSet3D res = new PointSet3D();
-        for (Point3D point : points)
+        for (Point3D point : points) {
             res.addPoint(point.transform(trans));
+        }
         return res;
     }
 
