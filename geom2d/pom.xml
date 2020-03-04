@@ -4,7 +4,7 @@
     <parent>
         <groupId>jgeom</groupId>
         <artifactId>jgeom</artifactId>
-        <version>0.12</version>
+        <version>dev</version>
     </parent>
     <artifactId>geom2d</artifactId>
     <packaging>jar</packaging>

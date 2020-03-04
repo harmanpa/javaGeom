@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>jgeom</groupId>
     <artifactId>jgeom</artifactId>
-    <version>0.12</version>
+    <version>dev</version>
     <packaging>pom</packaging>
     <distributionManagement>
         <repository>
@@ -20,6 +20,12 @@
         <module>geom2d-check</module>
         <module>geom2d-demo</module>
         <module>geom2d-tune</module>
+		<module>geom2d-math</module>
+		<module>geom2d-svg</module>
+		<module>geom2d-csg</module>
+		<module>geom2d-decomposition</module>
+		<module>geom2d-contours</module>
+		<module>geom2d-font</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

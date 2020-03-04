@@ -6,7 +6,7 @@
         <artifactId>jgeom</artifactId>
         <version>dev</version>
     </parent>
-    <artifactId>geom3d</artifactId>
+    <artifactId>geom2d-font</artifactId>
     <packaging>jar</packaging>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -14,20 +14,14 @@
     </properties>
     <dependencies>
         <dependency>
-            <groupId>junit</groupId>
-            <artifactId>junit</artifactId>
-            <version>4.12</version>
-            <scope>test</scope>
+            <groupId>com.google.apis</groupId>
+            <artifactId>google-api-services-webfonts</artifactId>
+            <version>v1-rev20160302-1.30.1</version>
         </dependency>
         <dependency>
-            <groupId>jgeom</groupId>
-            <artifactId>geom2d</artifactId>
-            <version>${project.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
+            <groupId>batik</groupId>
+            <artifactId>batik-ttf2svg</artifactId>
+            <version>1.6-1</version>
         </dependency>
     </dependencies>
 </project>

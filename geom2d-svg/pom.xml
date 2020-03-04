@@ -6,12 +6,18 @@
         <artifactId>jgeom</artifactId>
         <version>dev</version>
     </parent>
-    <artifactId>geom3d</artifactId>
+    <artifactId>geom2d-svg</artifactId>
     <packaging>jar</packaging>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
     </properties>
+    <repositories>
+        <repository>
+            <id>jitpack.io</id>
+            <url>https://jitpack.io</url>
+        </repository>
+    </repositories>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -20,14 +26,29 @@
             <scope>test</scope>
         </dependency>
         <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-parser</artifactId>
+            <version>1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-svggen</artifactId>
+            <version>1.11</version>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.xmlgraphics</groupId>
+            <artifactId>batik-dom</artifactId>
+            <version>1.11</version>
+        </dependency>
+        <dependency>
             <groupId>jgeom</groupId>
             <artifactId>geom2d</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
+            <groupId>jgeom</groupId>
+            <artifactId>geom2d-math</artifactId>
+            <version>${project.version}</version>
         </dependency>
     </dependencies>
 </project>

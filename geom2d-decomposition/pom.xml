@@ -6,7 +6,7 @@
         <artifactId>jgeom</artifactId>
         <version>dev</version>
     </parent>
-    <artifactId>geom3d</artifactId>
+    <artifactId>geom2d-decomposition</artifactId>
     <packaging>jar</packaging>
     <properties>
         <maven.compiler.source>1.8</maven.compiler.source>
@@ -20,14 +20,19 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>jgeom</groupId>
+            <groupId>${project.groupId}</groupId>
             <artifactId>geom2d</artifactId>
             <version>${project.version}</version>
         </dependency>
         <dependency>
-            <groupId>org.apache.commons</groupId>
-            <artifactId>commons-math3</artifactId>
-            <version>3.6.1</version>
+            <groupId>org.orbisgis</groupId>
+            <artifactId>poly2tri-core</artifactId>
+            <version>0.1.2</version>
+        </dependency>
+        <dependency>
+            <groupId>org.jgrapht</groupId>
+            <artifactId>jgrapht-core</artifactId>
+            <version>1.4.0</version>
         </dependency>
     </dependencies>
 </project>
