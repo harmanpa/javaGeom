@@ -18,6 +18,13 @@
             <url>https://jitpack.io</url>
         </repository>
     </repositories>
+	<distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Github JGeom</name>
+            <url>https://maven.pkg.github.com/harmanpa/jgeom</url>
+        </repository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

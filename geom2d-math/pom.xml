@@ -25,6 +25,13 @@
             </snapshots>
         </repository>
     </repositories>
+	<distributionManagement>
+        <repository>
+            <id>github</id>
+            <name>Github JGeom</name>
+            <url>https://maven.pkg.github.com/harmanpa/jgeom</url>
+        </repository>
+    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>
@@ -32,11 +39,6 @@
             <version>4.12</version>
             <scope>test</scope>
         </dependency>
-        <!--        <dependency>
-            <groupId>com.github.harmanpa.jgeom</groupId>
-            <artifactId>geom2d</artifactId>
-            <version>master-SNAPSHOT</version>
-        </dependency>-->
         <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-math3</artifactId>
