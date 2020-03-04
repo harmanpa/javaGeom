@@ -29,7 +29,7 @@
         <repository>
             <id>github</id>
             <name>Github JGeom</name>
-            <url>https://maven.pkg.github.com/harmanpa</url>
+            <url>https://maven.pkg.github.com/harmanpa/jgeom</url>
         </repository>
     </distributionManagement>
     <dependencies>
