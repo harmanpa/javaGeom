@@ -7,16 +7,9 @@
     <packaging>pom</packaging>
     <distributionManagement>
         <repository>
-            <repository>
-                <id>bintray-harmanpa-caetechpublic</id>
-                <name>harmanpa-caetechpublic</name>
-                <url>https://api.bintray.com/maven/harmanpa/caetechpublic/[PACKAGE_NAME]/;publish=1</url>
-                </repository>
-            <uniqueVersion>false</uniqueVersion>
-            <id>Github</id>
-            <name>Github</name>
-            <url>https://maven.pkg.github.com/harmanpa/jgeom</url>
-            <layout>default</layout>
+            <id>bintray-harmanpa-caetechpublic</id>
+            <name>harmanpa-caetechpublic</name>
+            <url>https://api.bintray.com/maven/harmanpa/caetechpublic/jgeom/;publish=1</url>
         </repository>
     </distributionManagement>
     <modules>
