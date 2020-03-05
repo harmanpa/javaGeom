@@ -5,11 +5,11 @@
     <version>dev</version>
     <artifactId>geom2d-contours</artifactId>
     <packaging>jar</packaging>
-	<distributionManagement>
+    <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>Github JGeom</name>
-            <url>https://maven.pkg.github.com/harmanpa/jgeom</url>
+            <id>bintray-harmanpa-caetechpublic</id>
+            <name>harmanpa-caetechpublic</name>
+            <url>https://api.bintray.com/maven/harmanpa/caetechpublic/jgeom/;publish=1</url>
         </repository>
     </distributionManagement>
     <dependencies>
