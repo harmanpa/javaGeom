@@ -10,5 +10,10 @@
             <username>harmanpa</username>
             <password>${env.BINTRAY_PASSWORD}</password>
         </server>
+        <server>
+            <id>dist</id>
+            <username>dist</username>
+            <password>${env.DIST_PASSWORD}</password>
+        </server>
     </servers>
 </settings>

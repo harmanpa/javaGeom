@@ -13,9 +13,14 @@
     </repositories>
     <distributionManagement>
         <repository>
-            <id>bintray-harmanpa-caetechpublic</id>
-            <name>harmanpa-caetechpublic</name>
-            <url>https://api.bintray.com/maven/harmanpa/caetechpublic/jgeom/;publish=1</url>
+            <id>dist</id>
+            <url>https://caetech.maven.distrepos.com/caetech</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </distributionManagement>
     <dependencies>

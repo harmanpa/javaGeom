@@ -5,11 +5,16 @@
     <version>dev</version>
     <artifactId>geom2d-check</artifactId>
     <packaging>jar</packaging>
-	<distributionManagement>
+    <distributionManagement>
         <repository>
-            <id>github</id>
-            <name>Github JGeom</name>
-            <url>https://maven.pkg.github.com/harmanpa/jgeom</url>
+            <id>dist</id>
+            <url>https://caetech.maven.distrepos.com/caetech</url>
+            <releases>
+                <enabled>true</enabled>
+            </releases>
+            <snapshots>
+                <enabled>true</enabled>
+            </snapshots>
         </repository>
     </distributionManagement>
     <dependencies>
