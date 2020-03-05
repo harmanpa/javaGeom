@@ -29,6 +29,9 @@
         <module>geom2d-decomposition</module>
         <module>geom2d-contours</module>
         <module>geom2d-font</module>
+		<module>geom2d-clipper</module>
+		<module>geom2d-binpacking</module>
+		<module>geom2d-nesting</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
