@@ -5,27 +5,9 @@
         <groupId>jgeom</groupId>
         <artifactId>jgeom</artifactId>
         <version>dev</version>
-	</parent>
+    </parent>
     <artifactId>geom2d-csg</artifactId>
     <packaging>jar</packaging>
-    <repositories>
-        <repository>
-            <id>jitpack.io</id>
-            <url>https://jitpack.io</url>
-        </repository>
-    </repositories>
-    <distributionManagement>
-        <repository>
-            <id>dist</id>
-            <url>https://caetech.maven.distrepos.com/caetech</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>jgeom</groupId>

@@ -7,7 +7,7 @@
         <version>dev</version>
 	</parent>
     <artifactId>geom2d-binpacking</artifactId>
-    <packaging>jar</packaging>
+    <packaging>jar</packaging>    
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

@@ -5,7 +5,7 @@
         <groupId>jgeom</groupId>
         <artifactId>jgeom</artifactId>
         <version>dev</version>
-	</parent>
+    </parent>
     <artifactId>geom2d-math</artifactId>
     <packaging>jar</packaging>
     <repositories>
@@ -13,30 +13,7 @@
             <id>jitpack.io</id>
             <url>https://jitpack.io</url>
         </repository>
-        <repository>
-            <id>maven-snapshots</id>
-            <url>http://oss.sonatype.org/content/repositories/snapshots</url>
-            <layout>default</layout>
-            <releases>
-                <enabled>false</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
     </repositories>
-    <distributionManagement>
-        <repository>
-            <id>dist</id>
-            <url>https://caetech.maven.distrepos.com/caetech</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>junit</groupId>

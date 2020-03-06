@@ -1,7 +1,0 @@
-tech\cae\binpacking\exceptions\PackingException.class
-tech\cae\binpacking\Strip.class
-tech\cae\binpacking\exceptions\IntersectionException.class
-tech\cae\binpacking\Convex.class
-tech\cae\binpacking\exceptions\ConvexHullException.class
-tech\cae\binpacking\M.class
-tech\cae\binpacking\Pack.class

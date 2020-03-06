@@ -1,15 +1,4 @@
 /.settings/
 .classpath
 .project
-/target/
-/geom2d/target/
-/geom2d-check/target/
-/geom2d-demo/target/
-/geom2d-tune/target/
-/geom3d/target/
-/geom2d-font/target/
-/geom2d-contours/target/
-/geom2d-csg/target/
-/geom2d-decomposition/target/
-/geom2d-math/target/
-/geom2d-svg/target/
+target/

@@ -8,18 +8,6 @@
 	</parent>
     <artifactId>geom2d-check</artifactId>
     <packaging>jar</packaging>
-    <distributionManagement>
-        <repository>
-            <id>dist</id>
-            <url>https://caetech.maven.distrepos.com/caetech</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
-        </repository>
-    </distributionManagement>
     <dependencies>
         <dependency>
             <groupId>jgeom</groupId>

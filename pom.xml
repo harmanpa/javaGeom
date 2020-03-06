@@ -7,14 +7,9 @@
     <packaging>pom</packaging>
     <distributionManagement>
         <repository>
-            <id>dist</id>
-            <url>https://caetech.maven.distrepos.com/caetech</url>
-            <releases>
-                <enabled>true</enabled>
-            </releases>
-            <snapshots>
-                <enabled>true</enabled>
-            </snapshots>
+            <id>github</id>
+            <name>Github jgeom</name>
+            <url>https://maven.pkg.github.com/harmanpa/jgeom</url>
         </repository>
     </distributionManagement>
     <modules>
@@ -29,9 +24,9 @@
         <module>geom2d-decomposition</module>
         <module>geom2d-contours</module>
         <module>geom2d-font</module>
-		<module>geom2d-clipper</module>
-		<module>geom2d-binpacking</module>
-		<module>geom2d-nesting</module>
+        <module>geom2d-clipper</module>
+        <module>geom2d-binpacking</module>
+        <module>geom2d-nesting</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
