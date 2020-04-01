@@ -128,7 +128,7 @@ public class Rings2D {
         return new SimplePolygon2D(points);
     }
 
-    static List<CirculinearCurve2D> fromPolygon(Polygon2D polygon) {
+    public static List<CirculinearCurve2D> fromPolygon(Polygon2D polygon) {
         List<CirculinearCurve2D> out = new ArrayList<>();
         if (polygon instanceof MultiPolygon2D) {
             ((MultiPolygon2D) polygon).contours().forEach(p -> out.addAll(fromPolygon(new SimplePolygon2D(p))));

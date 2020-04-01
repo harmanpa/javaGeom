@@ -483,6 +483,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.ContinuousCurve2D#asPolyline(int)
      */
+    @Override
     public Polyline2D asPolyline(int n) {
 
         // compute increment value

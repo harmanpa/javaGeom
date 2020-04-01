@@ -29,13 +29,16 @@ public abstract class AbstractContinuousCurve2D
 
     /**
      * Wrap the given curve into an array list with the appropriate generic.
+     * @param <T>
+     * @param curve
+     * @return 
      */
     protected static <T extends ContinuousCurve2D> Collection<T> wrapCurve(T curve) {
-        ArrayList<T> list = new ArrayList<T>(1);
+        ArrayList<T> list = new ArrayList<>(1);
         list.add(curve);
         return list;
     }
-
+    
     /**
      * Converts this continuous curve to an instance of LinearCurve2D with the
      * given number of edges. Returns either an instance of Polyline2D or
@@ -44,6 +47,7 @@ public abstract class AbstractContinuousCurve2D
      *
      * @see math.geom2d.curve.ContinuousCurve2D#asPolyline(int)
      */
+    @Override
     public LinearCurve2D asPolyline(int n) {
         // Check that the curve is bounded
         if (!this.isBounded()) {

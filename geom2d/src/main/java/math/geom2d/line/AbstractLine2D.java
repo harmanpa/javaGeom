@@ -381,6 +381,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      * Returns the unique intersection with a linear shape. If the intersection
      * doesn't exist (parallel lines, short edges), return null.
      */
+    @Override
     public Point2D intersection(LinearShape2D line) {
         Vector2D vect = line.direction();
         double dx2 = vect.x();

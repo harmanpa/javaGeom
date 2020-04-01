@@ -20,9 +20,7 @@
  * The Free Software Foundation, Inc., 59 Temple Place, Suite 330,
  * Boston, MA 02111-1307, USA.
  */
-
 // package
-
 package math.geom2d.curve;
 
 // Imports
@@ -32,6 +30,7 @@ import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.Vector2D;
 import math.geom2d.polygon.LinearCurve2D;
+import math.geom2d.polygon.Polyline2D;
 
 /**
  * Interface for all curves which can be drawn with one stroke. This includes
@@ -41,20 +40,17 @@ import math.geom2d.polygon.LinearCurve2D;
  * curves.
  * <p>
  * Such curves accept parametric representation, in the form :
- * <code>p(t)={x(t),y(t)}</code>, with <code>t</code> contained in
- * appropriate domain. Bounds of domain of definition can be obtained by methods
+ * <code>p(t)={x(t),y(t)}</code>, with <code>t</code> contained in appropriate
+ * domain. Bounds of domain of definition can be obtained by methods
  * <code>t0()</code> and <code>t1()</code>.
  * <p>
  */
-
 public interface ContinuousCurve2D extends Curve2D {
 
     // ===================================================================
     // constants
-
     // ===================================================================
     // general methods
-
     /**
      * Returns true if the curve makes a loop, that is come back to starting
      * point after covering the path.
@@ -62,50 +58,66 @@ public interface ContinuousCurve2D extends Curve2D {
     public abstract boolean isClosed();
 
     /**
-     * Computes the left tangent at the given position. 
-     * If the curve is smooth at position <code>t</code>, the result is the
-     * same as the tangent computed for the corresponding smooth curve, and 
-     * is equal to the result of rightTangent(double).
-     * If the position <code>t</code> corresponds to a singular point, the
-     * tangent of the smooth portion before <code>t</code> is computed.  
+     * Computes the left tangent at the given position. If the curve is smooth
+     * at position <code>t</code>, the result is the same as the tangent
+     * computed for the corresponding smooth curve, and is equal to the result
+     * of rightTangent(double). If the position <code>t</code> corresponds to a
+     * singular point, the tangent of the smooth portion before <code>t</code>
+     * is computed.
+     *
      * @param t the position on the curve
      * @return the left tangent vector at the curve for position t
      */
     public Vector2D leftTangent(double t);
-    
+
     /**
-     * Computes the right tangent at the given position. 
-     * If the curve is smooth at position <code>t</code>, the result is the
-     * same as the tangent computed for the corresponding smooth curve, and 
-     * is equal to the result of leftTangent(double).
-     * If the position <code>t</code> corresponds to a singular point, the
-     * tangent of the smooth portion after <code>t</code> is computed.  
+     * Computes the right tangent at the given position. If the curve is smooth
+     * at position <code>t</code>, the result is the same as the tangent
+     * computed for the corresponding smooth curve, and is equal to the result
+     * of leftTangent(double). If the position <code>t</code> corresponds to a
+     * singular point, the tangent of the smooth portion after <code>t</code> is
+     * computed.
+     *
      * @param t the position on the curve
      * @return the right tangent vector at the curve for position t
      */
     public Vector2D rightTangent(double t);
-    
+
     /**
-     * Computes the curvature at the given position. The curvature is finite
-     * for positions <code>t</code> that correspond to smooth parts, and is
-     * infinite for singular points. 
+     * Computes the curvature at the given position. The curvature is finite for
+     * positions <code>t</code> that correspond to smooth parts, and is infinite
+     * for singular points.
+     *
      * @param t the position on the curve
      * @return the curvature of the curve for position t
      */
     public abstract double curvature(double t);
 
-   
     /**
      * Returns a set of smooth curves.
+     * @return 
      */
     public abstract Collection<? extends SmoothCurve2D> smoothPieces();
+
+//    /**
+//     * Returns an approximation of the curve as a polyline with the number of
+//     * line segments calculated to minimise error.If the curve is closed, the
+//     * method should return an instance of LinearRing2D.Otherwise, it returns an
+//     * instance of Polyline2D. The parameter inside indicates whether arcs
+//     * should circumscribe the polyline, or vice versa.
+//     *
+//     * @param maxError
+//     * @param inside
+//     * @return a polyline with maxError maximum error *
+//     */
+//    public abstract LinearCurve2D asPolyline(double maxError, boolean inside);
 
     /**
      * Returns an approximation of the curve as a polyline with <code>n</code>
      * line segments. If the curve is closed, the method should return an
      * instance of LinearRing2D. Otherwise, it returns an instance of
      * Polyline2D.
-     * 
+     *
      * @param n the number of line segments
      * @return a polyline with <code>n</code> line segments.
      */
@@ -113,7 +125,7 @@ public interface ContinuousCurve2D extends Curve2D {
 
     /**
      * Append the path of the curve to the given path.
-     * 
+     *
      * @param path a path to modify
      * @return the modified path
      */
@@ -125,12 +137,12 @@ public interface ContinuousCurve2D extends Curve2D {
 
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#reverse(D)
-	 */
+     */
     public abstract ContinuousCurve2D reverse();
 
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#subCurve(double, double)
-	 */
+     */
     public abstract ContinuousCurve2D subCurve(double t0, double t1);
 
     // ===================================================================
@@ -138,11 +150,11 @@ public interface ContinuousCurve2D extends Curve2D {
 
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#clip(Box2D)
-	 */
+     */
     public abstract CurveSet2D<? extends ContinuousCurve2D> clip(Box2D box);
 
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#transform(AffineTransform2D)
-	 */
+     */
     public abstract ContinuousCurve2D transform(AffineTransform2D trans);
 }
