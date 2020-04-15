@@ -119,7 +119,10 @@ public class Polygonizer {
         List<Point2D> points = new ArrayList<>();
         points.add(start);
         for (int i = 0; i < lines.size() - 1; i++) {
-            points.add(lines.get(i).intersection(lines.get(i + 1)));
+            Point2D intersection = lines.get(i).intersection(lines.get(i + 1));
+            if (intersection != null) {
+                points.add(intersection);
+            }
         }
         points.add(end);
         return new Polyline2D(points);
