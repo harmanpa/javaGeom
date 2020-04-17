@@ -2,14 +2,11 @@ package tech.cae.binpacking;
 
 //Hao Hua, Southeast University, whitegreen@163.com
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Collections;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import tech.cae.binpacking.exceptions.ConvexHullException;
 import tech.cae.binpacking.exceptions.PackingException;
 
-public class Pack implements Cloneable {
+public class Pack2D implements Cloneable {
 
     public ArrayList<Strip> fixs = new ArrayList<>();
     public ArrayList<Strip> movs = new ArrayList<>();
@@ -22,15 +19,15 @@ public class Pack implements Cloneable {
     private final double preferX; // 0.501 or 1
 
     @Override
-    public Pack clone() throws CloneNotSupportedException {
+    public Pack2D clone() throws CloneNotSupportedException {
         super.clone();
-        Pack np = new Pack(trigos, rotSteps, WID, HEI, preferX);
+        Pack2D np = new Pack2D(trigos, rotSteps, WID, HEI, preferX);
         np.movs = movs;
         np.cntConvex = cntConvex;
         return np;
     }
 
-    public Pack(double[][] trigos, int rotSteps, double WID, double HEI, double preferX) {
+    public Pack2D(double[][] trigos, int rotSteps, double WID, double HEI, double preferX) {
         this.trigos = trigos;
         this.rotSteps = rotSteps;
         this.WID = WID;
@@ -42,7 +39,7 @@ public class Pack implements Cloneable {
         return movs.isEmpty();
     }
 
-    public Pack(double[][][] polys, double offset, Double segment_max_length, int rotSteps, double WID, double HEI, double preferX) throws PackingException {
+    public Pack2D(double[][][] polys, double offset, Double segment_max_length, int rotSteps, double WID, double HEI, double preferX) throws PackingException {
         for (int i = 0; i < polys.length; i++) {
             double[][] poly = polys[i];
             Strip strip = new Strip(i, poly, offset, segment_max_length);
@@ -64,9 +61,10 @@ public class Pack implements Cloneable {
 
     private void place1stStrip() throws PackingException {
         int rotid = -1;
-        double minArea = 1000000000;
+        double minArea = Double.MAX_VALUE;
         int sid = movs.size() - 1; // ***************************************** last one
         Strip first = movs.get(sid);
+        
         for (int i = 0; i < rotSteps; i++) {
             double[][] tp = M.rotate(trigos[i], first.outps);
             double[] bd = M.boundBox(tp); // minx, maxx, miny, maxy
@@ -258,6 +256,7 @@ public class Pack implements Cloneable {
     }
 
     private boolean feasible(double[][] poly) {
+        // TODO: Changing these tests could allow parts closer to edge
         for (double[] p : poly) {
             if (p[0] < 0 || p[0] > WID) {
                 return false;
