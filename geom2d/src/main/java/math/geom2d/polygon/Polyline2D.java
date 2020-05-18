@@ -23,7 +23,6 @@
  * Created on 8 mai 2006
  *
  */
-
 package math.geom2d.polygon;
 
 import java.util.ArrayList;
@@ -43,48 +42,46 @@ import math.geom2d.transform.CircleInversion2D;
 /**
  * A polyline is a continuous curve where each piece of the curve is a
  * LineSegment2D.
- * 
+ *
  * @author dlegland
  */
 public class Polyline2D extends LinearCurve2D
-implements CirculinearContinuousCurve2D {
+        implements CirculinearContinuousCurve2D {
 
     // ===================================================================
     // Static methods
-    
     /**
-     * Static factory for creating a new Polyline2D from a collection of
-     * points.
+     * Static factory for creating a new Polyline2D from a collection of points.
+     *
      * @since 0.8.1
      */
     public static Polyline2D create(Collection<? extends Point2D> points) {
-    	return new Polyline2D(points);
+        return new Polyline2D(points);
     }
-    
+
     /**
-     * Static factory for creating a new Polyline2D from an array of
-     * points.
+     * Static factory for creating a new Polyline2D from an array of points.
+     *
      * @since 0.8.1
      */
     public static Polyline2D create(Point2D... points) {
-    	return new Polyline2D(points);
+        return new Polyline2D(points);
     }
 
-    
     // ===================================================================
     // Contructors
-
     public Polyline2D() {
-    	super(1);
+        super(1);
     }
 
     /**
      * Creates a new polyline by allocating enough memory for the specified
      * number of vertices.
+     *
      * @param nVertices
      */
     public Polyline2D(int nVertices) {
-    	super(nVertices);
+        super(nVertices);
     }
 
     public Polyline2D(Point2D initialPoint) {
@@ -100,87 +97,90 @@ implements CirculinearContinuousCurve2D {
     }
 
     public Polyline2D(double[] xcoords, double[] ycoords) {
-    	super(xcoords, ycoords);
+        super(xcoords, ycoords);
     }
-    
+
     public Polyline2D(LinearCurve2D lineString) {
-    	super(lineString.vertices);
-    	if (lineString.isClosed()) 
-    		this.vertices.add(lineString.firstPoint());
+        super(lineString.vertices);
+        if (lineString.isClosed()) {
+            this.vertices.add(lineString.firstPoint());
+        }
     }
-    
+
     // ===================================================================
     // Methods implementing LinearCurve2D methods
-
     /**
      * Returns a simplified version of this polyline, by using Douglas-Peucker
      * algorithm.
      */
     public Polyline2D simplify(double distMax) {
-    	return new Polyline2D(Polylines2D.simplifyPolyline(this.vertices, distMax));
+        return new Polyline2D(Polylines2D.simplifyPolyline(this.vertices, distMax));
     }
 
     /**
      * Returns an array of LineSegment2D. The number of edges is the number of
      * vertices minus one.
-     * 
+     *
      * @return the edges of the polyline
      */
     public Collection<LineSegment2D> edges() {
         int n = vertices.size();
         ArrayList<LineSegment2D> edges = new ArrayList<LineSegment2D>(n);
 
-        if (n < 2)
+        if (n < 2) {
             return edges;
+        }
 
-        for (int i = 0; i < n-1; i++)
-            edges.add(new LineSegment2D(vertices.get(i), vertices.get(i+1)));
+        for (int i = 0; i < n - 1; i++) {
+            edges.add(new LineSegment2D(vertices.get(i), vertices.get(i + 1)));
+        }
 
         return edges;
     }
-    
+
     public int edgeNumber() {
-    	int n = vertices.size(); 
-    	if (n > 1) 
-    		return n - 1;
-    	return 0;
+        int n = vertices.size();
+        if (n > 1) {
+            return n - 1;
+        }
+        return 0;
     }
-    
+
     public LineSegment2D edge(int index) {
-    	return new LineSegment2D(vertices.get(index), vertices.get(index+1));
+        return new LineSegment2D(vertices.get(index), vertices.get(index + 1));
     }
 
     public LineSegment2D lastEdge() {
         int n = vertices.size();
-        if (n < 2)
+        if (n < 2) {
             return null;
-        return new LineSegment2D(vertices.get(n-2), vertices.get(n-1));
+        }
+        return new LineSegment2D(vertices.get(n - 2), vertices.get(n - 1));
     }
 
     // ===================================================================
     // Methods implementing the CirculinearCurve2D interface
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see math.geom2d.circulinear.CirculinearCurve2D#transform(math.geom2d.transform.CircleInversion2D)
-	 */
-	public CirculinearContinuousCurve2D transform(CircleInversion2D inv) {
-		
-		// Create array for storing transformed arcs
-		Collection<LineSegment2D> edges = this.edges();
-		ArrayList<CirculinearContinuousCurve2D> arcs = 
-			new ArrayList<CirculinearContinuousCurve2D>(edges.size());
-		
-		// Transform each arc
-		for(LineSegment2D edge : edges) {
-			arcs.add(edge.transform(inv));
-		}
-		
-		// create the transformed shape
-		return new PolyCirculinearCurve2D<CirculinearContinuousCurve2D>(arcs);
-	}
+     */
+    public CirculinearContinuousCurve2D transform(CircleInversion2D inv) {
 
+        // Create array for storing transformed arcs
+        Collection<LineSegment2D> edges = this.edges();
+        ArrayList<CirculinearContinuousCurve2D> arcs
+                = new ArrayList<CirculinearContinuousCurve2D>(edges.size());
 
-	// ===================================================================
+        // Transform each arc
+        for (LineSegment2D edge : edges) {
+            arcs.add(edge.transform(inv));
+        }
+
+        // create the transformed shape
+        return new PolyCirculinearCurve2D<CirculinearContinuousCurve2D>(arcs);
+    }
+
+    // ===================================================================
     // Methods implementing the ContinuousCurve2D interface
 
     /*
@@ -191,9 +191,10 @@ implements CirculinearContinuousCurve2D {
     public double windingAngle(Point2D point) {
         double angle = 0;
         int n = vertices.size();
-        for (int i = 0; i<n-1; i++)
-            angle += new LineSegment2D(vertices.get(i), vertices.get(i+1))
+        for (int i = 0; i < n - 1; i++) {
+            angle += new LineSegment2D(vertices.get(i), vertices.get(i + 1))
                     .windingAngle(point);
+        }
 
         return angle;
     }
@@ -204,36 +205,39 @@ implements CirculinearContinuousCurve2D {
      * @see math.geom2d.OrientedCurve2D#isInside(Point2D)
      */
     public boolean isInside(Point2D pt) {
-        if (new LinearRing2D(this.vertexArray()).isInside(pt))
+        if (new LinearRing2D(this.vertexArray()).isInside(pt)) {
             return true;
+        }
 
         // can not compute orientation if number of vertices if too low
-		if (this.vertices.size() < 3)
-			return false;
+        if (this.vertices.size() < 3) {
+            return false;
+        }
 
-		// check line corresponding to first edge
+        // check line corresponding to first edge
         Point2D p0 = this.firstPoint();
         Point2D q0 = this.vertex(1);
-        if (new StraightLine2D(q0, p0).isInside(pt))
+        if (new StraightLine2D(q0, p0).isInside(pt)) {
             return false;
+        }
 
-		// check line corresponding to last edge
+        // check line corresponding to last edge
         Point2D p1 = this.lastPoint();
         Point2D q1 = this.vertex(this.vertexNumber() - 2);
-        if (new StraightLine2D(p1, q1).isInside(pt))
+        if (new StraightLine2D(p1, q1).isInside(pt)) {
             return false;
+        }
 
         // check line joining the two extremities
-        if (new StraightLine2D(p0, p1).isInside(pt))
+        if (new StraightLine2D(p0, p1).isInside(pt)) {
             return true;
+        }
 
         return false;
     }
 
-    
     // ===================================================================
     // Methods inherited from ContinuousCurve2D
-
     /**
      * Returns false, as Polyline2D is open by definition.
      */
@@ -241,7 +245,6 @@ implements CirculinearContinuousCurve2D {
         return false;
     }
 
-    
     // ===================================================================
     // Methods inherited from Curve2D interface
 
@@ -257,25 +260,26 @@ implements CirculinearContinuousCurve2D {
         t = Math.max(Math.min(t, t1), t0);
 
         // index of vertex before point
-        int ind0 = (int) Math.floor(t+Tolerance2D.get());
+        int ind0 = (int) Math.floor(t + Tolerance2D.get());
         double tl = t - ind0;
         Point2D p0 = vertices.get(ind0);
 
-		// check if equal to a vertex
-		if (Math.abs(t - ind0) < Tolerance2D.get())
-			return p0;
+        // check if equal to a vertex
+        if (Math.abs(t - ind0) < Tolerance2D.get()) {
+            return p0;
+        }
 
         // index of vertex after point
-        int ind1 = ind0+1;
+        int ind1 = ind0 + 1;
         Point2D p1 = vertices.get(ind1);
 
         // position on line;
-		double x0 = p0.x();
-		double y0 = p0.y();
-		double dx = p1.x() - x0;
-		double dy = p1.y() - y0;
-		return new Point2D(x0 + tl * dx, y0 + tl * dy);
-	}
+        double x0 = p0.x();
+        double y0 = p0.y();
+        double dx = p1.x() - x0;
+        double dy = p1.y() - y0;
+        return new Point2D(x0 + tl * dx, y0 + tl * dy);
+    }
 
     /**
      * Returns the number of points in the polyline, minus one.
@@ -289,18 +293,19 @@ implements CirculinearContinuousCurve2D {
      */
     @Deprecated
     public double getT1() {
-    	return t1();
+        return t1();
     }
 
-	/**
-     * Returns the last point of this polyline, or null if the polyline does 
-     * not contain any point.
+    /**
+     * Returns the last point of this polyline, or null if the polyline does not
+     * contain any point.
      */
-	@Override
+    @Override
     public Point2D lastPoint() {
-        if (vertices.size() == 0)
+        if (vertices.size() == 0) {
             return null;
-        return vertices.get(vertices.size()-1);
+        }
+        return vertices.get(vertices.size() - 1);
     }
 
     /**
@@ -310,16 +315,16 @@ implements CirculinearContinuousCurve2D {
     public Polyline2D reverse() {
         Point2D[] points2 = new Point2D[vertices.size()];
         int n = vertices.size();
-        for (int i = 0; i < n; i++)
-			points2[i] = vertices.get(n - 1 - i);
+        for (int i = 0; i < n; i++) {
+            points2[i] = vertices.get(n - 1 - i);
+        }
         return new Polyline2D(points2);
     }
 
-	@Override
+    @Override
     public Collection<? extends Polyline2D> continuousCurves() {
-    	return wrapCurve(this);
+        return wrapCurve(this);
     }
-
 
     /**
      * Return an instance of Polyline2D. If t1 is lower than t0, return an
@@ -330,13 +335,14 @@ implements CirculinearContinuousCurve2D {
 
         Polyline2D res = new Polyline2D();
 
-		if (t1 < t0)
-			return res;
+        if (t1 < t0) {
+            return res;
+        }
 
-		// number of points in the polyline
-		int indMax = (int) this.t1();
+        // number of points in the polyline
+        int indMax = (int) this.t1();
 
-      // format to ensure t is between T0 and T1
+        // format to ensure t is between T0 and T1
         t0 = Math.min(Math.max(t0, 0), indMax);
         t1 = Math.min(Math.max(t1, 0), indMax);
 
@@ -357,8 +363,9 @@ implements CirculinearContinuousCurve2D {
         res.addVertex(this.point(t0));
 
         // add all the whole points between the 2 cuts
-        for (int n = ind0 + 1; n <= ind1; n++)
+        for (int n = ind0 + 1; n <= ind1; n++) {
             res.addVertex(vertices.get(n));
+        }
 
         // add the last point
         res.addVertex(this.point(t1));
@@ -377,8 +384,9 @@ implements CirculinearContinuousCurve2D {
      */
     public Polyline2D transform(AffineTransform2D trans) {
         Point2D[] pts = new Point2D[vertices.size()];
-		for (int i = 0; i < vertices.size(); i++)
+        for (int i = 0; i < vertices.size(); i++) {
             pts[i] = trans.transform(vertices.get(i));
+        }
         return new Polyline2D(pts);
     }
 
@@ -389,15 +397,16 @@ implements CirculinearContinuousCurve2D {
      */
     public java.awt.geom.GeneralPath appendPath(java.awt.geom.GeneralPath path) {
 
-        if (vertices.size() < 2)
+        if (vertices.size() < 2) {
             return path;
+        }
 
         // get point iterator
         Iterator<Point2D> iter = vertices.iterator();
 
         // avoid first point
         Point2D point = iter.next();
-       
+
         // line to each other point
         while (iter.hasNext()) {
             point = iter.next();
@@ -412,8 +421,9 @@ implements CirculinearContinuousCurve2D {
      */
     public java.awt.geom.GeneralPath asGeneralPath() {
         java.awt.geom.GeneralPath path = new java.awt.geom.GeneralPath();
-        if (vertices.size()<2)
+        if (vertices.size() < 2) {
             return path;
+        }
 
         // get point iterator
         Iterator<Point2D> iter = vertices.iterator();
@@ -431,58 +441,67 @@ implements CirculinearContinuousCurve2D {
         return path;
     }
 
+    // ===================================================================
+    // methods implementing the GeometricObject2D interface
 
-	// ===================================================================
-	// methods implementing the GeometricObject2D interface
-
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see math.geom2d.GeometricObject2D#almostEquals(math.geom2d.GeometricObject2D, double)
-	 */
+     */
     public boolean almostEquals(GeometricObject2D obj, double eps) {
-    	if (this == obj)
-    		return true;
-    	
-        if (!(obj instanceof Polyline2D))
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Polyline2D)) {
             return false;
+        }
         Polyline2D polyline = (Polyline2D) obj;
 
-        if (vertices.size() != polyline.vertices.size())
+        if (vertices.size() != polyline.vertices.size()) {
             return false;
-        
-        for (int i = 0; i < vertices.size(); i++)
-            if (!(vertices.get(i)).almostEquals(polyline.vertices.get(i), eps))
+        }
+
+        for (int i = 0; i < vertices.size(); i++) {
+            if (!(vertices.get(i)).almostEquals(polyline.vertices.get(i), eps)) {
                 return false;
+            }
+        }
         return true;
     }
 
     // ===================================================================
     // Methods inherited from the Object Class
-
     @Override
     public boolean equals(Object object) {
-    	if (this==object)
-    		return true;
-        if (!(object instanceof Polyline2D))
+        if (this == object) {
+            return true;
+        }
+        if (!(object instanceof Polyline2D)) {
             return false;
+        }
         Polyline2D polyline = (Polyline2D) object;
 
-        if (vertices.size()!=polyline.vertices.size())
+        if (vertices.size() != polyline.vertices.size()) {
             return false;
-        for (int i = 0; i<vertices.size(); i++)
-            if (!(vertices.get(i)).equals(polyline.vertices.get(i)))
+        }
+        for (int i = 0; i < vertices.size(); i++) {
+            if (!(vertices.get(i)).equals(polyline.vertices.get(i))) {
                 return false;
+            }
+        }
         return true;
     }
-    
-	/**
-	 * @deprecated use copy constructor instead (0.11.2)
-	 */
-	@Deprecated
+
+    /**
+     * @deprecated use copy constructor instead (0.11.2)
+     */
+    @Deprecated
     @Override
     public Polyline2D clone() {
         ArrayList<Point2D> array = new ArrayList<Point2D>(vertices.size());
-        for(Point2D point : vertices)
+        for (Point2D point : vertices) {
             array.add(point);
+        }
         return new Polyline2D(array);
     }
 

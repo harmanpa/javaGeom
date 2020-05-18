@@ -341,7 +341,7 @@ public class QuadBezierCurve2D extends AbstractSmoothCurve2D
         t0 = Math.max(t0, 0);
         t1 = Math.min(t1, 1);
         if (t0 > t1) {
-            return null;
+            return reverse().subCurve(t0, t1);
         }
 
         // Extreme points

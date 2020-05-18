@@ -284,7 +284,7 @@ public class ParabolaArc2D extends AbstractSmoothCurve2D
 
     public ParabolaArc2D subCurve(double t0, double t1) {
         if (t1 < t0) {
-            return null;
+            return reverse().subCurve(t0, t1);
         }
         t0 = max(this.t0, t0);
         t1 = min(this.t1, t1);

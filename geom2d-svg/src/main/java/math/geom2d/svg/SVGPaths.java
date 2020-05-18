@@ -13,6 +13,7 @@ import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import math.geom2d.Point2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.circulinear.CirculinearCurve2D;
 import math.geom2d.circulinear.CirculinearElement2D;
 import math.geom2d.circulinear.PolyCirculinearCurve2D;
@@ -30,11 +31,16 @@ import org.apache.batik.parser.PathParser;
 public class SVGPaths {
 
     public static CirculinearCurve2D parse(String path) {
-        CirculinearPathHandler pathHandler = new CirculinearPathHandler();
-        PathParser pathParser = new PathParser();
-        pathParser.setPathHandler(pathHandler);
-        pathParser.parse(path);
-        return pathHandler.getCurve();
+        try {
+            CirculinearPathHandler pathHandler = new CirculinearPathHandler();
+            PathParser pathParser = new PathParser();
+            pathParser.setPathHandler(pathHandler);
+            pathParser.parse(path);
+            return pathHandler.getCurve();
+        } catch (ParseException ex) {
+            // Just grab it for debug
+            throw ex;
+        }
     }
 
     public static String toString(Curve2D curve) {
@@ -240,9 +246,11 @@ public class SVGPaths {
 
         @Override
         public void arcAbs(float f, float f1, float f2, boolean bln, boolean bln1, float f3, float f4) throws ParseException {
-            elements.add(arc(lastX, lastY, f, bln, bln1, f3, f4));
-            lastX = f3;
-            lastY = f4;
+            if (!(Math.abs(f3 - lastX) < Tolerance2D.get() && Math.abs(f4 - lastY) < Tolerance2D.get())) {
+                elements.add(arc(lastX, lastY, f, bln, bln1, f3, f4));
+                lastX = f3;
+                lastY = f4;
+            }
         }
 
     }

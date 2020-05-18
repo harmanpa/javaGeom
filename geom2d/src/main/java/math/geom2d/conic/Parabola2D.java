@@ -23,8 +23,8 @@
  * Created on 29 janv. 2007
  *
  */
-
 package math.geom2d.conic;
+
 import math.geom2d.exceptions.UnboundedShape2DException;
 import static java.lang.Math.*;
 
@@ -55,47 +55,48 @@ import math.utils.EqualUtils;
  * <p>
  * This is a signed parameter (negative a makes the parabola point to opposite
  * side).
- * 
+ *
  * @author dlegland
  */
-public class Parabola2D extends AbstractSmoothCurve2D 
-implements Contour2D, Conic2D {
+public class Parabola2D extends AbstractSmoothCurve2D
+        implements Contour2D, Conic2D {
 
     // ==========================================================
     // static constructors
-
     /**
      * Creates a parabola by supplying the vertex and the focus.
-     * 
+     *
      * @param vertex the vertex point of the parabola
      * @param focus the focal point of the parabola
      * @return the parabola with given vertex and focus
      */
     public final static Parabola2D create(Point2D vertex, Point2D focus) {
-		double p = Point2D.distance(vertex, focus);
-		double theta = Angle2D.horizontalAngle(vertex, focus) - PI / 2;
-		return new Parabola2D(vertex, 1 / (4 * p), theta);
-	}
+        double p = Point2D.distance(vertex, focus);
+        double theta = Angle2D.horizontalAngle(vertex, focus) - PI / 2;
+        return new Parabola2D(vertex, 1 / (4 * p), theta);
+    }
 
-    
     // ==========================================================
     // class variables
+    /**
+     * Coordinate of the vertex
+     */
+    protected double xv = 0, yv = 0;
 
-    /** Coordinate of the vertex */
-    protected double xv    = 0, yv = 0;
-
-    /** orientation of the parabola */
+    /**
+     * orientation of the parabola
+     */
     protected double theta = 0;
 
-    /** The parameter of the parabola. If positive, the parabola is direct. */
-    protected double a     = 1;
+    /**
+     * The parameter of the parabola. If positive, the parabola is direct.
+     */
+    protected double a = 1;
 
-    private boolean  debug = false;
+    private boolean debug = false;
 
-    
     // ==========================================================
     // constructors
-
     /**
      * Empty constructor.
      */
@@ -117,22 +118,21 @@ implements Contour2D, Conic2D {
 
     // ==========================================================
     // methods specific to Parabola2D
-
     /**
      * Returns the focus of the parabola.
      */
     public Point2D getFocus() {
-		double c = 1 / a / 4.0;
-		return new Point2D(xv - c * sin(theta), yv + c * cos(theta));
-   }
+        double c = 1 / a / 4.0;
+        return new Point2D(xv - c * sin(theta), yv + c * cos(theta));
+    }
 
     public double getParameter() {
         return a;
     }
 
     public double getFocusDistance() {
-		return 1.0 / (4 * a);
-	}
+        return 1.0 / (4 * a);
+    }
 
     public Point2D getVertex() {
         return new Point2D(xv, yv);
@@ -151,7 +151,7 @@ implements Contour2D, Conic2D {
      */
     public Vector2D getVector2() {
         Vector2D vect = new Vector2D(1, 0);
-		return vect.transform(AffineTransform2D.createRotation(theta + PI / 2));
+        return vect.transform(AffineTransform2D.createRotation(theta + PI / 2));
     }
 
     /**
@@ -166,53 +166,52 @@ implements Contour2D, Conic2D {
      * Returns true if the parameter a is positive.
      */
     public boolean isDirect() {
-		return a > 0;
+        return a > 0;
     }
 
     /**
      * Changes coordinate of the point to correspond to a standard parabola.
      * Standard parabola s such that y=x^2 for every point of the parabola.
-     * 
+     *
      * @param point
      * @return
      */
     private Point2D formatPoint(Point2D point) {
-		Point2D p2 = point;
-		p2 = p2.transform(AffineTransform2D.createTranslation(-xv, -yv));
-		p2 = p2.transform(AffineTransform2D.createRotation(-theta));
-		p2 = p2.transform(AffineTransform2D.createScaling(1, 1.0 / a));
+        Point2D p2 = point;
+        p2 = p2.transform(AffineTransform2D.createTranslation(-xv, -yv));
+        p2 = p2.transform(AffineTransform2D.createRotation(-theta));
+        p2 = p2.transform(AffineTransform2D.createScaling(1, 1.0 / a));
         return p2;
     }
 
     /**
      * Changes coordinate of the line to correspond to a standard parabola.
      * Standard parabola s such that y=x^2 for every point of the parabola.
-     * 
+     *
      * @param point
      * @return
      */
     private LinearShape2D formatLine(LinearShape2D line) {
         line = line.transform(AffineTransform2D.createTranslation(-xv, -yv));
         line = line.transform(AffineTransform2D.createRotation(-theta));
-		line = line.transform(AffineTransform2D.createScaling(1, 1.0 / a));
+        line = line.transform(AffineTransform2D.createScaling(1, 1.0 / a));
         return line;
     }
 
     // ==========================================================
     // methods implementing the Conic2D interface
-
     public Conic2D.Type conicType() {
         return Conic2D.Type.PARABOLA;
     }
 
     @Override
     public double[] conicCoefficients() throws NonInvertibleTransform2DException {
-    	// The transformation matrix from base parabola y=x^2
-    	AffineTransform2D transform =
-    		AffineTransform2D.createRotation(theta).chain(
-    				AffineTransform2D.createTranslation(xv, yv));
-        	
-    	// Extract coefficients of inverse transform
+        // The transformation matrix from base parabola y=x^2
+        AffineTransform2D transform
+                = AffineTransform2D.createRotation(theta).chain(
+                        AffineTransform2D.createTranslation(xv, yv));
+
+        // Extract coefficients of inverse transform
         double[][] coefs = transform.invert().affineMatrix();
         double m00 = coefs[0][0];
         double m01 = coefs[0][1];
@@ -220,18 +219,18 @@ implements Contour2D, Conic2D {
         double m10 = coefs[1][0];
         double m11 = coefs[1][1];
         double m12 = coefs[1][2];
-        
+
         // Default conic coefficients are A=a, F=1.
         // Compute result of transformed coefficients, which simplifies in:
-		double A = a * m00 * m00;
-		double B = 2 * a * m00 * m01;
-		double C = a * m01 * m01;
-		double D = 2 * a * m00 * m02 - m10;
-		double E = 2 * a * m01 * m02 - m11;
-		double F = a * m02 * m02 - m12;
-        
+        double A = a * m00 * m00;
+        double B = 2 * a * m00 * m01;
+        double C = a * m01 * m01;
+        double D = 2 * a * m00 * m02 - m10;
+        double E = 2 * a * m01 * m02 - m11;
+        double F = a * m02 * m02 - m12;
+
         // arrange into array
-		return new double[] { A, B, C, D, E, F };
+        return new double[]{A, B, C, D, E, F};
     }
 
     /**
@@ -243,26 +242,26 @@ implements Contour2D, Conic2D {
 
     // ==========================================================
     // methods implementing the Boundary2D interface
-
     public Domain2D domain() {
         return new GenericDomain2D(this);
     }
 
     // ==========================================================
     // methods implementing the OrientedCurve2D interface
-
     public double windingAngle(Point2D point) {
-		if (isDirect()) {
-			if (isInside(point))
-				return PI * 2;
-			else
-				return 0.0;
-		} else {
-			if (isInside(point))
-				return 0.0;
-			else
-				return -PI * 2;
-		}
+        if (isDirect()) {
+            if (isInside(point)) {
+                return PI * 2;
+            } else {
+                return 0.0;
+            }
+        } else {
+            if (isInside(point)) {
+                return 0.0;
+            } else {
+                return -PI * 2;
+            }
+        }
     }
 
     public double signedDistance(Point2D p) {
@@ -270,8 +269,9 @@ implements Contour2D, Conic2D {
     }
 
     public double signedDistance(double x, double y) {
-        if (isInside(new Point2D(x, y)))
+        if (isInside(new Point2D(x, y))) {
             return -distance(x, y);
+        }
         return -distance(x, y);
     }
 
@@ -285,35 +285,34 @@ implements Contour2D, Conic2D {
         double y = p2.y();
 
         // check condition of parabola
-		return y > x * x ^ a < 0;
+        return y > x * x ^ a < 0;
     }
 
     // ==========================================================
     // methods implementing the SmoothCurve2D interface
-
     public Vector2D tangent(double t) {
-		Vector2D vect = new Vector2D(1, 2.0 * a * t);
-		return vect.transform(AffineTransform2D.createRotation(theta));
+        Vector2D vect = new Vector2D(1, 2.0 * a * t);
+        return vect.transform(AffineTransform2D.createRotation(theta));
     }
 
     /**
      * Returns the curvature of the parabola at the given position.
      */
     public double curvature(double t) {
-		return 2 * a / pow(hypot(1, 2 * a * t), 3);
+        return 2 * a / pow(hypot(1, 2 * a * t), 3);
     }
 
     // ==========================================================
     // methods implementing the ContinuousCurve2D interface
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#continuousCurves()
-	 */
-	public Collection<? extends Parabola2D> continuousCurves() {
-		return wrapCurve(this);
-	}
-	
-   /**
+     */
+    public Collection<? extends Parabola2D> continuousCurves() {
+        return wrapCurve(this);
+    }
+
+    /**
      * Returns false, as a parabola is an open curve.
      */
     public boolean isClosed() {
@@ -322,7 +321,6 @@ implements Contour2D, Conic2D {
 
     // ==========================================================
     // methods implementing the Curve2D interface
-
     /**
      * Returns the parameter of the first point of the line, which is always
      * Double.NEGATIVE_INFINITY.
@@ -330,7 +328,7 @@ implements Contour2D, Conic2D {
     public double t0() {
         return Double.NEGATIVE_INFINITY;
     }
-    
+
     /**
      * Returns the parameter of the last point of the line, which is always
      * Double.POSITIVE_INFINITY.
@@ -340,7 +338,7 @@ implements Contour2D, Conic2D {
     }
 
     public Point2D point(double t) {
-		Point2D point = new Point2D(t, a * t * t);
+        Point2D point = new Point2D(t, a * t * t);
         point = AffineTransform2D.createRotation(theta).transform(point);
         point = AffineTransform2D.createTranslation(xv, yv).transform(point);
         return point;
@@ -376,12 +374,14 @@ implements Contour2D, Conic2D {
 
         // case of vertical or quasi-vertical line
         if (Math.abs(dx) < Tolerance2D.get()) {
-            if (debug)
+            if (debug) {
                 System.out.println("intersect parabola with vertical line ");
+            }
             double x = line2.origin().x();
-			Point2D point = new Point2D(x, x * x);
-            if (line2.contains(point))
+            Point2D point = new Point2D(x, x * x);
+            if (line2.contains(point)) {
                 points.add(line.point(line2.position(point)));
+            }
             return points;
         }
 
@@ -391,32 +391,34 @@ implements Contour2D, Conic2D {
         double y0 = origin.y();
 
         // Solve second order equation
-		double k = dy / dx; // slope of the line
-		double yl = k * x0 - y0;
-		double delta = k * k - 4 * yl;
+        double k = dy / dx; // slope of the line
+        double yl = k * x0 - y0;
+        double delta = k * k - 4 * yl;
 
         // Case of a line 'below' the parabola
-		if (delta < 0)
+        if (delta < 0) {
             return points;
+        }
 
         // There are two intersections with supporting line,
         // need to check these points belong to the line.
-
         double x;
         Point2D point;
         StraightLine2D support = line2.supportingLine();
 
         // test first intersection point
-		x = (k - Math.sqrt(delta)) * .5;
-		point = new Point2D(x, x * x);
-        if (line2.contains(support.projectedPoint(point)))
+        x = (k - Math.sqrt(delta)) * .5;
+        point = new Point2D(x, x * x);
+        if (line2.contains(support.projectedPoint(point))) {
             points.add(line.point(line2.position(point)));
+        }
 
         // test second intersection point
-		x = (k + Math.sqrt(delta)) * .5;
-		point = new Point2D(x, x * x);
-        if (line2.contains(support.projectedPoint(point)))
+        x = (k + Math.sqrt(delta)) * .5;
+        point = new Point2D(x, x * x);
+        if (line2.contains(support.projectedPoint(point))) {
             points.add(line.point(line2.position(point)));
+        }
 
         return points;
     }
@@ -426,17 +428,16 @@ implements Contour2D, Conic2D {
      * direction and opposite parameter <code>p</code>.
      */
     public Parabola2D reverse() {
-		return new Parabola2D(xv, yv, -a, Angle2D.formatAngle(theta + PI));
+        return new Parabola2D(xv, yv, -a, Angle2D.formatAngle(theta + PI));
     }
 
     /**
      * Returns a new ParabolaArc2D, or null if t1<t0.
      */
     public ParabolaArc2D subCurve(double t0, double t1) {
-        if (debug)
-			System.out.println("theta = " + Math.toDegrees(theta));
-		if (t1 < t0)
-            return null;
+        if (t1 < t0) {
+            return reverse().subCurve(t0, t1);
+        }
         return new ParabolaArc2D(this, t0, t1);
     }
 
@@ -452,22 +453,26 @@ implements Contour2D, Conic2D {
 
     // ===============================================
     // Drawing methods (curve interface)
-
-    /** Throws an infiniteShapeException */
+    /**
+     * Throws an infiniteShapeException
+     */
     public java.awt.geom.GeneralPath appendPath(
-    		java.awt.geom.GeneralPath path) {
+            java.awt.geom.GeneralPath path) {
         throw new UnboundedShape2DException(this);
     }
 
-    /** Throws an infiniteShapeException */
+    /**
+     * Throws an infiniteShapeException
+     */
     public void fill(Graphics2D g2) {
         throw new UnboundedShape2DException(this);
     }
 
     // ===============================================
     // methods implementing the Shape2D interface
-
-    /** Always returns false, because a parabola is not bounded. */
+    /**
+     * Always returns false, because a parabola is not bounded.
+     */
     public boolean isBounded() {
         return false;
     }
@@ -480,23 +485,24 @@ implements Contour2D, Conic2D {
     }
 
     /**
-     * Clip the parabola by a box. The result is an instance of CurveSet2D<ParabolaArc2D>,
-     * which contains only instances of ParabolaArc2D. If the parabola is not
-     * clipped, the result is an instance of CurveSet2D<ParabolaArc2D> which
-     * contains 0 curves.
+     * Clip the parabola by a box. The result is an instance of
+     * CurveSet2D<ParabolaArc2D>, which contains only instances of
+     * ParabolaArc2D. If the parabola is not clipped, the result is an instance
+     * of CurveSet2D<ParabolaArc2D> which contains 0 curves.
      */
     public CurveSet2D<ParabolaArc2D> clip(Box2D box) {
         // Clip the curve
         CurveSet2D<SmoothCurve2D> set = Curves2D.clipSmoothCurve(this, box);
 
         // Stores the result in appropriate structure
-        CurveArray2D<ParabolaArc2D> result = 
-        	new CurveArray2D<ParabolaArc2D>(set.size());
+        CurveArray2D<ParabolaArc2D> result
+                = new CurveArray2D<ParabolaArc2D>(set.size());
 
         // convert the result
         for (Curve2D curve : set.curves()) {
-            if (curve instanceof ParabolaArc2D)
+            if (curve instanceof ParabolaArc2D) {
                 result.add((ParabolaArc2D) curve);
+            }
         }
         return result;
     }
@@ -504,7 +510,7 @@ implements Contour2D, Conic2D {
     public Box2D boundingBox() {
         // TODO: manage parabolas with horizontal or vertical orientations
         return new Box2D(
-        		Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
+                Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
                 Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
     }
 
@@ -514,24 +520,24 @@ implements Contour2D, Conic2D {
      * direct or indirect.
      */
     public Parabola2D transform(AffineTransform2D trans) {
-    	//TODO: check if transform work also for non-motion transforms...
+        //TODO: check if transform work also for non-motion transforms...
         Point2D vertex = this.getVertex().transform(trans);
         Point2D focus = this.getFocus().transform(trans);
-		double a = 1 / (4.0 * Point2D.distance(vertex, focus));
-		double theta = Angle2D.horizontalAngle(vertex, focus) - PI / 2;
+        double a = 1 / (4.0 * Point2D.distance(vertex, focus));
+        double theta = Angle2D.horizontalAngle(vertex, focus) - PI / 2;
 
         // check orientation of resulting parabola
-		if (this.a < 0 ^ trans.isDirect())
-            // normal case
+        if (this.a < 0 ^ trans.isDirect()) // normal case
+        {
             return new Parabola2D(vertex, a, theta);
-        else
-            // inverted case
-			return new Parabola2D(vertex, -a, theta + PI);
+        } else // inverted case
+        {
+            return new Parabola2D(vertex, -a, theta + PI);
+        }
     }
 
     // ===============================================
     // methods implementing the Shape interface
-
     public boolean contains(double x, double y) {
         // Process the point to be in a basis such that parabola is vertical
         Point2D p2 = formatPoint(new Point2D(x, y));
@@ -541,64 +547,74 @@ implements Contour2D, Conic2D {
         double yp = p2.y();
 
         // check condition of parabola
-		return abs(yp - xp * xp) < Tolerance2D.get();
+        return abs(yp - xp * xp) < Tolerance2D.get();
     }
 
     public boolean contains(Point2D point) {
         return contains(point.x(), point.y());
     }
 
-	// ===================================================================
-	// methods implementing the GeometricObject2D interface
+    // ===================================================================
+    // methods implementing the GeometricObject2D interface
 
-	/* (non-Javadoc)
+    /* (non-Javadoc)
 	 * @see math.geom2d.GeometricObject2D#almostEquals(math.geom2d.GeometricObject2D, double)
-	 */
+     */
     public boolean almostEquals(GeometricObject2D obj, double eps) {
-    	if (this==obj)
-    		return true;
-    	
-        if (!(obj instanceof Parabola2D))
+        if (this == obj) {
+            return true;
+        }
+
+        if (!(obj instanceof Parabola2D)) {
             return false;
+        }
         Parabola2D parabola = (Parabola2D) obj;
 
-        if ((this.xv-parabola.xv)>eps) 
+        if ((this.xv - parabola.xv) > eps) {
             return false;
-        if ((this.yv-parabola.yv)>eps) 
+        }
+        if ((this.yv - parabola.yv) > eps) {
             return false;
-        if ((this.a-parabola.a)>eps)
+        }
+        if ((this.a - parabola.a) > eps) {
             return false;
-        if (!Angle2D.almostEquals(this.theta, parabola.theta, eps))
+        }
+        if (!Angle2D.almostEquals(this.theta, parabola.theta, eps)) {
             return false;
+        }
 
         return true;
     }
 
     // ====================================================================
     // Methods inherited from the object class
-
     @Override
     public String toString() {
-        return String.format("Parabola2D(%f,%f,%f,%f)", 
+        return String.format("Parabola2D(%f,%f,%f,%f)",
                 xv, yv, a, theta);
     }
 
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Parabola2D))
+        if (!(obj instanceof Parabola2D)) {
             return false;
+        }
         Parabola2D that = (Parabola2D) obj;
 
         // Compare each field
-		if (!EqualUtils.areEqual(this.xv, that.xv)) 
-			return false;
-		if (!EqualUtils.areEqual(this.yv, that.yv)) 
-			return false;
-		if (!EqualUtils.areEqual(this.a, that.a)) 
-			return false;
-		if (!EqualUtils.areEqual(this.theta, that.theta)) 
-			return false;
-        
+        if (!EqualUtils.areEqual(this.xv, that.xv)) {
+            return false;
+        }
+        if (!EqualUtils.areEqual(this.yv, that.yv)) {
+            return false;
+        }
+        if (!EqualUtils.areEqual(this.a, that.a)) {
+            return false;
+        }
+        if (!EqualUtils.areEqual(this.theta, that.theta)) {
+            return false;
+        }
+
         return true;
     }
 
@@ -611,5 +627,5 @@ implements Contour2D, Conic2D {
         hash = 83 * hash + (int) (Double.doubleToLongBits(this.a) ^ (Double.doubleToLongBits(this.a) >>> 32));
         return hash;
     }
-    
+
 }

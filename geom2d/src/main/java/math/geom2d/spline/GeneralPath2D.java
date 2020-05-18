@@ -235,7 +235,8 @@ public class GeneralPath2D implements Curve2D {
     // Methods implementing the Curve2D interface	
     /**
      * The first parameterization value is equal to 0.
-     * @return 
+     *
+     * @return
      */
     @Override
     public double t0() {

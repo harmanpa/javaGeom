@@ -11,8 +11,11 @@ import java.util.Collection;
 import java.util.List;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
+import math.geom2d.Tolerance2D;
 import math.geom2d.circulinear.CirculinearCurve2D;
 import math.geom2d.circulinear.CirculinearCurves2D;
+import math.geom2d.circulinear.buffer.BufferCalculator;
+import math.geom2d.domain.Boundaries2D;
 import math.geom2d.math.Rings2D;
 
 /**
@@ -23,16 +26,14 @@ public class Part2D {
 
     private final CirculinearCurve2D outline;
     private final List<CirculinearCurve2D> holes;
-    private final double tolerance;
 
-    public Part2D(CirculinearCurve2D outline, List<CirculinearCurve2D> holes, double tolerance) {
+    public Part2D(CirculinearCurve2D outline, List<CirculinearCurve2D> holes) {
         this.outline = outline;
         this.holes = holes;
-        this.tolerance = tolerance;
     }
 
-    public Part2D(CirculinearCurve2D outline, double tolerance) {
-        this(outline, Arrays.asList(), tolerance);
+    public Part2D(CirculinearCurve2D outline) {
+        this(outline, Arrays.asList());
     }
 
     public CirculinearCurve2D getOutline() {
@@ -42,6 +43,22 @@ public class Part2D {
     public List<CirculinearCurve2D> getHoles() {
         return holes;
     }
+
+//    public PartSet2D outset(double distance) {
+//        // Outset the main body
+//
+//        // Inset each hole, remove any curves that are empty
+//    }
+//
+//    public PartSet2D inset(double distance) {
+//        // Inset the main body
+//List<CirculinearCurve2D> insets = null;
+//        // Outset each hole. Union of all.
+//        
+//        combineHoles(outline, holes)Rings2D.union(holes, distance)
+//        // Any that intersect main body replace with intersection. Subtract from body.
+//                
+//    }
 
     public PartSet2D add(Part2D part) {
         return combine(part.getOutline(), part.getHoles(), true);
@@ -74,13 +91,13 @@ public class Part2D {
         }
         if (isNonOverlapping(outline, curve, points)) {
             if (union) {
-                return new PartSet2D(this, new Part2D(curve, holes, tolerance));
+                return new PartSet2D(this, new Part2D(curve, holes));
             } else {
                 return new PartSet2D(this);
             }
         }
         if (union) {
-            List<CirculinearCurve2D> outlines = Rings2D.union(outline, curve, tolerance);
+            List<CirculinearCurve2D> outlines = Rings2D.union(outline, curve, Tolerance2D.get());
             return combineHoles(outlines.iterator().next(), holes);
         }
         return combineHoles(outline, Arrays.asList(curve));
@@ -104,7 +121,7 @@ public class Part2D {
             for (CirculinearCurve2D intersectingHole : intersectingHoles) {
                 List<CirculinearCurve2D> newOutlines = new ArrayList<>();
                 for (CirculinearCurve2D anOutline : outlines) {
-                    newOutlines.addAll(Rings2D.difference(anOutline, intersectingHole, tolerance));
+                    newOutlines.addAll(Rings2D.difference(anOutline, intersectingHole, Tolerance2D.get()));
                 }
                 outlines = newOutlines;
             }
@@ -113,12 +130,12 @@ public class Part2D {
             return new PartSet2D(parts);
         } else {
             if (containedHoles.isEmpty()) {
-                return new PartSet2D(new Part2D(outline, holes, tolerance));
+                return new PartSet2D(new Part2D(outline, holes));
             }
             if (holes.isEmpty()) {
-                return new PartSet2D(new Part2D(outline, containedHoles, tolerance));
+                return new PartSet2D(new Part2D(outline, containedHoles));
             }
-            return new PartSet2D(new Part2D(outline, combineHoles(containedHoles), tolerance));
+            return new PartSet2D(new Part2D(outline, combineHoles(containedHoles)));
         }
     }
 
@@ -132,7 +149,7 @@ public class Part2D {
         List<CirculinearCurve2D> allHoles = new ArrayList<>();
         allHoles.addAll(holes);
         allHoles.addAll(newHoles);
-        return Rings2D.union(allHoles, tolerance);
+        return Rings2D.union(allHoles, Tolerance2D.get());
     }
 
     static boolean isContained(CirculinearCurve2D outer, CirculinearCurve2D inner, Collection<Point2D> points) {

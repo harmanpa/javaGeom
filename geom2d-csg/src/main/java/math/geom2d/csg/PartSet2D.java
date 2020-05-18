@@ -38,8 +38,8 @@ public class PartSet2D {
         return parts.size();
     }
 
-    public PartSet2D add(CirculinearCurve2D curve, double tolerance) {
-        return add(new Part2D(curve, tolerance));
+    public PartSet2D add(CirculinearCurve2D curve) {
+        return add(new Part2D(curve));
     }
 
     public PartSet2D subtract(CirculinearCurve2D curve) {

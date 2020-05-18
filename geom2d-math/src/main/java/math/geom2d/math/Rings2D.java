@@ -81,6 +81,7 @@ public class Rings2D {
                         builder.addEdge(faces.get(j), faces.get(i), new DefaultEdge());
                         break;
                     case Overlapping:
+                        System.out.println("Warning: Overlapping faces");
                     case None:
                 }
             }

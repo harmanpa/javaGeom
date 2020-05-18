@@ -74,7 +74,7 @@ public class PolyCirculinearCurve2D<T extends CirculinearContinuousCurve2D>
      * @param <T>
      * @param curves
      * @param closed
-     * @return 
+     * @return
      * @since 0.9.0
      */
     public static <T extends CirculinearContinuousCurve2D>
@@ -88,7 +88,7 @@ public class PolyCirculinearCurve2D<T extends CirculinearContinuousCurve2D>
      *
      * @param <T>
      * @param curves
-     * @return 
+     * @return
      * @since 0.9.0
      */
     @SafeVarargs

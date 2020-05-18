@@ -78,7 +78,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
      * The signed angle extent, in radians between -2PI and +2PI.
      */
     protected double angleExtent = PI;
-
+       
     // ====================================================================
     // constructors
     /**
@@ -137,6 +137,9 @@ public class CircleArc2D extends AbstractSmoothCurve2D
         this.angleExtent = Angle2D.formatAngle(endAngle - startAngle);
         if (!direct) {
             this.angleExtent = this.angleExtent - PI * 2;
+        }
+        if(Double.isNaN(xc) || Double.isNaN(yc)) {
+            System.out.println();
         }
     }
 
