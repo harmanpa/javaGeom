@@ -5,11 +5,17 @@
  */
 package math.geom2d.math;
 
+import com.google.common.collect.ImmutableList;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import math.geom2d.Box2D;
+import math.geom2d.Point2D;
 import math.geom2d.circulinear.CirculinearCurve2D;
 import math.geom2d.circulinear.CirculinearCurves2D;
 import math.geom2d.circulinear.CirculinearElement2D;
@@ -31,6 +37,15 @@ public class FastIntersector {
         this(curves.stream().flatMap(curve -> curve.continuousCurves().stream().flatMap(ccc -> ccc.smoothPieces().stream())).collect(Collectors.toList()));
     }
 
+    public FastIntersector(Set<CirculinearCurve2D> curves, Set<CirculinearCurve2D> excluding) {
+        this(ImmutableList.copyOf(
+                Sets.difference(
+                        curves.stream().flatMap(curve -> curve.continuousCurves().stream()
+                        .flatMap(ccc -> ccc.smoothPieces().stream())).collect(Collectors.toSet()),
+                        excluding.stream().flatMap(curve -> curve.continuousCurves().stream()
+                        .flatMap(ccc -> ccc.smoothPieces().stream())).collect(Collectors.toSet()))));
+    }
+
     public FastIntersector(CirculinearCurve2D curve) {
         this(curve.continuousCurves().stream().flatMap(ccc -> ccc.smoothPieces().stream()).collect(Collectors.toList()));
     }
@@ -43,8 +58,12 @@ public class FastIntersector {
         }
     }
 
+    public boolean isEmpty() {
+        return this.tree.size() == 0;
+    }
+
     public boolean intersects(CirculinearCurve2D curve) {
-        return intersects(curve.continuousCurves().stream().flatMap(ccc -> ccc.smoothPieces().stream()).collect(Collectors.toList()), new AABBf(), new ArrayList<>());
+        return !isEmpty() && intersects(curve.continuousCurves().stream().flatMap(ccc -> ccc.smoothPieces().stream()).collect(Collectors.toList()), new AABBf(), new ArrayList<>());
     }
 
     private boolean intersects(List<CirculinearElement2D> elements, AABBf dest, List<CirculinearElement2DBoundable> candidates) {
@@ -55,6 +74,41 @@ public class FastIntersector {
         candidates.clear();
         this.tree.detectOverlaps(getAABB(element.boundingBox(), dest), candidates);
         return candidates.stream().anyMatch(candidate -> !CirculinearCurves2D.findIntersections(element, candidate.getShape()).isEmpty());
+    }
+
+    public List<Point2D> findIntersections(CirculinearCurve2D curve) {
+        List<Point2D> intersections = new ArrayList<>();
+        if (!isEmpty()) {
+            findIntersections(curve.continuousCurves().stream().flatMap(ccc -> ccc.smoothPieces().stream()).collect(Collectors.toList()), new AABBf(), new ArrayList<>(), intersections);
+        }
+        return intersections;
+    }
+
+    private void findIntersections(List<CirculinearElement2D> elements, AABBf dest, List<CirculinearElement2DBoundable> candidates, List<Point2D> intersections) {
+        elements.forEach(element -> findIntersections(element, dest, candidates, intersections));
+    }
+
+    private void findIntersections(CirculinearElement2D element, AABBf dest, List<CirculinearElement2DBoundable> candidates, List<Point2D> intersections) {
+        candidates.clear();
+        this.tree.detectOverlaps(getAABB(element.boundingBox(), dest), candidates);
+        candidates.forEach(candidate -> intersections.addAll(CirculinearCurves2D.findIntersections(element, candidate.getShape())));
+    }
+
+    public Stream<CirculinearElement2D> streamIntersections(CirculinearElement2D with) {
+        List<CirculinearElement2DBoundable> candidates = new ArrayList<>();
+        this.tree.detectOverlaps(getAABB(with.boundingBox(), null), candidates);
+        return candidates.stream()
+                .map(candidate -> candidate.getShape())
+                .filter(shape -> !CirculinearCurves2D.findIntersections(with, shape).isEmpty());
+    }
+
+    public List<CirculinearElement2D> getIntersected(Collection<CirculinearElement2D> elements) {
+        if (isEmpty()) {
+            return Arrays.asList();
+        }
+        List<CirculinearElement2DBoundable> candidates = new ArrayList<>();
+        AABBf dest = new AABBf();
+        return elements.stream().filter(element -> intersects(element, dest, candidates)).collect(Collectors.toList());
     }
 
     static AABBf getAABB(Box2D box, AABBf dest) {

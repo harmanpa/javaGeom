@@ -3,6 +3,7 @@ package tech.cae.binpacking;
 //Hao Hua, Southeast University, whitegreen@163.com
 import java.util.ArrayList;
 import java.util.Collections;
+import math.geom2d.AffineTransform2D;
 import tech.cae.binpacking.exceptions.ConvexHullException;
 import tech.cae.binpacking.exceptions.PackingException;
 
@@ -127,6 +128,7 @@ public class Pack2D implements Cloneable {
         Convex min_con = null;
         double[][] opl = stp.outps;
         for (int i = 0; i < opl.length; i++) { // each vertex of new strip
+            // p is point, d0/d2 are vectors to previous/next points
             double[] p = opl[i];
             double[] d0 = M.sub(opl[(i - 1 + opl.length) % opl.length], p);
             double[] d2 = M.sub(opl[(i + 1) % opl.length], p);
@@ -265,6 +267,7 @@ public class Pack2D implements Cloneable {
                 return false;
             }
         }
+        // TODO: This could use the AABB tree to be much faster
         return fixs.stream().noneMatch((fixed) -> (overlap(poly, fixed.inps)));
     }
 

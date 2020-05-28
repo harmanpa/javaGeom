@@ -5,27 +5,37 @@
  */
 package math.geom2d.math;
 
+import java.awt.Graphics2D;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
-import math.geom2d.Angle2D;
+import math.geom2d.AffineTransform2D;
+import math.geom2d.Box2D;
+import math.geom2d.GeometricObject2D;
 import math.geom2d.Point2D;
 import math.geom2d.Tolerance2D;
+import math.geom2d.circulinear.CirculinearContourArray2D;
 import math.geom2d.circulinear.CirculinearCurve2D;
-import math.geom2d.curve.ContinuousCurve2D;
+import math.geom2d.circulinear.CirculinearDomain2D;
+import math.geom2d.conic.Circle2D;
+import math.geom2d.conic.CircleArc2D;
 import math.geom2d.curve.SmoothCurve2D;
 import math.geom2d.line.AbstractLine2D;
+import math.geom2d.line.LineSegment2D;
 import math.geom2d.line.LinearElement2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.polygon.LinearCurve2D;
+import math.geom2d.polygon.LinearRing2D;
 import math.geom2d.polygon.Polygon2D;
 import math.geom2d.polygon.Polyline2D;
 import math.geom2d.polygon.SimplePolygon2D;
 import math.geom2d.polygon.convhull.JarvisMarch2D;
+import math.geom2d.transform.CircleInversion2D;
 
 /**
  *
@@ -42,7 +52,7 @@ public class Polygonizer {
                     c1.addAll(c2);
                     return c1;
                 });
-        return new SimplePolygon2D(removeColinearEdges(removeCoincidentPoints(points)));
+        return toPolygon(removeColinearEdges(removeCoincidentPoints(points)));
     }
 
     static boolean isClockwise(SmoothCurve2D segment) {
@@ -58,12 +68,33 @@ public class Polygonizer {
                     c1.addAll(c2);
                     return c1;
                 });
-        return new SimplePolygon2D(removeColinearEdges(wrapWithJumps(removeCoincidentPoints(points), jumpDistance)));
+        return toPolygon(removeColinearEdges(wrapWithJumps(removeCoincidentPoints(points), jumpDistance)));
+    }
+
+    static Polygon2D toPolygon(Collection<Point2D> points) {
+        if (points.isEmpty()) {
+            return new EmptyPolygon2D();
+        }
+        return new SimplePolygon2D(points);
     }
 
     public static LinearCurve2D toPolyline(SmoothCurve2D segment, double maxError, boolean inside) {
         if (segment instanceof LinearElement2D) {
             return segment.asPolyline(1);
+        }
+        if (segment instanceof Circle2D) {
+            double maxAngle = inside
+                    ? Math.acos(1 - maxError / ((Circle2D) segment).supportingCircle().radius())
+                    : Math.acos(((Circle2D) segment).supportingCircle().radius() / (maxError + ((Circle2D) segment).supportingCircle().radius()));
+            int n = (int) Math.ceil(Math.PI * 2 / maxAngle);
+            return toPolyline(segment, n, inside);
+        }
+        if (segment instanceof CircleArc2D) {
+            double maxAngle = inside
+                    ? Math.acos(1 - maxError / ((CircleArc2D) segment).supportingCircle().radius())
+                    : Math.acos(((CircleArc2D) segment).supportingCircle().radius() / (maxError + ((CircleArc2D) segment).supportingCircle().radius()));
+            int n = (int) Math.ceil(Math.abs(((CircleArc2D) segment).getAngleExtent()) / maxAngle);
+            return toPolyline(segment, n, inside);
         }
         int n = inside ? 1 : 2;
         double error;
@@ -153,6 +184,9 @@ public class Polygonizer {
     }
 
     private static Collection<Point2D> removeColinearEdges(Collection<Point2D> vertices) {
+        if (vertices.size() < 3) {
+            return Arrays.asList();
+        }
         List<Point2D> newVertices = new ArrayList<>(vertices.size());
         Iterator<Point2D> it = vertices.iterator();
         Point2D first = it.next();
@@ -249,5 +283,153 @@ public class Polygonizer {
         }
         // Else just continue
         return 0;
+    }
+
+    static class EmptyPolygon2D implements Polygon2D {
+
+        @Override
+        public Collection<Point2D> vertices() {
+            return Arrays.asList();
+        }
+
+        @Override
+        public Point2D vertex(int i) {
+            return null;
+        }
+
+        @Override
+        public void setVertex(int i, Point2D point) {
+        }
+
+        @Override
+        public void addVertex(Point2D point) {
+        }
+
+        @Override
+        public void insertVertex(int index, Point2D point) {
+        }
+
+        @Override
+        public void removeVertex(int index) {
+        }
+
+        @Override
+        public int vertexNumber() {
+            return 0;
+        }
+
+        @Override
+        public int closestVertexIndex(Point2D point) {
+            return -1;
+        }
+
+        @Override
+        public Collection<? extends LineSegment2D> edges() {
+            return Arrays.asList();
+        }
+
+        @Override
+        public int edgeNumber() {
+            return 0;
+        }
+
+        @Override
+        public Point2D centroid() {
+            return null;
+        }
+
+        @Override
+        public double area() {
+            return 0;
+        }
+
+        @Override
+        public CirculinearContourArray2D<? extends LinearRing2D> boundary() {
+            return new CirculinearContourArray2D<>();
+        }
+
+        @Override
+        public Collection<? extends LinearRing2D> contours() {
+            return Arrays.asList();
+        }
+
+        @Override
+        public Polygon2D complement() {
+            return this;
+        }
+
+        @Override
+        public Polygon2D transform(AffineTransform2D trans) {
+            return this;
+        }
+
+        @Override
+        public Polygon2D clip(Box2D box) {
+            return this;
+        }
+
+        @Override
+        public CirculinearDomain2D transform(CircleInversion2D inv) {
+            return this;
+        }
+
+        @Override
+        public CirculinearDomain2D buffer(double dist) {
+            return this;
+        }
+
+        @Override
+        public boolean contains(double x, double y) {
+            return false;
+        }
+
+        @Override
+        public boolean contains(Point2D p) {
+            return false;
+        }
+
+        @Override
+        public double distance(Point2D p) {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        @Override
+        public double distance(double x, double y) {
+            return Double.POSITIVE_INFINITY;
+        }
+
+        @Override
+        public boolean isBounded() {
+            return false;
+        }
+
+        @Override
+        public boolean isEmpty() {
+            return true;
+        }
+
+        @Override
+        public Box2D boundingBox() {
+            return null;
+        }
+
+        @Override
+        public void draw(Graphics2D g2) {
+        }
+
+        @Override
+        public boolean almostEquals(GeometricObject2D obj, double eps) {
+            return false;
+        }
+
+        @Override
+        public Polygon2D asPolygon(int n) {
+            return this;
+        }
+
+        @Override
+        public void fill(Graphics2D g2) {
+        }
+
     }
 }
