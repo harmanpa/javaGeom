@@ -63,7 +63,9 @@ public class FastIntersector {
     }
 
     public boolean intersects(CirculinearCurve2D curve) {
-        return !isEmpty() && intersects(curve.continuousCurves().stream().flatMap(ccc -> ccc.smoothPieces().stream()).collect(Collectors.toList()), new AABBf(), new ArrayList<>());
+        return !isEmpty() 
+                && intersects(curve.continuousCurves().stream().flatMap(ccc -> ccc.smoothPieces().stream()).collect(Collectors.toList()), 
+                        new AABBf(), new ArrayList<>());
     }
 
     private boolean intersects(List<CirculinearElement2D> elements, AABBf dest, List<CirculinearElement2DBoundable> candidates) {

@@ -5,6 +5,8 @@
  */
 package math.geom2d.math;
 
+import com.google.common.collect.Iterables;
+import com.google.common.collect.Sets;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -16,6 +18,7 @@ import java.util.List;
 import java.util.Objects;
 import java.util.PrimitiveIterator;
 import java.util.Random;
+import java.util.Set;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
 import math.geom2d.Box2D;
@@ -70,21 +73,24 @@ public class Rings2D {
                 .allowingMultipleEdges(false)
                 .allowingSelfLoops(false)
                 .buildGraphBuilder();
-        faces.forEach(f -> builder.addVertex(f));
-        for (int i = 0; i < faces.size(); i++) {
-            for (int j = i + 1; j < faces.size(); j++) {
-                switch (getState(faces.get(i).get(), faces.get(j).get(), tolerance)) {
+        Set<T> faceSet = Sets.newHashSet(faces);
+        faceSet.forEach(f -> builder.addVertex(f));
+        if (faceSet.size() >= 2) {
+            Sets.combinations(faceSet, 2).forEach(facePairSet -> {
+                T[] pair = Iterables.toArray(facePairSet, type);
+                switch (getState(pair[0].get(), pair[1].get(), tolerance)) {
                     case Contained:
-                        builder.addEdge(faces.get(i), faces.get(j), new DefaultEdge());
+                        builder.addEdge(pair[0], pair[1], new DefaultEdge());
                         break;
                     case Inverted:
-                        builder.addEdge(faces.get(j), faces.get(i), new DefaultEdge());
+                        builder.addEdge(pair[1], pair[0], new DefaultEdge());
                         break;
                     case Overlapping:
+                    case Equal:
                         System.out.println("Warning: Overlapping faces");
                     case None:
                 }
-            }
+            });
         }
         Graph<T, DefaultEdge> g = builder.build();
         // Remove transitive edges
@@ -555,20 +561,26 @@ public class Rings2D {
     }
 
     public enum ContainedState {
-        Contained, Inverted, Overlapping, None
+        Contained, Inverted, Overlapping, Equal, None
     };
 
     public static ContainedState getState(CirculinearCurve2D outer, CirculinearCurve2D inner, double tolerance) {
-        if (outer.boundingBox().containsBounds(inner)) {
+        if (outer.almostEquals(inner, tolerance)) {
+            return ContainedState.Equal;
+        } else if (outer.boundingBox().containsBounds(inner)) {
             List<Point2D> points = haveParallelElements(outer, inner, tolerance)
                     ? iterativeIntersections(inner, outer, tolerance)
                     : new ArrayList<>(CirculinearCurves2D.findIntersections(inner, outer));
-            return points.isEmpty() ? ContainedState.Contained : ContainedState.Overlapping;
+            return points.isEmpty()
+                    ? (verticesContained(outer, inner) ? ContainedState.Contained : ContainedState.None)
+                    : ContainedState.Overlapping;
         } else if (inner.boundingBox().containsBounds(outer)) {
             List<Point2D> points = haveParallelElements(outer, inner, tolerance)
                     ? iterativeIntersections(inner, outer, tolerance)
                     : new ArrayList<>(CirculinearCurves2D.findIntersections(inner, outer));
-            return points.isEmpty() ? ContainedState.Inverted : ContainedState.Overlapping;
+            return points.isEmpty()
+                    ? (verticesContained(inner, outer) ? ContainedState.Inverted : ContainedState.None)
+                    : ContainedState.Overlapping;
         } else {
             Box2D intersection = outer.boundingBox().intersection(inner.boundingBox());
             if (intersection.getHeight() > 0 && intersection.getWidth() > 0) {
@@ -581,8 +593,13 @@ public class Rings2D {
         }
     }
 
+    static boolean verticesContained(CirculinearCurve2D outer, CirculinearCurve2D inner) {
+        CirculinearCurve2D ccw = ensureCounterClockwise(outer);
+        return inner.vertices().stream().allMatch(v -> isPointInside(ccw, v));
+    }
+
     public static boolean isContained(CirculinearCurve2D outer, CirculinearCurve2D inner, Collection<Point2D> points) {
-        return outer.boundingBox().containsBounds(inner) && points.isEmpty();
+        return outer.boundingBox().containsBounds(inner) && points.isEmpty() && verticesContained(outer, inner);
     }
 
     public static boolean isNonOverlapping(CirculinearCurve2D outer, CirculinearCurve2D inner, Collection<Point2D> points) {
