@@ -171,6 +171,9 @@ public class Polygonizer {
     }
 
     private static Collection<Point2D> removeCoincidentPoints(Collection<Point2D> vertices) {
+        if(vertices.isEmpty()) {
+            return vertices;
+        }
         Deque<Point2D> newVertices = new ArrayDeque<>(vertices.size());
         Iterator<Point2D> it = vertices.iterator();
         newVertices.addLast(it.next());
