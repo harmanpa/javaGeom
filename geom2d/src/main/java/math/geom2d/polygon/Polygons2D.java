@@ -232,6 +232,10 @@ public final class Polygons2D {
         // number of vertices
         int n = ring.vertexNumber();
 
+        if (n == 0) {
+            return 0.0;
+        }
+
         // initialize with the last vertex
         Point2D prev = ring.vertex(n - 1);
 

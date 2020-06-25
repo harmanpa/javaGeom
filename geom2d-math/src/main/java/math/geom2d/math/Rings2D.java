@@ -250,7 +250,9 @@ public class Rings2D {
     }
 
     public static boolean isPointInside(CirculinearCurve2D curve, Point2D point) {
-        return curve.continuousCurves().stream().map(cc -> cc.isInside(point)).reduce((b1, b2) -> b1 && b2).get();
+        return curve.continuousCurves().stream()
+                .filter(cc -> cc.length() > Tolerance2D.get())
+                .map(cc -> cc.isInside(point)).reduce((b1, b2) -> b1 && b2).get();
     }
 
     public static CirculinearCurve2D ensureClockwise(CirculinearCurve2D curve) {
@@ -680,7 +682,9 @@ public class Rings2D {
 
     public static boolean haveParallelElements(CirculinearCurve2D curve1, CirculinearCurve2D curve2, double tolerance) {
         return getElements(curve1).stream()
+                .filter(elem -> elem.length() > Tolerance2D.get())
                 .anyMatch((elem1) -> (getElements(curve2).stream()
+                .filter(elem -> elem.length() > Tolerance2D.get())
                 .anyMatch((elem2) -> elementsParallel(elem1, elem2, tolerance))));
     }
 
