@@ -11,6 +11,7 @@ import java.util.Comparator;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.function.Supplier;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Angle2D;
 import math.geom2d.Point2D;
@@ -25,42 +26,44 @@ import math.geom2d.conic.EllipseArc2D;
 /**
  *
  * @author peter
+ * @param <T>
  */
-public class Similarity2D {
+public class Similarity2D<T extends Supplier<CirculinearCurve2D>> {
 
-    public static List<SimilaritySet> findSimilarities(CirculinearCurve2D... curves) {
+    public List<SimilaritySet<T>> findSimilarities(T... curves) {
         return findSimilarities(Arrays.asList(curves));
     }
 
-    public static List<SimilaritySet> findSimilarities(List<CirculinearCurve2D> curves) {
+    public List<SimilaritySet<T>> findSimilarities(List<T> curves) {
         switch (curves.size()) {
             case 0:
             case 1:
                 return Arrays.asList();
             case 2:
-                Similarity similarity = findSimilarities(curves.get(0), curves.get(1));
+                Similarity similarity = findSimilarities(curves.get(0).get(), curves.get(1).get());
                 if (similarity.isSimilar()) {
                     SimilaritySet set = new SimilaritySet(curves.get(0));
-
+                    set.add(curves.get(1), similarity);
                     return Arrays.asList(set);
                 }
                 return Arrays.asList();
             default:
                 // Chessboard
-                List<SimilaritySet> out = new ArrayList<>();
+                List<SimilaritySet<T>> out = new ArrayList<>();
                 for (int column = 0; column < curves.size(); column++) {
                     for (int row = column + 1; row < curves.size(); row++) {
-                        Similarity result = findSimilarities(curves.get(column), curves.get(row));
+                        Similarity result = findSimilarities(curves.get(column).get(), curves.get(row).get());
                         if (result.isSimilar()) {
-                            List<CirculinearCurve2D> newCurves = new ArrayList<>();
+                            List<T> newCurves = new ArrayList<>();
                             // Add any curves other than the row
                             for (int other = 0; other < curves.size(); other++) {
                                 if (other > column && other != row) {
                                     newCurves.add(curves.get(other));
                                 }
                             }
-                            List<SimilaritySet> otherSets = findSimilarities(newCurves);
+                            List<SimilaritySet<T>> otherSets = findSimilarities(newCurves);
                             SimilaritySet thisSet = new SimilaritySet(curves.get(column));
+                            thisSet.add(curves.get(row), result);
                             for (SimilaritySet set : otherSets) {
                                 if (set.getRoot().equals(thisSet.getRoot())) {
                                     thisSet.addAll(set.getSimilarities());
@@ -77,7 +80,7 @@ public class Similarity2D {
         }
     }
 
-    public static Similarity findSimilarities(CirculinearCurve2D curve1, CirculinearCurve2D curve2) {
+    public Similarity findSimilarities(CirculinearCurve2D curve1, CirculinearCurve2D curve2) {
         List<CirculinearElement2D> elements1 = Rings2D.getElements(curve1);
         List<CirculinearElement2D> elements2 = Rings2D.getElements(curve2);
         if (elements1.size() == elements2.size()) {
@@ -165,28 +168,28 @@ public class Similarity2D {
         }
     }
 
-    public static class SimilaritySet {
+    public static class SimilaritySet<T extends Supplier<CirculinearCurve2D>> {
 
-        private final CirculinearCurve2D root;
-        private final Map<CirculinearCurve2D, Similarity> similarities = new HashMap<>();
+        private final T root;
+        private final Map<T, Similarity> similarities = new HashMap<>();
 
-        SimilaritySet(CirculinearCurve2D root) {
+        SimilaritySet(T root) {
             this.root = root;
         }
 
-        public CirculinearCurve2D getRoot() {
+        public T getRoot() {
             return root;
         }
 
-        public Map<CirculinearCurve2D, Similarity> getSimilarities() {
+        public Map<T, Similarity> getSimilarities() {
             return similarities;
         }
 
-        public void add(CirculinearCurve2D curve, Similarity similarity) {
+        public void add(T curve, Similarity similarity) {
             similarities.put(curve, similarity);
         }
 
-        public void addAll(Map<CirculinearCurve2D, Similarity> map) {
+        public void addAll(Map<T, Similarity> map) {
             similarities.putAll(map);
         }
 

@@ -41,7 +41,8 @@ public class Tolerance2D {
     }
 
     public static Double get() {
-        return THREAD_ACCURACY.get();
+        double result = THREAD_ACCURACY.get();
+        return result;
     }
 
     public static void reset() {
