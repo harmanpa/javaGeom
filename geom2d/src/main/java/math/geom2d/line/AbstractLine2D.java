@@ -266,7 +266,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     public double positionOnLine(double x, double y) {
         double denom = dx * dx + dy * dy;
-        if (Math.abs(denom) < Tolerance2D.get()) {
+        if (Math.abs(denom) < Math.pow(Tolerance2D.get(), 2)) {
             throw new DegeneratedLine2DException(this);
         }
         return ((y - y0) * dy + (x - x0) * dx) / denom;
@@ -298,7 +298,12 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
         }
 
         // compute position on the line
-        double t = positionOnLine(x, y);
+        double t;
+        try {
+            t = positionOnLine(x, y);
+        } catch (DegeneratedLine2DException ex) {
+            t = 0;
+        }
 
         // compute position of intersection point
         return new Point2D(x0 + t * dx, y0 + t * dy);

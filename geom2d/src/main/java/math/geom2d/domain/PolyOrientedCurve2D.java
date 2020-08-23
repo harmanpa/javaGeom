@@ -171,7 +171,9 @@ public class PolyOrientedCurve2D<T extends ContinuousOrientedCurve2D> extends
     /**
      * Determines if the given point lies within the domain bounded by this
      * curve.
+     * @param point
      */
+    @Override
     public boolean isInside(Point2D point) {
         double pos = this.project(point);
 

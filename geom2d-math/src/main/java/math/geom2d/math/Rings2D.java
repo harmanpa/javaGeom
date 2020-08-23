@@ -34,6 +34,7 @@ import math.geom2d.circulinear.GenericCirculinearRing2D;
 import math.geom2d.conic.Circle2D;
 import math.geom2d.conic.CircleArc2D;
 import math.geom2d.conic.CircularShape2D;
+import math.geom2d.exceptions.DegeneratedLine2DException;
 import math.geom2d.line.LineSegment2D;
 import math.geom2d.line.LinearShape2D;
 import math.geom2d.line.Ray2D;
@@ -252,7 +253,13 @@ public class Rings2D {
     public static boolean isPointInside(CirculinearCurve2D curve, Point2D point) {
         return curve.continuousCurves().stream()
                 .filter(cc -> cc.length() > Tolerance2D.get())
-                .map(cc -> cc.isInside(point)).reduce((b1, b2) -> b1 && b2).get();
+                .map(cc -> {
+                    try {
+                        return cc.isInside(point);
+                    } catch (DegeneratedLine2DException ex) {
+                        return false;
+                    }
+                }).reduce((b1, b2) -> b1 && b2).get();
     }
 
     public static CirculinearCurve2D ensureClockwise(CirculinearCurve2D curve) {
