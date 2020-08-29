@@ -117,7 +117,7 @@ public class Rings2D {
         return rotate(curve, curve.project(closeTo));
     }
 
-    static Polygon2D toPolygon(CirculinearCurve2D curve) {
+    public static Polygon2D toPolygon(CirculinearCurve2D curve) {
         Deque<Point2D> points = new ArrayDeque<>();
         new LineArcIterator(curve) {
             @Override

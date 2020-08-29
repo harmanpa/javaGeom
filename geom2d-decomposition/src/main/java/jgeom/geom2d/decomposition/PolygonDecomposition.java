@@ -5,6 +5,7 @@
  */
 package jgeom.geom2d.decomposition;
 
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
@@ -34,18 +35,35 @@ import org.poly2tri.triangulation.delaunay.DelaunayTriangle;
 public class PolygonDecomposition {
 
     private final Polygon2D polygon;
+    private final Set<Polygon2D> holes;
 
     public PolygonDecomposition(Polygon2D polygon) {
+        this(polygon, new HashSet<>());
+    }
+
+    public PolygonDecomposition(Polygon2D polygon, Set<Polygon2D> holes) {
         this.polygon = polygon;
+        this.holes = holes;
     }
 
     public Set<Polygon2D> decompose() {
         // If original polygon is already convex return it
-        //TODO
+        if (holes.isEmpty()) {
+            if (Math.abs(Polygons2D.convexHull(polygon.boundary().get(0).vertices()).area())
+                    - Math.abs(polygon.boundary().get(0).area())
+                    <= Tolerance2D.get()) {
+                return new HashSet<>(Arrays.asList(polygon));
+            }
+        }
+
         // Triangulate
         Polygon triangulatee = new Polygon(polygon.vertices().stream()
                 .map(v -> new PolygonPoint(v.getX(), v.getY()))
                 .collect(Collectors.toList()));
+        holes.forEach(hole -> triangulatee.addHole(new Polygon(hole.vertices().stream()
+                .map(v -> new PolygonPoint(v.getX(), v.getY()))
+                .collect(Collectors.toList()))));
+
         Poly2Tri.triangulate(triangulatee);
 
         // Build graph of adjacent triangles
@@ -58,7 +76,8 @@ public class PolygonDecomposition {
                 = GraphTypeBuilder.undirected().vertexClass(Polygon2D.class)
                         .edgeClass(DefaultEdge.class).buildGraphBuilder();
         polygonMap.values().forEach(poly -> builder.addVertex(poly));
-        triangulatee.getTriangles().forEach(tri1 -> Stream.of(tri1.neighbors).forEach(tri2 -> {
+        triangulatee.getTriangles().forEach(tri1 -> Stream.of(tri1.neighbors)
+                .filter(tri2 -> tri2 != null && polygonMap.containsKey(tri2)).forEach(tri2 -> {
             Polygon2D poly1 = polygonMap.get(tri1);
             Polygon2D poly2 = polygonMap.get(tri2);
             builder.removeEdge(poly1, poly2);
