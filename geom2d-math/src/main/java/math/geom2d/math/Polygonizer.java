@@ -6,6 +6,7 @@
 package math.geom2d.math;
 
 import java.awt.Graphics2D;
+import java.lang.reflect.Array;
 import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -14,11 +15,14 @@ import java.util.Collections;
 import java.util.Deque;
 import java.util.Iterator;
 import java.util.List;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.GeometricObject2D;
 import math.geom2d.Point2D;
 import math.geom2d.Tolerance2D;
+import math.geom2d.Vector2D;
 import math.geom2d.circulinear.CirculinearContourArray2D;
 import math.geom2d.circulinear.CirculinearCurve2D;
 import math.geom2d.circulinear.CirculinearDomain2D;
@@ -170,9 +174,9 @@ public class Polygonizer {
         return new Polyline2D(removeColinearEdges(removeCoincidentPoints(polyline.vertices())));
     }
 
-    private static Collection<Point2D> removeCoincidentPoints(Collection<Point2D> vertices) {
-        if(vertices.isEmpty()) {
-            return vertices;
+    private static List<Point2D> removeCoincidentPoints(Collection<Point2D> vertices) {
+        if (vertices.isEmpty()) {
+            return new ArrayList<>(vertices);
         }
         Deque<Point2D> newVertices = new ArrayDeque<>(vertices.size());
         Iterator<Point2D> it = vertices.iterator();
@@ -183,37 +187,27 @@ public class Polygonizer {
                 newVertices.addLast(next);
             }
         }
-        return newVertices;
+        return new ArrayList<>(newVertices);
     }
 
-    private static Collection<Point2D> removeColinearEdges(Collection<Point2D> vertices) {
+    private static boolean colinear(Point2D[] points) {
+        return new Vector2D(points[0], points[1]).normalize()
+                .almostEquals(new Vector2D(points[1], points[2]).normalize(), Math.pow(Tolerance2D.get(), 2));
+    }
+
+    private static List<Point2D> removeColinearEdges(List<Point2D> vertices) {
         if (vertices.size() < 3) {
             return Arrays.asList();
         }
-        List<Point2D> newVertices = new ArrayList<>(vertices.size());
-        Iterator<Point2D> it = vertices.iterator();
-        Point2D first = it.next();
-        Point2D second = it.next();
-        Point2D a = first;
-        Point2D b = second;
-        while (it.hasNext()) {
-            Point2D c = it.next();
-            if (!Point2D.isColinear(a, b, c)) {
-                newVertices.add(b);
-            }
-            a = b;
-            b = c;
-        }
-        Point2D c = first;
-        if (!Point2D.isColinear(a, b, c)) {
-            newVertices.add(b);
-        }
-        a = b;
-        b = c;
-        c = second;
-        if (!Point2D.isColinear(a, b, c)) {
-            newVertices.add(b);
-        }
+        List<Point2D> newVertices = new ArrayList<>(vertices);
+        int n;
+        do {
+            n = newVertices.size();
+            newVertices = sequentials(Point2D.class, newVertices, 3)
+                    .map(triple -> colinear(triple) ? null : triple[1])
+                    .filter(p -> p != null)
+                    .collect(Collectors.toList());
+        } while (newVertices.size() < n);
         return newVertices;
     }
 
@@ -286,6 +280,33 @@ public class Polygonizer {
         }
         // Else just continue
         return 0;
+    }
+
+    public static <T> Stream<T[]> sequentials(Class<T> type, List<T> list, int each) {
+        return indexStream(list.size(), each).map(indices -> {
+            T[] arr = (T[]) Array.newInstance(type, each);
+            for (int i = 0; i < indices.length; i++) {
+                arr[i] = list.get(indices[i]);
+            }
+            return arr;
+        });
+    }
+
+    public static Stream<int[]> indexStream(final int n, final int each) {
+        if (n == 0) {
+            return Stream.of();
+        }
+        int[] seed = new int[each];
+        for (int i = 0; i < each; i++) {
+            seed[i] = i % n;
+        }
+        return Stream.iterate(seed, indices -> {
+            int[] out = new int[indices.length];
+            for (int i = 0; i < indices.length; i++) {
+                out[i] = indices[i] == n - 1 ? 0 : indices[i] + 1;
+            }
+            return out;
+        }).limit((long) n);
     }
 
     static class EmptyPolygon2D implements Polygon2D {
