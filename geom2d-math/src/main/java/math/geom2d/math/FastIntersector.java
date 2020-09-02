@@ -63,8 +63,8 @@ public class FastIntersector {
     }
 
     public boolean intersects(CirculinearCurve2D curve) {
-        return !isEmpty() 
-                && intersects(curve.continuousCurves().stream().flatMap(ccc -> ccc.smoothPieces().stream()).collect(Collectors.toList()), 
+        return !isEmpty()
+                && intersects(curve.continuousCurves().stream().flatMap(ccc -> ccc.smoothPieces().stream()).collect(Collectors.toList()),
                         new AABBf(), new ArrayList<>());
     }
 
@@ -112,7 +112,7 @@ public class FastIntersector {
         AABBf dest = new AABBf();
         return elements.stream().filter(element -> intersects(element, dest, candidates)).collect(Collectors.toList());
     }
-
+    
     static AABBf getAABB(Box2D box, AABBf dest) {
         if (dest == null) {
             dest = new AABBf();

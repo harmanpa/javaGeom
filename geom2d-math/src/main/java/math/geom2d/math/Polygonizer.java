@@ -218,6 +218,10 @@ public class Polygonizer {
             Collections.reverse(pointList);
         }
         Polygon2D hull = new JarvisMarch2D().convexHull(pointList);
+        // Limit jump distance to 20% of smallest dimension so we don't eliminate key features
+        Box2D bounds = hull.boundingBox();
+        jumpDistance = Math.min(jumpDistance, 0.2 * Math.min(bounds.getHeight(), bounds.getWidth()));
+        
         // Position the list to start with the first point in the hull
         Collections.rotate(pointList, -pointList.indexOf(hull.vertex(0)));
 //        List<Point2D> pointList = shiftToLowestPoint(points);
