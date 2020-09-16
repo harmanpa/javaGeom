@@ -75,6 +75,27 @@ public class Polygonizer {
         return toPolygon(removeColinearEdges(wrapWithJumps(removeCoincidentPoints(points), jumpDistance)));
     }
 
+    public final static int windingNumber(List<Point2D> vertices, Point2D point) {
+        double y = point.getY();
+        return sequentials(Point2D.class, vertices, 2)
+                .filter(pair -> (pair[0].getY() <= y && pair[1].getY() > y)
+                || (pair[0].getY() > y && pair[1].getY() <= y))
+                .mapToInt(pair -> isLeft(pair[0], pair[1], point)).sum();
+    }
+
+    /**
+     * Tests if a point is Left|On|Right of an infinite line. Input: three
+     * points P0, P1, and P2 Return: >0 for P2 left of the line through P0 and
+     * P1 =0 for P2 on the line <0 for P2 right of the line See: the January
+     * 2001 Algorithm "Area of 2D and 3D Triangles and Polygons"
+     */
+    private static int isLeft(Point2D p1, Point2D p2, Point2D pt) {
+        double x = p1.x();
+        double y = p1.y();
+        return (int) Math.signum(
+                (p2.x() - x) * (pt.y() - y) - (pt.x() - x) * (p2.y() - y));
+    }
+
     static Polygon2D toPolygon(Collection<Point2D> points) {
         if (points.isEmpty()) {
             return new EmptyPolygon2D();
@@ -178,16 +199,10 @@ public class Polygonizer {
         if (vertices.isEmpty()) {
             return new ArrayList<>(vertices);
         }
-        Deque<Point2D> newVertices = new ArrayDeque<>(vertices.size());
-        Iterator<Point2D> it = vertices.iterator();
-        newVertices.addLast(it.next());
-        while (it.hasNext()) {
-            Point2D next = it.next();
-            if (!newVertices.peekLast().almostEquals(next, Tolerance2D.get())) {
-                newVertices.addLast(next);
-            }
-        }
-        return new ArrayList<>(newVertices);
+        return sequentials(Point2D.class, new ArrayList<>(vertices), 2)
+                .map(pair -> pair[0].almostEquals(pair[1], Tolerance2D.get()) ? null : pair[0])
+                .filter(point -> point != null)
+                .collect(Collectors.toList());
     }
 
     private static boolean colinear(Point2D[] points) {
@@ -221,7 +236,7 @@ public class Polygonizer {
         // Limit jump distance to 20% of smallest dimension so we don't eliminate key features
         Box2D bounds = hull.boundingBox();
         jumpDistance = Math.min(jumpDistance, 0.2 * Math.min(bounds.getHeight(), bounds.getWidth()));
-        
+
         // Position the list to start with the first point in the hull
         Collections.rotate(pointList, -pointList.indexOf(hull.vertex(0)));
 //        List<Point2D> pointList = shiftToLowestPoint(points);
