@@ -426,7 +426,8 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     public boolean containsProjection(Point2D point) {
         try {
             double pos = this.positionOnLine(point);
-            return pos > (this.t0() - Tolerance2D.get()) && pos < (this.t1() + Tolerance2D.get());
+            double tol = Tolerance2D.getRelative(this);
+            return pos > (this.t0() - tol) && pos < (this.t1() + tol);
         } catch (DegeneratedLine2DException ex) {
             return false;
         }

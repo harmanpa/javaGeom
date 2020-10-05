@@ -8,6 +8,7 @@ package math.geom2d;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
+import math.geom2d.circulinear.CirculinearCurve2D;
 
 /**
  *
@@ -43,6 +44,14 @@ public class Tolerance2D {
     public static Double get() {
         double result = THREAD_ACCURACY.get();
         return result;
+    }
+
+    public static Double getRelative(CirculinearCurve2D curve) {
+        return getRelative(curve.length());
+    }
+
+    public static Double getRelative(double length) {
+        return Math.max(1e-12, get() / length);
     }
 
     public static void reset() {
