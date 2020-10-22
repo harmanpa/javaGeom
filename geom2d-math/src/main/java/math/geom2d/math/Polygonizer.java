@@ -13,7 +13,6 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Deque;
-import java.util.Iterator;
 import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
@@ -28,6 +27,8 @@ import math.geom2d.circulinear.CirculinearCurve2D;
 import math.geom2d.circulinear.CirculinearDomain2D;
 import math.geom2d.conic.Circle2D;
 import math.geom2d.conic.CircleArc2D;
+import math.geom2d.conic.Ellipse2D;
+import math.geom2d.conic.EllipseArc2D;
 import math.geom2d.curve.SmoothCurve2D;
 import math.geom2d.line.AbstractLine2D;
 import math.geom2d.line.LineSegment2D;
@@ -118,6 +119,24 @@ public class Polygonizer {
             double maxAngle = inside
                     ? Math.acos(1 - maxError / ((CircleArc2D) segment).supportingCircle().radius())
                     : Math.acos(((CircleArc2D) segment).supportingCircle().radius() / (maxError + ((CircleArc2D) segment).supportingCircle().radius()));
+            int n = (int) Math.ceil(Math.abs(((CircleArc2D) segment).getAngleExtent()) / maxAngle);
+            return toPolyline(segment, n, inside);
+        }
+        if (segment instanceof Ellipse2D) {
+            double rMax = Math.max(((Ellipse2D) segment).semiMajorAxisLength(), ((Ellipse2D) segment).semiMinorAxisLength()) / 2;
+            double rMin = Math.min(((Ellipse2D) segment).semiMajorAxisLength(), ((Ellipse2D) segment).semiMinorAxisLength()) / 2;
+            double maxAngle = inside
+                    ? Math.acos(1 - maxError / rMax)
+                    : Math.acos(rMin / (maxError + ((Circle2D) segment).supportingCircle().radius()));
+            int n = (int) Math.ceil(Math.PI * 2 / maxAngle);
+            return toPolyline(segment, n, inside);
+        }
+        if (segment instanceof EllipseArc2D) {
+            double rMax = Math.max(((Ellipse2D) segment).semiMajorAxisLength(), ((Ellipse2D) segment).semiMinorAxisLength()) / 2;
+            double rMin = Math.min(((Ellipse2D) segment).semiMajorAxisLength(), ((Ellipse2D) segment).semiMinorAxisLength()) / 2;
+            double maxAngle = inside
+                    ? Math.acos(1 - maxError / rMax)
+                    : Math.acos(rMin / (maxError + ((CircleArc2D) segment).supportingCircle().radius()));
             int n = (int) Math.ceil(Math.abs(((CircleArc2D) segment).getAngleExtent()) / maxAngle);
             return toPolyline(segment, n, inside);
         }
