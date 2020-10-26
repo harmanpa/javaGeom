@@ -20,15 +20,18 @@ import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.GeometricObject2D;
 import math.geom2d.Point2D;
+import math.geom2d.Shape2D;
 import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
 import math.geom2d.circulinear.CirculinearContourArray2D;
 import math.geom2d.circulinear.CirculinearCurve2D;
+import math.geom2d.circulinear.CirculinearCurves2D;
 import math.geom2d.circulinear.CirculinearDomain2D;
 import math.geom2d.conic.Circle2D;
 import math.geom2d.conic.CircleArc2D;
 import math.geom2d.conic.Ellipse2D;
 import math.geom2d.conic.EllipseArc2D;
+import math.geom2d.curve.Curve2D;
 import math.geom2d.curve.SmoothCurve2D;
 import math.geom2d.line.AbstractLine2D;
 import math.geom2d.line.LineSegment2D;
@@ -62,6 +65,10 @@ public class Polygonizer {
 
     static boolean isClockwise(SmoothCurve2D segment) {
         return segment.curvature(segment.t0() + (segment.t1() - segment.t0()) / 2) < 0;
+    }
+
+    public static CirculinearCurve2D toCirculinear(Shape2D shape, double maxError, boolean inside) {
+        return CirculinearCurves2D.convert(shape, c -> toPolyline(c, maxError, inside));
     }
 
     public static Polygon2D toPolygon(CirculinearCurve2D curve, double maxError, boolean inside, double jumpDistance) {
@@ -104,23 +111,23 @@ public class Polygonizer {
         return new SimplePolygon2D(points);
     }
 
-    public static LinearCurve2D toPolyline(SmoothCurve2D segment, double maxError, boolean inside) {
+    public static LinearCurve2D toPolyline(Curve2D segment, double maxError, boolean inside) {
         if (segment instanceof LinearElement2D) {
-            return segment.asPolyline(1);
+            return ((LinearElement2D) segment).asPolyline(1);
         }
         if (segment instanceof Circle2D) {
             double maxAngle = inside
                     ? Math.acos(1 - maxError / ((Circle2D) segment).supportingCircle().radius())
                     : Math.acos(((Circle2D) segment).supportingCircle().radius() / (maxError + ((Circle2D) segment).supportingCircle().radius()));
             int n = (int) Math.ceil(Math.PI * 2 / maxAngle);
-            return toPolyline(segment, n, inside);
+            return toPolylineN((SmoothCurve2D) segment, n, inside);
         }
         if (segment instanceof CircleArc2D) {
             double maxAngle = inside
                     ? Math.acos(1 - maxError / ((CircleArc2D) segment).supportingCircle().radius())
                     : Math.acos(((CircleArc2D) segment).supportingCircle().radius() / (maxError + ((CircleArc2D) segment).supportingCircle().radius()));
             int n = (int) Math.ceil(Math.abs(((CircleArc2D) segment).getAngleExtent()) / maxAngle);
-            return toPolyline(segment, n, inside);
+            return toPolylineN((SmoothCurve2D) segment, n, inside);
         }
         if (segment instanceof Ellipse2D) {
             double rMax = Math.max(((Ellipse2D) segment).semiMajorAxisLength(), ((Ellipse2D) segment).semiMinorAxisLength()) / 2;
@@ -129,7 +136,7 @@ public class Polygonizer {
                     ? Math.acos(1 - maxError / rMax)
                     : Math.acos(rMin / (maxError + ((Circle2D) segment).supportingCircle().radius()));
             int n = (int) Math.ceil(Math.PI * 2 / maxAngle);
-            return toPolyline(segment, n, inside);
+            return toPolylineN((SmoothCurve2D) segment, n, inside);
         }
         if (segment instanceof EllipseArc2D) {
             double rMax = Math.max(((Ellipse2D) segment).semiMajorAxisLength(), ((Ellipse2D) segment).semiMinorAxisLength()) / 2;
@@ -138,27 +145,33 @@ public class Polygonizer {
                     ? Math.acos(1 - maxError / rMax)
                     : Math.acos(rMin / (maxError + ((CircleArc2D) segment).supportingCircle().radius()));
             int n = (int) Math.ceil(Math.abs(((CircleArc2D) segment).getAngleExtent()) / maxAngle);
-            return toPolyline(segment, n, inside);
+            return toPolylineN((SmoothCurve2D) segment, n, inside);
         }
         int n = inside ? 1 : 2;
         double error;
         LinearCurve2D out;
         do {
-            out = toPolyline(segment, n, inside);
-            error = calculateError(segment, out, inside);
+            if (segment instanceof SmoothCurve2D) {
+                out = toPolyline((SmoothCurve2D) segment, n, inside);
+                error = calculateError(segment, out, inside);
+            } else {
+                // NB: Can only be inside
+                out = toPolyline(segment, n);
+                error = calculateError(segment, out, true);
+            }
             n++;
         } while (error > maxError);
         return out;
     }
 
-    private static LinearCurve2D toPolyline(SmoothCurve2D segment, int nSubSegments, boolean inside) {
+    private static LinearCurve2D toPolylineN(SmoothCurve2D segment, int nSubSegments, boolean inside) {
         switch (nSubSegments) {
             case 1:
                 return new Polyline2D(segment.firstPoint(), segment.lastPoint());
             case 2:
                 if (!inside) {
                     if (segment.tangent(segment.t0()).isColinear(segment.tangent(segment.t1()))) {
-                        return toPolyline(segment, 3, inside);
+                        return toPolylineN(segment, 3, inside);
                     }
                     List<AbstractLine2D> lines = new ArrayList<>();
                     lines.add(new StraightLine2D(segment.firstPoint(), segment.tangent(segment.t0())));
@@ -178,6 +191,19 @@ public class Polygonizer {
                     lines.add(new StraightLine2D(segment.lastPoint(), segment.tangent(segment.t1())));
                     return toPolyline(segment.firstPoint(), lines, segment.lastPoint());
                 }
+        }
+    }
+
+    private static LinearCurve2D toPolyline(Curve2D segment, int nSubSegments) {
+        switch (nSubSegments) {
+            case 1:
+                return new Polyline2D(segment.firstPoint(), segment.lastPoint());
+            default:
+                double spacing = (segment.t1() - segment.t0()) / nSubSegments;
+                return new Polyline2D(Stream.iterate(segment.t0(), t -> t + spacing)
+                        .limit(nSubSegments + 1)
+                        .map(t -> segment.point(t))
+                        .collect(Collectors.toList()));
         }
     }
 
@@ -203,7 +229,7 @@ public class Polygonizer {
         return new Polyline2D(points);
     }
 
-    private static double calculateError(SmoothCurve2D segment, LinearCurve2D polyline, boolean inside) {
+    private static double calculateError(Curve2D segment, LinearCurve2D polyline, boolean inside) {
         return (inside
                 ? polyline.edges().stream().map(line -> line.point(line.t0() + (line.t1() - line.t0()) / 2))
                 : polyline.vertices().stream())

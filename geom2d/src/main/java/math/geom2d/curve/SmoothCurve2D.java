@@ -57,20 +57,24 @@ public interface SmoothCurve2D extends ContinuousCurve2D {
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#reverse()
      */
+    @Override
     public abstract SmoothCurve2D reverse();
 
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#subCurve(double, double)
      */
+    @Override
     public abstract SmoothCurve2D subCurve(double t0, double t1);
 
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#clip(Box2D)
      */
+    @Override
     public abstract CurveSet2D<? extends SmoothCurve2D> clip(Box2D box);
 
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#transform(AffineTransform2D)
      */
+    @Override
     public abstract SmoothCurve2D transform(AffineTransform2D trans);
 }

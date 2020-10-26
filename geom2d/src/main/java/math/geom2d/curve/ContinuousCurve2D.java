@@ -30,7 +30,6 @@ import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.Vector2D;
 import math.geom2d.polygon.LinearCurve2D;
-import math.geom2d.polygon.Polyline2D;
 
 /**
  * Interface for all curves which can be drawn with one stroke. This includes
@@ -54,6 +53,8 @@ public interface ContinuousCurve2D extends Curve2D {
     /**
      * Returns true if the curve makes a loop, that is come back to starting
      * point after covering the path.
+     *
+     * @return
      */
     public abstract boolean isClosed();
 
@@ -95,7 +96,8 @@ public interface ContinuousCurve2D extends Curve2D {
 
     /**
      * Returns a set of smooth curves.
-     * @return 
+     *
+     * @return
      */
     public abstract Collection<? extends SmoothCurve2D> smoothPieces();
 
@@ -111,7 +113,6 @@ public interface ContinuousCurve2D extends Curve2D {
 //     * @return a polyline with maxError maximum error *
 //     */
 //    public abstract LinearCurve2D asPolyline(double maxError, boolean inside);
-
     /**
      * Returns an approximation of the curve as a polyline with <code>n</code>
      * line segments. If the curve is closed, the method should return an
@@ -138,11 +139,13 @@ public interface ContinuousCurve2D extends Curve2D {
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#reverse(D)
      */
+    @Override
     public abstract ContinuousCurve2D reverse();
 
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#subCurve(double, double)
      */
+    @Override
     public abstract ContinuousCurve2D subCurve(double t0, double t1);
 
     // ===================================================================
@@ -151,10 +154,12 @@ public interface ContinuousCurve2D extends Curve2D {
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#clip(Box2D)
      */
+    @Override
     public abstract CurveSet2D<? extends ContinuousCurve2D> clip(Box2D box);
 
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#transform(AffineTransform2D)
      */
+    @Override
     public abstract ContinuousCurve2D transform(AffineTransform2D trans);
 }

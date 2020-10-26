@@ -10,12 +10,12 @@ package math.geom2d.circulinear;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Comparator;
 import java.util.List;
 import java.util.NavigableMap;
 import java.util.NavigableSet;
 import java.util.TreeMap;
 import java.util.TreeSet;
+import java.util.function.Function;
 import java.util.stream.Collectors;
 
 import math.geom2d.Point2D;
@@ -49,8 +49,22 @@ public class CirculinearCurves2D {
      * @return
      */
     public static CirculinearCurve2D convert(Shape2D shape) {
+        return convert(shape, c -> null);
+    }
+
+    /**
+     * Converts a shape to a circulinear curve, by concatenating all elements of
+     * the shape to the appropriate circulinear curve type.If the curve contains
+     * one or more non-circulinear smooth curve, null is returned
+     *
+     * @param shape
+     * @param subcurveConverter
+     * @return
+     */
+    public static CirculinearCurve2D convert(Shape2D shape,
+            Function<Curve2D, CirculinearCurve2D> subcurveConverter) {
         if (shape instanceof Curve2D) {
-            return convert((Curve2D) shape);
+            return convert((Curve2D) shape, subcurveConverter);
         }
         if (shape instanceof Polygon2D) {
             List<CirculinearElement2D> elements = new ArrayList<>();
@@ -69,6 +83,20 @@ public class CirculinearCurves2D {
      * @return
      */
     public static CirculinearCurve2D convert(Curve2D curve) {
+        return convert(curve, c -> null);
+    }
+
+    /**
+     * Converts a curve to a circulinear curve, by concatenating all elements of
+     * the curve to the appropriate circulinear curve type.If the curve contains
+     * one or more non-circulinear smooth curve, null is returned
+     *
+     * @param curve
+     * @param subcurveConverter
+     * @return
+     */
+    public static CirculinearCurve2D convert(Curve2D curve,
+            Function<Curve2D, CirculinearCurve2D> subcurveConverter) {
         // first check type, to avoid unnecessary computations
         if (curve instanceof CirculinearCurve2D) {
             return (CirculinearCurve2D) curve;
@@ -89,6 +117,14 @@ public class CirculinearCurves2D {
             for (SmoothCurve2D smooth : smoothPieces) {
                 if (smooth instanceof CirculinearElement2D) {
                     elements.add((CirculinearElement2D) smooth);
+                } else if (subcurveConverter != null) {
+                    CirculinearCurve2D sub = subcurveConverter.apply(smooth);
+                    if (sub == null) {
+                        return null;
+                    }
+                    sub.continuousCurves()
+                            .forEach(cc -> cc.smoothPieces()
+                            .forEach(sp -> elements.add(sp)));
                 } else {
                     return null;
                 }
@@ -119,11 +155,13 @@ public class CirculinearCurves2D {
             }
 
             // create the resulting CirculinearContinuousCurve2D
-            return CirculinearCurveArray2D.create(curves.toArray(new CirculinearElement2D[0]));
+            return CirculinearCurveArray2D.create(curves.toArray(new CirculinearContinuousCurve2D[0]));
         }
-
-        //TODO: throw exception ?
-        return null;
+        if (subcurveConverter != null) {
+            return subcurveConverter.apply(curve);
+        } else {
+            return null;
+        }
     }
 
     /*
@@ -356,9 +394,10 @@ public class CirculinearCurves2D {
      * double, where N is the number of intersections. For each row, the first
      * element is the position on the first curve, and the second element is the
      * position on the second curve.
+     *
      * @param curve1
      * @param curve2
-     * @return 
+     * @return
      */
     public static double[][] locateIntersections(CirculinearCurve2D curve1,
             CirculinearCurve2D curve2) {
@@ -414,14 +453,15 @@ public class CirculinearCurves2D {
 
     /**
      * Computes the intersections, if they exist, of two circulinear elements.
+     *
      * @param elem1
      * @param elem2
-     * @return 
+     * @return
      */
     public static Collection<Point2D> findIntersections(
             CirculinearElement2D elem1, CirculinearElement2D elem2) {
-        
-        if(elem1==null || elem2==null) {
+
+        if (elem1 == null || elem2 == null) {
             return new ArrayList<>(0);
         }
 
@@ -436,7 +476,6 @@ public class CirculinearCurves2D {
             LinearShape2D line2 = (LinearShape2D) elem2;
 
             // test parallel elements
-            
             Vector2D v1 = line1.direction();
             Vector2D v2 = line2.direction();
             if (Vector2D.isColinear(v1, v2)) {
@@ -776,10 +815,8 @@ public class CirculinearCurves2D {
                     // position on each curve
                     pos1 = couples[k][0];
                     pos2 = couples[k][1];
-                    
-                    // check there isn't a really close intersection
-                    
 
+                    // check there isn't a really close intersection
                     // add positions in their tree sets
                     positions.get(i).add(pos1);
                     positions.get(j).add(pos2);
@@ -918,7 +955,7 @@ public class CirculinearCurves2D {
 
         return contours;
     }
-    
+
     /**
      * Add all circulinear elements of the given curve to the collection of
      * circulinear elements.
