@@ -5,6 +5,7 @@ package math.geom2d.polygon;
 
 import de.lighti.clipper.Clipper;
 import de.lighti.clipper.Clipper.PolyType;
+import de.lighti.clipper.ClipperOffset;
 import de.lighti.clipper.DefaultClipper;
 import de.lighti.clipper.Path;
 import de.lighti.clipper.Paths;
@@ -15,6 +16,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
@@ -326,13 +328,15 @@ public final class Polygons2D {
     }
 
     /**
-     * Computes the buffer at a distance d of the input polygon. The result is a
+     * Computes the buffer at a distance d of the input polygon.The result is a
      * domain whose boundary is composed of line segments and circle arcs.
      *
+     * @param polygon
+     * @param dist
+     * @return
      * @see Polygon2D#buffer(double)
      */
-    public final static CirculinearDomain2D createBuffer(Polygon2D polygon,
-            double dist) {
+    public final static CirculinearDomain2D createBuffer(Polygon2D polygon, double dist) {
         // get current instance of buffer calculator
         BufferCalculator bc = BufferCalculator.getDefaultInstance();
 
@@ -463,6 +467,22 @@ public final class Polygons2D {
             return convertFromClipperPaths(solution, 8);
         }
         return null;
+    }
+
+    public static List<Polygon2D> offset(Polygon2D polygon, double distance) {
+        Paths paths = new Paths();
+        paths.add(convertToClipperPath(polygon, 8));
+        new ClipperOffset().execute(paths, distance);
+        Polygon2D out = convertFromClipperPaths(paths, 8);
+        if (out instanceof MultiPolygon2D) {
+            return ((MultiPolygon2D) out).rings.stream()
+                    .map(ring -> new SimplePolygon2D(ring))
+                    .collect(Collectors.toList());
+        }
+        if (out.vertexNumber() <= 1) {
+            return Arrays.asList();
+        }
+        return Arrays.asList(out);
     }
 
     private static Path convertToClipperPath(Polygon2D polygon, int decimalPlaces) {
