@@ -51,6 +51,10 @@ import math.geom2d.transform.CircleInversion2D;
  */
 public class Polygonizer {
 
+    public static Polygon2D toPolygon(Shape2D shape, double maxError, boolean inside) {
+        return toPolygon(toCirculinear(shape, maxError, inside), maxError, inside);
+    }
+
     public static Polygon2D toPolygon(CirculinearCurve2D curve, double maxError, boolean inside) {
         boolean curveCW = Rings2D.isClockwise(curve);
         Collection<Point2D> points = curve.continuousCurves().stream()
@@ -69,6 +73,10 @@ public class Polygonizer {
 
     public static CirculinearCurve2D toCirculinear(Shape2D shape, double maxError, boolean inside) {
         return CirculinearCurves2D.convert(shape, c -> toPolyline(c, maxError, inside));
+    }
+
+    public static Polygon2D toPolygon(Shape2D shape, double maxError, boolean inside, double jumpDistance) {
+        return toPolygon(toCirculinear(shape, maxError, inside), maxError, inside, jumpDistance);
     }
 
     public static Polygon2D toPolygon(CirculinearCurve2D curve, double maxError, boolean inside, double jumpDistance) {
