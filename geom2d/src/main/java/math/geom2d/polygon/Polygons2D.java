@@ -469,22 +469,6 @@ public final class Polygons2D {
         return null;
     }
 
-    public static List<Polygon2D> offset(Polygon2D polygon, double distance) {
-        Paths paths = new Paths();
-        paths.add(convertToClipperPath(polygon, 8));
-        new ClipperOffset().execute(paths, distance);
-        Polygon2D out = convertFromClipperPaths(paths, 8);
-        if (out instanceof MultiPolygon2D) {
-            return ((MultiPolygon2D) out).rings.stream()
-                    .map(ring -> new SimplePolygon2D(ring))
-                    .collect(Collectors.toList());
-        }
-        if (out.vertexNumber() <= 1) {
-            return Arrays.asList();
-        }
-        return Arrays.asList(out);
-    }
-
     private static Path convertToClipperPath(Polygon2D polygon, int decimalPlaces) {
         double scaling = Math.pow(10, decimalPlaces);
         Path path = new Path(polygon.vertexNumber());

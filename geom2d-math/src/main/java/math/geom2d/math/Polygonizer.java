@@ -5,6 +5,11 @@
  */
 package math.geom2d.math;
 
+import de.lighti.clipper.Clipper;
+import de.lighti.clipper.ClipperOffset;
+import de.lighti.clipper.Path;
+import de.lighti.clipper.Paths;
+import de.lighti.clipper.Point;
 import java.awt.Graphics2D;
 import java.lang.reflect.Array;
 import java.util.ArrayDeque;
@@ -39,6 +44,7 @@ import math.geom2d.line.LinearElement2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.polygon.LinearCurve2D;
 import math.geom2d.polygon.LinearRing2D;
+import math.geom2d.polygon.MultiPolygon2D;
 import math.geom2d.polygon.Polygon2D;
 import math.geom2d.polygon.Polyline2D;
 import math.geom2d.polygon.SimplePolygon2D;
@@ -99,6 +105,31 @@ public class Polygonizer {
                 .mapToInt(pair -> isLeft(pair[0], pair[1], point)).sum();
     }
 
+    public static List<Polygon2D> offset(Polygon2D polygon, double distance) {
+        ClipperOffset offset = new ClipperOffset();
+        offset.addPath(
+                convertToClipperPath(polygon, 8),
+                Clipper.JoinType.ROUND,
+                Clipper.EndType.OPEN_BUTT);
+        Paths paths = new Paths();
+        offset.execute(paths, distance * Math.pow(10, 8));
+        Polygon2D out = convertFromClipperPaths(paths, 8);
+        if (out instanceof MultiPolygon2D) {
+            return ((MultiPolygon2D) out).contours().stream()
+                    .map(ring -> toPolygon(
+                    removeColinearEdges(
+                            removeCoincidentPoints(ring.vertices()))))
+                    .collect(Collectors.toList());
+        }
+        if (out.vertexNumber() <= 1) {
+            return Arrays.asList();
+        }
+        return Arrays.asList(
+                toPolygon(
+                        removeColinearEdges(
+                                removeCoincidentPoints(out.vertices()))));
+    }
+
     /**
      * Tests if a point is Left|On|Right of an infinite line. Input: three
      * points P0, P1, and P2 Return: >0 for P2 left of the line through P0 and
@@ -142,17 +173,19 @@ public class Polygonizer {
             double rMin = Math.min(((Ellipse2D) segment).semiMajorAxisLength(), ((Ellipse2D) segment).semiMinorAxisLength()) / 2;
             double maxAngle = inside
                     ? Math.acos(1 - maxError / rMax)
-                    : Math.acos(rMin / (maxError + ((Circle2D) segment).supportingCircle().radius()));
+                    : Math.acos(rMin / (maxError + rMax));
             int n = (int) Math.ceil(Math.PI * 2 / maxAngle);
             return toPolylineN((SmoothCurve2D) segment, n, inside);
         }
         if (segment instanceof EllipseArc2D) {
-            double rMax = Math.max(((Ellipse2D) segment).semiMajorAxisLength(), ((Ellipse2D) segment).semiMinorAxisLength()) / 2;
-            double rMin = Math.min(((Ellipse2D) segment).semiMajorAxisLength(), ((Ellipse2D) segment).semiMinorAxisLength()) / 2;
+            double rMax = Math.max(((EllipseArc2D) segment).getSupportingEllipse().semiMajorAxisLength(), 
+                    ((EllipseArc2D) segment).getSupportingEllipse().semiMinorAxisLength()) / 2;
+            double rMin = Math.min(((EllipseArc2D) segment).getSupportingEllipse().semiMajorAxisLength(), 
+                    ((EllipseArc2D) segment).getSupportingEllipse().semiMinorAxisLength()) / 2;
             double maxAngle = inside
                     ? Math.acos(1 - maxError / rMax)
-                    : Math.acos(rMin / (maxError + ((CircleArc2D) segment).supportingCircle().radius()));
-            int n = (int) Math.ceil(Math.abs(((CircleArc2D) segment).getAngleExtent()) / maxAngle);
+                    : Math.acos(rMin / (maxError + rMax));
+            int n = (int) Math.ceil(Math.abs(((EllipseArc2D) segment).getAngleExtent()) / maxAngle);
             return toPolylineN((SmoothCurve2D) segment, n, inside);
         }
         int n = inside ? 1 : 2;
@@ -527,5 +560,46 @@ public class Polygonizer {
         public void fill(Graphics2D g2) {
         }
 
+    }
+
+    private static Path convertToClipperPath(Polygon2D polygon, int decimalPlaces) {
+        if (polygon.vertexNumber() < 3) {
+            return new Path();
+        }
+        double scaling = Math.pow(10, decimalPlaces);
+        Path path = new Path(polygon.vertexNumber());
+        Point2D first = polygon.vertices().iterator().next();
+        polygon.vertices().forEach(v -> path.add(new Point.LongPoint((long) Math.round(v.getX() * scaling), (long) Math.round(v.getY() * scaling))));
+        path.add(new Point.LongPoint((long) Math.round(first.getX() * scaling), (long) Math.round(first.getY() * scaling)));
+        return path;
+    }
+
+    private static Polygon2D convertFromClipperPaths(Paths paths, int decimalPlaces) {
+        int n = paths.size();
+
+        // if the result is single, create a SimplePolygon
+        if (n == 1) {
+            Point2D[] points = extractPathVertices(paths.get(0), decimalPlaces);
+            return SimplePolygon2D.create(points);
+        }
+
+        // extract the different rings of the resulting polygon
+        LinearRing2D[] rings = new LinearRing2D[n];
+        for (int i = 0; i < n; i++) {
+            rings[i] = LinearRing2D.create(extractPathVertices(paths.get(i), decimalPlaces));
+        }
+
+        // create a multiple polygon
+        return MultiPolygon2D.create(rings);
+    }
+
+    private static Point2D[] extractPathVertices(Path path, int decimalPlaces) {
+        double scaling = Math.pow(10, decimalPlaces);
+        int n = path.size();
+        Point2D[] points = new Point2D[n];
+        for (int i = 0; i < n; i++) {
+            points[i] = new Point2D(path.get(i).getX() / scaling, path.get(i).getY() / scaling);
+        }
+        return points;
     }
 }
