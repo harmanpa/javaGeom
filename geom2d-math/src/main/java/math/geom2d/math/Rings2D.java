@@ -718,9 +718,11 @@ public class Rings2D {
             Circle2D circ1 = ((CircularShape2D) elem1).supportingCircle();
             Circle2D circ2 = ((CircularShape2D) elem2).supportingCircle();
             if (circ1.center().distance(circ2.center()) < tolerance && Math.abs(circ1.radius() - circ2.radius()) < tolerance) {
-                double t12 = elem1.project(elem2.lastPoint());
-                double t11 = elem1.project(elem2.firstPoint());
-                return Math.abs(t12 - t11) >= Tolerance2D.get();
+                if (elem1 instanceof CircleArc2D && elem2 instanceof CircleArc2D) {
+                    return ((CircleArc2D) elem1).containsAngle(((CircleArc2D) elem2).getAngle(elem2.t0()))
+                            || ((CircleArc2D) elem1).containsAngle(((CircleArc2D) elem2).getAngle(elem2.t1()));
+                }
+                return true;
             }
             return false;
         }
