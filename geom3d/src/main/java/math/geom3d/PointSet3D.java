@@ -4,6 +4,7 @@
 package math.geom3d;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import math.geom2d.Tolerance2D;
@@ -15,9 +16,10 @@ import math.geom3d.transform.AffineTransform3D;
  */
 public class PointSet3D implements Shape3D, Iterable<Point3D> {
 
-    protected Collection<Point3D> points = new ArrayList<Point3D>();
+    private final Collection<Point3D> points;
 
     public PointSet3D() {
+        this.points = new ArrayList<>();
     }
 
     /**
@@ -26,17 +28,17 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      * @param n the number of points to store
      */
     public PointSet3D(int n) {
-        this.points = new ArrayList<Point3D>(n);
+        this.points = new ArrayList<>(n);
     }
 
     /**
      * Instances of Point3D are directly added, other Point are converted to
      * Point3D with the same location.
+     *
+     * @param points
      */
     public PointSet3D(Point3D[] points) {
-        for (Point3D element : points) {
-            this.points.add(element);
-        }
+        this.points = Arrays.asList(points);
     }
 
     /**
@@ -47,9 +49,7 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      * @param points
      */
     public PointSet3D(Collection<? extends Point3D> points) {
-        for (Point3D point : points) {
-            this.points.add(point);
-        }
+        this.points = new ArrayList<>(points);
     }
 
     /**
@@ -110,6 +110,7 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      * 
      * @see math.geom3d.Shape3D#clip(math.geom3d.Box3D)
      */
+    @Override
     public Shape3D clip(Box3D box) {
         PointSet3D res = new PointSet3D(this.points.size());
         Shape3D clipped;
@@ -122,6 +123,7 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
         return res;
     }
 
+    @Override
     public Box3D boundingBox() {
         double xmin = Double.MAX_VALUE;
         double ymin = Double.MAX_VALUE;
@@ -146,6 +148,7 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      * 
      * @see math.geom3d.Shape3D#getDistance(math.geom3d.Point3D)
      */
+    @Override
     public double distance(Point3D p) {
         if (points.isEmpty()) {
             return Double.POSITIVE_INFINITY;
@@ -157,19 +160,17 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
         return dist;
     }
 
+    @Override
     public boolean contains(Point3D point) {
-        for (Point3D p : points) {
-            if (point.distance(p) < Tolerance2D.get()) {
-                return true;
-            }
-        }
-        return false;
+        return points.stream().anyMatch((p) -> (point.distance(p) < Tolerance2D.get()));
     }
 
+    @Override
     public boolean isEmpty() {
-        return points.size() == 0;
+        return points.isEmpty();
     }
 
+    @Override
     public boolean isBounded() {
         return true;
     }
@@ -179,11 +180,12 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      * 
      * @see math.geom3d.Shape3D#transform(math.geom3d.AffineTransform3D)
      */
+    @Override
     public Shape3D transform(AffineTransform3D trans) {
         PointSet3D res = new PointSet3D();
-        for (Point3D point : points) {
+        points.forEach((point) -> {
             res.addPoint(point.transform(trans));
-        }
+        });
         return res;
     }
 
@@ -195,6 +197,7 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      * 
      * @see java.lang.Iterable#iterator()
      */
+    @Override
     public Iterator<Point3D> iterator() {
         return points.iterator();
     }

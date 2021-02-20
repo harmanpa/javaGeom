@@ -3,9 +3,11 @@
  */
 package math.geom3d;
 
+import static java.lang.Math.acos;
+import static java.lang.Math.max;
+import static java.lang.Math.min;
 import math.geom2d.Tolerance2D;
 import math.geom3d.transform.AffineTransform3D;
-import org.apache.commons.math3.util.MathArrays;
 
 /**
  * Define a vector in 3 dimensions. Provides methods to compute cross product
@@ -29,6 +31,10 @@ public class Vector3D {
      * Dot product is zero if the vectors defined by the 2 vectors are
      * orthogonal. It is positive if vectors are in the same direction, and
      * negative if they are in opposite direction.
+     *
+     * @param v1
+     * @param v2
+     * @return
      */
     public final static double dotProduct(Vector3D v1, Vector3D v2) {
         return v1.x * v2.x + v1.y * v2.y + v1.z * v2.z;
@@ -41,9 +47,13 @@ public class Vector3D {
 //    }
 
     /**
-     * Computes the cross product of the two vectors. Cross product is zero for
-     * colinear vectors. It is positive if angle between vector 1 and vector 2
-     * is comprised between 0 and PI, and negative otherwise.
+     * Computes the cross product of the two vectors.Cross product is zero for
+     * colinear vectors.It is positive if angle between vector 1 and vector 2 is
+     * comprised between 0 and PI, and negative otherwise.
+     *
+     * @param v1
+     * @param v2
+     * @return
      */
     public final static Vector3D crossProduct(Vector3D v1, Vector3D v2) {
         return new Vector3D(
@@ -55,6 +65,8 @@ public class Vector3D {
     /**
      * test if the two vectors are colinear
      *
+     * @param v1
+     * @param v2
      * @return true if the vectors are colinear
      */
     public final static boolean isColinear(Vector3D v1, Vector3D v2) {
@@ -70,6 +82,8 @@ public class Vector3D {
     /**
      * test if the two vectors are orthogonal
      *
+     * @param v1
+     * @param v2
      * @return true if the vectors are orthogonal
      */
     public final static boolean isOrthogonal(Vector3D v1, Vector3D v2) {
@@ -90,6 +104,10 @@ public class Vector3D {
 
     /**
      * Base constructor, using coordinates in each direction.
+     *
+     * @param x
+     * @param y
+     * @param z
      */
     public Vector3D(double x, double y, double z) {
         this.x = x;
@@ -99,6 +117,8 @@ public class Vector3D {
 
     /**
      * Construct a new vector between origin and a 3D point.
+     *
+     * @param point
      */
     public Vector3D(Point3D point) {
         this(point.getX(), point.getY(), point.getZ());
@@ -106,6 +126,9 @@ public class Vector3D {
 
     /**
      * construct a new vector between two points
+     *
+     * @param point1
+     * @param point2
      */
     public Vector3D(Point3D point1, Point3D point2) {
         this(point2.getX() - point1.getX(), point2.getY() - point1.getY(), point2
@@ -130,16 +153,22 @@ public class Vector3D {
     // ===================================================================
     // basic arithmetic on vectors
     /**
-     * Return the sum of current vector with vector given as parameter. Inner
+     * Return the sum of current vector with vector given as parameter.Inner
      * fields are not modified.
+     *
+     * @param v
+     * @return
      */
     public Vector3D plus(Vector3D v) {
         return new Vector3D(x + v.x, y + v.y, z + v.z);
     }
 
     /**
-     * Return the subtraction of current vector with vector given as parameter.
-     * Inner fields are not modified.
+     * Return the subtraction of current vector with vector given as
+     * parameter.Inner fields are not modified.
+     *
+     * @param v
+     * @return
      */
     public Vector3D minus(Vector3D v) {
         return new Vector3D(x - v.x, y - v.y, z - v.z);
@@ -147,6 +176,9 @@ public class Vector3D {
 
     /**
      * Multiplies this vector by a constant.
+     *
+     * @param k
+     * @return
      */
     public Vector3D times(double k) {
         return new Vector3D(k * x, k * y, k * z);
@@ -186,10 +218,29 @@ public class Vector3D {
     /**
      * Returns the vector with same direction as this one, but with norm equal
      * to 1.
+     *
+     * @return
      */
     public Vector3D normalize() {
         double r = this.norm();
         return new Vector3D(this.x / r, this.y / r, this.z / r);
+    }
+
+    public Vector3D cross(Vector3D v2) {
+        return crossProduct(this, v2);
+    }
+
+    public double dot(Vector3D v2) {
+        return dotProduct(this, v2);
+    }
+
+    public double angle(Vector3D v) {
+        double val = this.dot(v) / (this.norm() * v.norm());
+        return acos(max(min(val, 1), -1)); // compensate rounding errors
+    }
+
+    public Vector3D lerp(Vector3D a, double t) {
+        return this.plus(a.minus(this).times(t));
     }
 
     /**
@@ -222,10 +273,16 @@ public class Vector3D {
         if (Math.abs(y - v.y) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(z - v.z) > Tolerance2D.get()) {
-            return false;
-        }
-        return true;
+        return Math.abs(z - v.z) <= Tolerance2D.get();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 41 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
+        hash = 41 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
+        hash = 41 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
+        return hash;
     }
 
 }

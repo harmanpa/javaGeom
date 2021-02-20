@@ -86,8 +86,17 @@ public class Point3D implements Shape3D {
         return new Point3D(this.x - p2.x, this.y - p2.y, this.z - p2.z);
     }
 
+    public Point3D times(double k) {
+        return new Point3D(k * x, k * y, k * z);
+    }
+
+    public Point3D lerp(Point3D a, double t) {
+        return this.plus(a.minus(this).times(t));
+    }
+
     // ===================================================================
     // Methods implementing the Shape3D interface
+    @Override
     public double distance(Point3D point) {
         double dx = point.x - x;
         double dy = point.y - y;
@@ -99,12 +108,13 @@ public class Point3D implements Shape3D {
     /**
      * A point 'contains' another point if their euclidean distance is less than
      * the accuracy.
+     *
+     * @param point
+     * @return
      */
+    @Override
     public boolean contains(Point3D point) {
-        if (distance(point) > Tolerance2D.get()) {
-            return false;
-        }
-        return true;
+        return distance(point) <= Tolerance2D.get();
     }
 
     /**
@@ -127,7 +137,11 @@ public class Point3D implements Shape3D {
 
     /**
      * Returns the clipped point, or null if empty.
+     *
+     * @param box
+     * @return
      */
+    @Override
     public PointSet3D clip(Box3D box) {
         PointSet3D set = new PointSet3D(1);
         if (x < box.getMinX() || x > box.getMaxX()) {
@@ -147,7 +161,11 @@ public class Point3D implements Shape3D {
     /**
      * Applies the given affine transform to the point, and return the
      * transformed point.
+     *
+     * @param trans
+     * @return
      */
+    @Override
     public Point3D transform(AffineTransform3D trans) {
         double coef[] = trans.coefficients();
         return new Point3D(
@@ -172,9 +190,15 @@ public class Point3D implements Shape3D {
         if (Math.abs(point.y - this.y) > Tolerance2D.get()) {
             return false;
         }
-        if (Math.abs(point.z - this.z) > Tolerance2D.get()) {
-            return false;
-        }
-        return true;
+        return Math.abs(point.z - this.z) <= Tolerance2D.get();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 41 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
+        hash = 41 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
+        hash = 41 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
+        return hash;
     }
 }

@@ -27,6 +27,11 @@
         <module>geom2d-clipper</module>
         <module>geom2d-binpacking</module>
         <module>geom2d-nesting</module>
+        <module>geom3d-csg</module>
+        <module>geom3d-poly2tri</module>
+        <module>geom3d-quickhull</module>
+        <module>geom3d-io</module>
+        <module>geom2d-bezier</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

@@ -112,32 +112,35 @@ public class AffineTransform3D implements Bijection3D {
     }
 
     public AffineTransform3D(double[] coefs) {
-        if (coefs.length == 9) {
-            m00 = coefs[0];
-            m01 = coefs[1];
-            m02 = coefs[2];
-            m10 = coefs[3];
-            m11 = coefs[4];
-            m12 = coefs[5];
-            m20 = coefs[6];
-            m21 = coefs[7];
-            m22 = coefs[8];
-        } else if (coefs.length == 12) {
-            m00 = coefs[0];
-            m01 = coefs[1];
-            m02 = coefs[2];
-            m03 = coefs[3];
-            m10 = coefs[4];
-            m11 = coefs[5];
-            m12 = coefs[6];
-            m13 = coefs[7];
-            m20 = coefs[8];
-            m21 = coefs[9];
-            m22 = coefs[10];
-            m23 = coefs[11];
-        } else {
-            throw new IllegalArgumentException(
-                    "Input array must have 9 or 12 elements");
+        switch (coefs.length) {
+            case 9:
+                m00 = coefs[0];
+                m01 = coefs[1];
+                m02 = coefs[2];
+                m10 = coefs[3];
+                m11 = coefs[4];
+                m12 = coefs[5];
+                m20 = coefs[6];
+                m21 = coefs[7];
+                m22 = coefs[8];
+                break;
+            case 12:
+                m00 = coefs[0];
+                m01 = coefs[1];
+                m02 = coefs[2];
+                m03 = coefs[3];
+                m10 = coefs[4];
+                m11 = coefs[5];
+                m12 = coefs[6];
+                m13 = coefs[7];
+                m20 = coefs[8];
+                m21 = coefs[9];
+                m22 = coefs[10];
+                m23 = coefs[11];
+                break;
+            default:
+                throw new IllegalArgumentException(
+                        "Input array must have 9 or 12 elements");
         }
     }
 
@@ -194,15 +197,14 @@ public class AffineTransform3D implements Bijection3D {
         if (m21 != 0) {
             return false;
         }
-        if (m23 != 0) {
-            return false;
-        }
-        return true;
+        return m23 == 0;
     }
 
     /**
-     * Returns the affine coefficients of the transform. Result is an array of
-     * 12 double.
+     * Returns the affine coefficients of the transform.Result is an array of 12
+     * double.
+     *
+     * @return
      */
     public double[] coefficients() {
         double[] tab = {m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23};
@@ -221,7 +223,10 @@ public class AffineTransform3D implements Bijection3D {
 
     /**
      * Computes the inverse affine transform.
+     *
+     * @return
      */
+    @Override
     public AffineTransform3D inverse() {
         double det = this.determinant();
         return new AffineTransform3D(
@@ -298,9 +303,14 @@ public class AffineTransform3D implements Bijection3D {
 
     /**
      * Transforms the input point array, stores the result in the pre-allocated
-     * array, and returns a pointer to the result array. A new array is created
+     * array, and returns a pointer to the result array.A new array is created
      * if <code>res</code> is null or has length smaller than of src.
+     *
+     * @param src
+     * @param dst
+     * @return
      */
+    @Override
     public Point3D[] transformPoints(Point3D[] src, Point3D[] dst) {
         // Check validity of result array
         if (dst == null || dst.length < src.length) {
@@ -319,7 +329,11 @@ public class AffineTransform3D implements Bijection3D {
 
     /**
      * Transforms the input point.
+     *
+     * @param src
+     * @return
      */
+    @Override
     public Point3D transformPoint(Point3D src) {
         return new Point3D(
                 src.getX() * m00 + src.getY() * m01 + src.getZ() * m02 + m03,
