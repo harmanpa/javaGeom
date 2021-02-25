@@ -79,7 +79,8 @@ public class Rings2D {
         if (faceSet.size() >= 2) {
             Sets.combinations(faceSet, 2).forEach(facePairSet -> {
                 T[] pair = Iterables.toArray(facePairSet, type);
-                switch (getState(pair[0].get(), pair[1].get(), tolerance)) {
+                ContainedState state = getState(pair[0].get(), pair[1].get(), tolerance);
+                switch (state) {
                     case Contained:
                         builder.addEdge(pair[0], pair[1], new DefaultEdge());
                         break;
@@ -87,8 +88,9 @@ public class Rings2D {
                         builder.addEdge(pair[1], pair[0], new DefaultEdge());
                         break;
                     case Overlapping:
-                    case Equal:
                         System.out.println("Warning: Overlapping faces");
+                    case Equal:
+                        System.out.println("Warning: Identical faces");
                     case None:
                 }
             });
