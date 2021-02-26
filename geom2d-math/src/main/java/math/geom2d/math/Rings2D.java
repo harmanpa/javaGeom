@@ -79,7 +79,9 @@ public class Rings2D {
         if (faceSet.size() >= 2) {
             Sets.combinations(faceSet, 2).forEach(facePairSet -> {
                 T[] pair = Iterables.toArray(facePairSet, type);
-                ContainedState state = getState(pair[0].get(), pair[1].get(), tolerance);
+                CirculinearCurve2D outer = pair[0].get();
+                CirculinearCurve2D inner = pair[1].get();
+                ContainedState state = getState(outer, inner, tolerance);
                 switch (state) {
                     case Contained:
                         builder.addEdge(pair[0], pair[1], new DefaultEdge());
@@ -88,9 +90,19 @@ public class Rings2D {
                         builder.addEdge(pair[1], pair[0], new DefaultEdge());
                         break;
                     case Overlapping:
-                        System.out.println("Warning: Overlapping faces");
+                        double area1 = area(outer);
+                        double area2 = area(inner);
+                        double unionArea = union(outer, inner, tolerance).stream().mapToDouble(u -> area(u)).sum();
+                        // If the areas summed is closer then next to each other, else contained
+                        if (Math.abs(area1 + area2 - unionArea) > Math.abs(Math.max(area1, area2) - unionArea)) {
+                            if (area1 > area2) {
+                                builder.addEdge(pair[0], pair[1], new DefaultEdge());
+                            } else {
+                                builder.addEdge(pair[1], pair[0], new DefaultEdge());
+                            }
+                        }
+                        break;
                     case Equal:
-                        System.out.println("Warning: Identical faces");
                     case None:
                 }
             });

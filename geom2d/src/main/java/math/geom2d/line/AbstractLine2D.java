@@ -63,8 +63,12 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     // ===================================================================
     // static methods
     /**
-     * Returns the unique intersection of two straight objects. If the
+     * Returns the unique intersection of two straight objects.If the
      * intersection doesn't exist (parallel lines, short edge), return null.
+     *
+     * @param line1
+     * @param line2
+     * @return
      */
     public static Point2D getIntersection(AbstractLine2D line1,
             AbstractLine2D line2) {
@@ -82,6 +86,10 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
 
     /**
      * Tests if the two linear objects are located on the same straight line.
+     *
+     * @param line1
+     * @param line2
+     * @return
      */
     public static boolean isColinear(AbstractLine2D line1, AbstractLine2D line2) {
         // test if the two lines are parallel
@@ -98,6 +106,10 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
 
     /**
      * Tests if the two linear objects are parallel.
+     *
+     * @param line1
+     * @param line2
+     * @return
      */
     public static boolean isParallel(AbstractLine2D line1, AbstractLine2D line2) {
         return (Math.abs(line1.dx * line2.dy - line1.dy * line2.dx) < Tolerance2D.get());
@@ -135,6 +147,9 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     // Methods specific to Line shapes
     /**
      * Tests if the given linear shape is parallel to this shape.
+     *
+     * @param linear
+     * @return
      */
     public boolean isColinear(LinearShape2D linear) {
         // test if the two lines are parallel
@@ -146,22 +161,17 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
         // method for details on tests)
         StraightLine2D line = linear.supportingLine();
         if (Math.abs(dx) > Math.abs(dy)) {
-            if (Math.abs((line.x0 - x0) * dy / dx + y0 - line.y0) > Tolerance2D.get()) {
-                return false;
-            } else {
-                return true;
-            }
+            return Math.abs((line.x0 - x0) * dy / dx + y0 - line.y0) <= Tolerance2D.get();
         } else {
-            if (Math.abs((line.y0 - y0) * dx / dy + x0 - line.x0) > Tolerance2D.get()) {
-                return false;
-            } else {
-                return true;
-            }
+            return Math.abs((line.y0 - y0) * dx / dy + x0 - line.x0) <= Tolerance2D.get();
         }
     }
 
     /**
      * Tests if the this object is parallel to the given one.
+     *
+     * @param line
+     * @return
      */
     public boolean isParallel(LinearShape2D line) {
         return Vector2D.isColinear(this.direction(), line.direction());
@@ -170,11 +180,15 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     /**
      * Returns true if the point (x, y) lies on the line covering the object,
      * with precision given by Tolerance2D.get().
+     *
+     * @param x
+     * @param y
+     * @return
      */
     protected boolean supportContains(double x, double y) {
         double denom = Math.hypot(dx, dy);
         if (denom < Tolerance2D.get()) {
-            throw new DegeneratedLine2DException(this);
+            return new Point2D(x0, y0).distance(x, y) < Tolerance2D.get();
         }
         return (Math.abs((x - x0) * dy - (y - y0) * dx) / (denom * denom) < Tolerance2D.get());
     }
@@ -363,6 +377,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     /**
      * Returns the origin point of this linear shape.
      */
+    @Override
     public Point2D origin() {
         return new Point2D(x0, y0);
     }
@@ -370,21 +385,28 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     /**
      * Returns the direction vector of this linear shape.
      */
+    @Override
     public Vector2D direction() {
         return new Vector2D(dx, dy);
     }
 
     /**
-     * Gets Angle with axis (O,i), counted counter-clockwise. Result is given
+     * Gets Angle with axis (O,i), counted counter-clockwise.Result is given
      * between 0 and 2*pi.
+     *
+     * @return
      */
+    @Override
     public double horizontalAngle() {
         return (Math.atan2(dy, dx) + 2 * Math.PI) % (2 * Math.PI);
     }
 
     /**
-     * Returns the unique intersection with a linear shape. If the intersection
+     * Returns the unique intersection with a linear shape.If the intersection
      * doesn't exist (parallel lines, short edges), return null.
+     *
+     * @param line
+     * @return
      */
     @Override
     public Point2D intersection(LinearShape2D line) {
@@ -418,6 +440,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     /* (non-Javadoc)
 	 * @see math.geom2d.line.AbstractLine2D#supportingLine()
      */
+    @Override
     public StraightLine2D supportingLine() {
         return new StraightLine2D(this);
     }
@@ -449,6 +472,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     /* (non-Javadoc)
 	 * @see math.geom2d.circulinear.CirculinearCurve2D#length(double)
      */
+    @Override
     public double length(double pos) {
         return pos * Math.hypot(dx, dy);
     }
@@ -458,10 +482,11 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
 	 * 
 	 * @see math.geom2d.circulinear.CirculinearCurve2D#position(double)
      */
+    @Override
     public double position(double distance) {
         double delta = Math.hypot(dx, dy);
         if (delta < Tolerance2D.get()) {
-            throw new DegeneratedLine2DException(this);
+            return t0();
         }
         return distance / delta;
     }
@@ -472,6 +497,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     /* (non-Javadoc)
 	 * @see math.geom2d.circulinear.CirculinearCurve2D#transform(math.geom2d.transform.CircleInversion2D)
      */
+    @Override
     public CirculinearElement2D transform(CircleInversion2D inv) {
         // Extract inversion parameters
         Point2D center = inv.center();
@@ -543,6 +569,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     /* (non-Javadoc)
 	 * @see math.geom2d.circulinear.CirculinearShape2D#buffer(double)
      */
+    @Override
     public CirculinearDomain2D buffer(double dist) {
         BufferCalculator bc = BufferCalculator.getDefaultInstance();
         return bc.computeBuffer(this, dist);
@@ -554,6 +581,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     /* (non-Javadoc)
 	 * @see math.geom2d.domain.OrientedCurve2D#windingAngle(Point2D)
      */
+    @Override
     public double windingAngle(Point2D point) {
 
         double t0 = this.t0();
@@ -590,12 +618,15 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     }
 
     /**
-     * Returns the signed distance of the StraightObject2d to the given point.
-     * The signed distance is positive if point lies 'to the right' of the line,
-     * when moving in the direction given by direction vector. This method is
-     * not designed to be used directly, because AbstractLine2D is an abstract
-     * class, but it can be used by subclasses to help computations.
+     * Returns the signed distance of the StraightObject2d to the given
+     * point.The signed distance is positive if point lies 'to the right' of the
+     * line, when moving in the direction given by direction vector. This method
+     * is not designed to be used directly, because AbstractLine2D is an
+     * abstract class, but it can be used by subclasses to help computations.
+     *
+     * @param p
      */
+    @Override
     public double signedDistance(Point2D p) {
         return signedDistance(p.x(), p.y());
     }
@@ -607,6 +638,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      * not designed to be used directly, because AbstractLine2D is an abstract
      * class, but it can be used by subclasses to help computations.
      */
+    @Override
     public double signedDistance(double x, double y) {
         double delta = Math.hypot(dx, dy);
         if (delta < Tolerance2D.get()) {
@@ -622,6 +654,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      * @param p the point to test
      * @return true if point p lies on the 'left' of the line.
      */
+    @Override
     public boolean isInside(Point2D p) {
         return ((p.x() - x0) * dy - (p.y() - y0) * dx < 0);
     }
@@ -632,6 +665,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.SmoothCurve2D#tangent(double)
      */
+    @Override
     public Vector2D tangent(double t) {
         return new Vector2D(dx, dy);
     }
@@ -744,8 +778,12 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
 
     /**
      * Returns a new AbstractLine2D, which is the portion of this AbstractLine2D
-     * delimited by parameters t0 and t1. Casts the result to StraightLine2D,
+     * delimited by parameters t0 and t1.Casts the result to StraightLine2D,
      * Ray2D or LineSegment2D when appropriate.
+     *
+     * @param t0
+     * @param t1
+     * @return
      */
     @Override
     public AbstractLine2D subCurve(double t0, double t1) {
@@ -781,9 +819,12 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
     // ===================================================================
     // methods implementing the Shape2D
     /**
-     * Returns the distance of the StraightObject2d to the given point. This
+     * Returns the distance of the StraightObject2d to the given point.This
      * method is not designed to be used directly, because AbstractLine2D is an
      * abstract class, but it can be called by subclasses to help computations.
+     *
+     * @param p
+     * @return
      */
     @Override
     public double distance(Point2D p) {
