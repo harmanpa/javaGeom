@@ -32,6 +32,7 @@
         <module>geom3d-quickhull</module>
         <module>geom3d-io</module>
         <module>geom2d-bezier</module>
+        <module>geom3d-utils</module>
     </modules>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

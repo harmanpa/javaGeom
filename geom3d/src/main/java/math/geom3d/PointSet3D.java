@@ -7,6 +7,7 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import math.geom2d.Tolerance2D;
 
 import math.geom3d.transform.AffineTransform3D;
@@ -16,7 +17,7 @@ import math.geom3d.transform.AffineTransform3D;
  */
 public class PointSet3D implements Shape3D, Iterable<Point3D> {
 
-    private final Collection<Point3D> points;
+    private final List<Point3D> points;
 
     public PointSet3D() {
         this.points = new ArrayList<>();
@@ -84,6 +85,10 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      */
     public Iterator<Point3D> getPoints() {
         return points.iterator();
+    }
+
+    public Point3D getPoint(int i) {
+        return points.get(i);
     }
 
     /**
