@@ -70,6 +70,10 @@ public class Point3D implements Shape3D {
         return z;
     }
 
+    public Vector3D asVector() {
+        return new Vector3D(this);
+    }
+
     public Point3D plus(Vector3D vec) {
         return new Point3D(this.x + vec.x, this.y + vec.y, this.z + vec.z);
     }

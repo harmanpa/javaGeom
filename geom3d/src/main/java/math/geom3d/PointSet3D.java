@@ -155,14 +155,7 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      */
     @Override
     public double distance(Point3D p) {
-        if (points.isEmpty()) {
-            return Double.POSITIVE_INFINITY;
-        }
-        double dist = Double.POSITIVE_INFINITY;
-        for (Point3D point : points) {
-            dist = Math.min(dist, point.distance(p));
-        }
-        return dist;
+        return points.stream().parallel().mapToDouble(pa -> pa.distance(p)).min().orElse(Double.POSITIVE_INFINITY);
     }
 
     @Override

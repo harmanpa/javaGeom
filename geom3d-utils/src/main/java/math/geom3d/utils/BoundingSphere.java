@@ -22,6 +22,10 @@ public class BoundingSphere {
         return new Sphere3D(new Point3D(ball.center()[0], ball.center()[1], ball.center()[2]), ball.radius());
     }
 
+    public static Sphere3D innerSphere(Point3D centre, PointSet3D points) {
+        return new Sphere3D(centre, points.distance(centre));
+    }
+
     static class MiniballPointSet3D implements PointSet {
 
         private final PointSet3D points;
