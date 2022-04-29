@@ -9,7 +9,6 @@ jobs:
 
     steps:
     - uses: actions/checkout@v2
-    - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* && git fetch --prune --unshallow
     - name: Set up JDK 1.8
       uses: actions/setup-java@v1
       with:
@@ -17,8 +16,19 @@ jobs:
     - name: Deploy
       run: mvn  -B -e -Dmaven.wagon.http.pool=false --settings settings.xml deploy
       env:
-          GITHUB_USERNAME: x-access-token
-          GITHUB_PASSWORD: ${{ secrets.GITHUB_ACCESS_TOKEN }}
+          GITHUB_USERNAME: harmanpa
+          GITHUB_PASSWORD: ${{ secrets.GH }}
+    - name: Job Failed Notification
+      if: ${{ failure() }}
+      uses: rtCamp/action-slack-notify@v2.1.2
+      env:
+        SLACK_CHANNEL: releases
+        SLACK_COLOR: '#ff0000'
+        SLACK_TITLE: 'jgeom Build Failed'
+        SLACK_USERNAME: caebot
+        SLACK_WEBHOOK: ${{ secrets.SLACK_WEBHOOK }}
+        MSG_MINIMAL: commit
+        SLACK_FOOTER: CAE Tech
     - name: Slack Notification
       uses: rtCamp/action-slack-notify@v2.1.2
       env:
