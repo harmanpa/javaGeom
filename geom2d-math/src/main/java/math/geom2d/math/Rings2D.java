@@ -165,10 +165,11 @@ public class Rings2D {
     }
 
     public static double area(CirculinearCurve2D curve) {
-        if (isPolygon(curve)) {
-            return Math.abs(toPolygon(curve).area());
-        }
-        return integrateArea(curve);
+        return new GenericCirculinearRing2D(curve).area();
+//        if (isPolygon(curve)) {
+//            return Math.abs(toPolygon(curve).area());
+//        }
+//        return integrateArea(curve);
     }
 
     static double integrateArea(CirculinearCurve2D curve) {

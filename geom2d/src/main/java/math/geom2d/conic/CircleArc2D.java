@@ -239,6 +239,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
     /**
      * Returns the circle that contains the circle arc.
      */
+    @Override
     public Circle2D supportingCircle() {
         return circle;
     }

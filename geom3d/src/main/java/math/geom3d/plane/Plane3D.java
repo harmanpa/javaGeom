@@ -50,13 +50,15 @@ public class Plane3D implements Shape3D {
                 new Vector3D(0, 0, 1));
     }
 
-    // ===================================================================
-    // constructors
-    public Plane3D() {
+    public final static Plane3D fromNormal(Point3D point, Vector3D normal) {
+        Vector3D temp = normal.swapNonZero();
+        Vector3D a = normal.cross(temp);
+        Vector3D b = normal.cross(a);
+        return new Plane3D(point, b, a);
     }
-    
-    public Plane3D(Point3D point, Vector3D normal) {
-        
+
+    public final static Plane3D fromNormal(Vector3D normal, double dist) {
+        return fromNormal(new Point3D(0, 0, 0).plus(normal.times(dist)), normal);
     }
 
     public Plane3D(Point3D point, Vector3D vector1, Vector3D vector2) {
@@ -75,6 +77,13 @@ public class Plane3D implements Shape3D {
     // methods specific to Plane3D
     public Point3D origin() {
         return new Point3D(x0, y0, z0);
+    }
+
+    public double dist() {
+        Point3D globalOrigin = new Point3D(0, 0, 0);
+        Point3D pointOnPlane = projectPoint(globalOrigin);
+        double d = globalOrigin.distance(pointOnPlane);
+        return Math.signum(new Vector3D(globalOrigin, pointOnPlane).dot(normal())) * d;
     }
 
     public Vector3D vector1() {
@@ -129,6 +138,10 @@ public class Plane3D implements Shape3D {
                 + vect.getZ());
         point = this.projectPoint(point);
         return new Vector3D(point.getX() - x0, point.getY() - y0, point.getZ() - z0);
+    }
+
+    public Point3D point(Point2D p) {
+        return point(p.getX(), p.getY());
     }
 
     public Point3D point(double u, double v) {

@@ -109,6 +109,14 @@ public class Point3D implements Shape3D {
         return Math.hypot(Math.hypot(dx, dy), dz);
     }
 
+    public double distanceSq(Point3D point) {
+        double dx = point.x - x;
+        double dy = point.y - y;
+        double dz = point.z - z;
+
+        return dx * dx + dy * dy + dz * dz;
+    }
+
     /**
      * A point 'contains' another point if their euclidean distance is less than
      * the accuracy.
@@ -123,18 +131,25 @@ public class Point3D implements Shape3D {
 
     /**
      * Returns false, as a point is never empty.
+     *
+     * @return
      */
+    @Override
     public boolean isEmpty() {
         return false;
     }
 
     /**
      * Returns true, as a point is always bounded.
+     *
+     * @return
      */
+    @Override
     public boolean isBounded() {
         return true;
     }
 
+    @Override
     public Box3D boundingBox() {
         return new Box3D(x, x, y, y, z, z);
     }

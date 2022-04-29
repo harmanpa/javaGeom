@@ -10,11 +10,16 @@ package math.geom2d.circulinear;
 
 import java.awt.Graphics2D;
 import java.util.Collection;
+import java.util.List;
+import java.util.stream.Collectors;
 
 import math.geom2d.AffineTransform2D;
 import math.geom2d.circulinear.buffer.BufferCalculator;
+import math.geom2d.conic.ArcSegment2D;
+import math.geom2d.conic.CircleArc2D;
 import math.geom2d.domain.BoundaryPolyCurve2D;
 import math.geom2d.domain.ContinuousOrientedCurve2D;
+import math.geom2d.polygon.LinearRing2D;
 import math.geom2d.transform.CircleInversion2D;
 
 /**
@@ -73,6 +78,35 @@ public class GenericCirculinearRing2D
             Collection<? extends CirculinearElement2D> curves) {
         super(curves);
         this.closed = true;
+    }
+
+    public GenericCirculinearRing2D(CirculinearCurve2D curve) {
+        super(curve.continuousCurves().stream()
+                .flatMap(cc -> cc.smoothPieces().stream())
+                .collect(Collectors.toList()));
+        this.closed = true;
+    }
+
+    @Override
+    public double area() {
+        // Split into a polygon, and a list of ArcSegment2Ds. Each segment either adds to or subtracts from the polygon area.
+        List<CirculinearElement2D> elements = continuousCurves().stream()
+                .flatMap(cc -> cc.smoothPieces().stream())
+                .collect(Collectors.toList());
+        LinearRing2D polygon = new LinearRing2D(elements.stream()
+                .map(element -> element.point(element.t0()))
+                .collect(Collectors.toList()));
+        List<CircleArc2D> arcs = elements.stream()
+                .filter(element -> element instanceof CircleArc2D)
+                .map(element -> (CircleArc2D) element)
+                .collect(Collectors.toList());
+        double area = polygon.area();
+        for (CircleArc2D arc : arcs) {
+            boolean inside = polygon.isInside(arc.point((arc.t1() + arc.t0()) / 2));
+            double segmentArea = new ArcSegment2D(arc).area();
+            area += inside ? -segmentArea : segmentArea;
+        }
+        return area;
     }
 
     // ===================================================================

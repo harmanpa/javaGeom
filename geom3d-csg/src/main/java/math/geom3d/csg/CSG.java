@@ -841,7 +841,7 @@ public class CSG {
             } else {
                 return this;
             }
-        } catch (Exception ex) {
+        } catch (QuickHullException ex) {
             try {
                 System.err.println("CSG difference failed, performing workaround");
                 //ex.printStackTrace();
@@ -860,7 +860,7 @@ public class CSG {
                 } else {
                     return this;
                 }
-            } catch (Exception e) {
+            } catch (QuickHullException e) {
                 return this;
             }
         }
@@ -1014,16 +1014,6 @@ public class CSG {
      */
     public CSG intersect(CSG... csgs) {
         return intersect(Arrays.asList(csgs));
-    }
-
-    /**
-     * Weighted.
-     *
-     * @param f the f
-     * @return the csg
-     */
-    public CSG weighted(WeightFunction f) {
-        return new Modifier(f).modified(this);
     }
 
     /**
@@ -1280,15 +1270,15 @@ public class CSG {
     }
 
     /**
-     * minkowskiDifference performs an efficient difference of the minkowski
-     * transform of the intersection of an object. if you have 2 objects and
-     * need them to fit with a specific tolerance as described as the distance
-     * from he normal of the surface, then this function will effectinatly
-     * compute that value.
+     * minkowskiDifference performs an efficient difference of the Minkowski
+     * transform of the intersection of an object.if you have 2 objects and need
+     * them to fit with a specific tolerance as described as the distance from
+     * the normal of the surface, then this function will compute that value.
      *
      * @param itemToDifference the object that needs to fit
      * @param tolerance the tolerance distance
      * @return
+     * @throws math.geom3d.quickhull.QuickHullException
      */
     public CSG minkowskiDifference(CSG itemToDifference, double tolerance) throws QuickHullException {
         double shellThickness = Math.abs(tolerance);
@@ -1379,6 +1369,7 @@ public class CSG {
      *
      * @return A CSG that completely encapsulates the base CSG, centered around
      * it
+     * @throws math.geom3d.quickhull.QuickHullException
      */
     public CSG getBoundingBox() throws QuickHullException {
         return new Cube((-this.getMinX() + this.getMaxX()),

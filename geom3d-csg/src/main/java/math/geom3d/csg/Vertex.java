@@ -57,31 +57,14 @@ public class Vertex {
     public Vector3D normal;
 
     /**
-     * The weight.
-     */
-    private double weight;
-
-    /**
      * Constructor. Creates a vertex.
      *
      * @param pos position
      * @param normal normal
      */
     public Vertex(Point3D pos, Vector3D normal) {
-        this(pos, normal, 1.0);
-    }
-
-    /**
-     * Constructor. Creates a vertex.
-     *
-     * @param pos position
-     * @param normal normal
-     * @param weight weight
-     */
-    private Vertex(Point3D pos, Vector3D normal, double weight) {
         this.pos = pos;
         this.normal = normal;
-        this.weight = weight;
     }
 
     /* (non-Javadoc)
@@ -90,7 +73,7 @@ public class Vertex {
     @Override
     @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDeclaresCloneNotSupported"})
     public Vertex clone() {
-        return new Vertex(pos, normal, weight);
+        return new Vertex(pos, normal);
     }
 
     /**
@@ -120,7 +103,7 @@ public class Vertex {
      * @return this vertex
      */
     public Vertex transform(Transform transform) {
-        pos = transform.transform(pos, weight);
+        pos = transform.transform(pos);
         return this;
     }
 
@@ -132,24 +115,6 @@ public class Vertex {
      */
     public Vertex transformed(Transform transform) {
         return clone().transform(transform);
-    }
-
-    /**
-     * Gets the weight.
-     *
-     * @return the weight
-     */
-    public double getWeight() {
-        return weight;
-    }
-
-    /**
-     * Sets the weight.
-     *
-     * @param weight the weight to set
-     */
-    public void setWeight(double weight) {
-        this.weight = weight;
     }
 
     /* (non-Javadoc)

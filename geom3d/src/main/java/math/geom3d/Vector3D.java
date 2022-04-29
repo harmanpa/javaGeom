@@ -243,6 +243,16 @@ public class Vector3D {
         return this.plus(a.minus(this).times(t));
     }
 
+    public Vector3D swapNonZero() {
+        if(Math.abs(x-y)>Tolerance2D.get()) {
+            return new Vector3D(y, x, z);
+        } else if(Math.abs(x-z)>Tolerance2D.get()) {
+            return new Vector3D(z, y, x);
+        } else {
+            return new Vector3D(x, z, y);
+        }
+    }
+
     /**
      * Transform the vector, by using only the first 4 parameters of the
      * transform. Translation of a vector returns the same vector.
@@ -283,6 +293,11 @@ public class Vector3D {
         hash = 41 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
         hash = 41 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
         return hash;
+    }
+
+    @Override
+    public String toString() {
+        return "Vector3D{" + "x=" + x + ", y=" + y + ", z=" + z + '}';
     }
 
 }

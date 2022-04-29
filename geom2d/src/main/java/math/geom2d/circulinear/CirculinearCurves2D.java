@@ -318,6 +318,10 @@ public class CirculinearCurves2D {
 
     /**
      * Checks if the point is a common extremity between the two curve elements.
+     * @param inter
+     * @param elem1
+     * @param elem2
+     * @return 
      */
     public static boolean isCommonVertex(Point2D inter,
             CirculinearCurve2D elem1, CirculinearCurve2D elem2) {
