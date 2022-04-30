@@ -43,7 +43,7 @@ public class ArcSegment2D implements ClosedShape2D {
     @Override
     public double area() {
         CircleSector2D sector = new CircleSector2D(arc);
-        return sector.area() - sector.getInnerTriangle().area();
+        return sector.area() - Math.abs(sector.getInnerTriangle().area());
     }
 
     @Override

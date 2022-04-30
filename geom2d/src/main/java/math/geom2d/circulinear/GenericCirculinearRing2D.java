@@ -100,7 +100,7 @@ public class GenericCirculinearRing2D
                 .filter(element -> element instanceof CircleArc2D)
                 .map(element -> (CircleArc2D) element)
                 .collect(Collectors.toList());
-        double area = polygon.area();
+        double area = Math.abs(polygon.area());
         for (CircleArc2D arc : arcs) {
             boolean inside = polygon.isInside(arc.point((arc.t1() + arc.t0()) / 2));
             double segmentArea = new ArcSegment2D(arc).area();
