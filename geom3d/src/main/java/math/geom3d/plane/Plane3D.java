@@ -3,12 +3,14 @@
  */
 package math.geom3d.plane;
 
+import java.util.List;
 import math.geom2d.Point2D;
 import math.geom2d.Tolerance2D;
 import math.geom3d.Box3D;
+import math.geom3d.Vector3D;
 import math.geom3d.Point3D;
 import math.geom3d.Shape3D;
-import math.geom3d.Vector3D;
+import math.geom3d.fitting.Plane3DFitter;
 import math.geom3d.line.StraightLine3D;
 import math.geom3d.transform.AffineTransform3D;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -61,6 +63,10 @@ public class Plane3D implements Shape3D {
         return fromNormal(new Point3D(0, 0, 0).plus(normal.times(dist)), normal);
     }
 
+    public final static Plane3D fromPoints(List<Point3D> points) {
+        return new Plane3DFitter().fit(points);
+    }
+
     public Plane3D(Point3D point, Vector3D vector1, Vector3D vector2) {
         this.x0 = point.getX();
         this.y0 = point.getY();
@@ -77,6 +83,10 @@ public class Plane3D implements Shape3D {
     // methods specific to Plane3D
     public Point3D origin() {
         return new Point3D(x0, y0, z0);
+    }
+
+    public Plane3D withOrigin(Point3D origin) {
+        return new Plane3D(origin, new Vector3D(dx1, dy1, dz1), new Vector3D(dx2, dy2, dz2));
     }
 
     public double dist() {
@@ -103,6 +113,10 @@ public class Plane3D implements Shape3D {
     public Vector3D normal() {
         return Vector3D.crossProduct(this.vector1(), this.vector2())
                 .opposite();
+    }
+
+    public Plane3D flip() {
+        return fromNormal(origin(), normal().opposite());
     }
 
     /**
@@ -166,7 +180,7 @@ public class Plane3D implements Shape3D {
      */
     public Shape3D clip(Box3D box) {
         // TODO Auto-generated method stub
-        return null;
+        return this;
     }
 
     /*
