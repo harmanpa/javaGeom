@@ -10,6 +10,7 @@ import java.util.List;
 import java.util.Random;
 import java.util.Spliterator.OfDouble;
 import math.geom2d.Point2D;
+import math.geom2d.exceptions.Geom2DException;
 import math.geom3d.Point3D;
 import math.geom3d.fitting.Plane3DFitter;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
@@ -87,7 +88,7 @@ public class FitPlaneTest {
 //        System.out.println("iterations: " + optimum.getIterations());
 //    }
     @Test
-    public void testPlane() {
+    public void testPlane() throws Geom2DException {
         // Construct a plane to generate accurate fitting data
         Plane3D examplePlane = Plane3D.createXZPlane();
         // Generate some random 2D points and turn into 3D
@@ -100,6 +101,10 @@ public class FitPlaneTest {
 
         Plane3DFitter fitter = new Plane3DFitter();
         Plane3D plane = fitter.fit(observedPoints);
+        System.out.println(examplePlane.normal());
+        System.out.println(examplePlane.dist());
+        System.out.println(plane.normal());
+        System.out.println(plane.dist());
         System.out.println(plane.normal().angle(examplePlane.normal()));
         // the model function components are the distances to current estimated center,
         // they should be as close as possible to the specified radius

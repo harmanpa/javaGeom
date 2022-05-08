@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import math.geom2d.exceptions.Geom2DException;
 import org.apache.commons.math3.analysis.MultivariateVectorFunction;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
@@ -19,6 +20,8 @@ import org.apache.commons.math3.linear.ArrayRealVector;
 import org.apache.commons.math3.linear.RealMatrix;
 import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.util.Pair;
+import org.apache.commons.math3.exception.TooManyEvaluationsException;
+import org.apache.commons.math3.exception.TooManyIterationsException;
 
 /**
  *
@@ -46,7 +49,7 @@ public class AbstractFitter<T, X> {
         this.guesser = guesser;
     }
 
-    public T fit(List<X> target, T initial) {
+    public T fit(List<X> target, T initial) throws Geom2DException {
 
         // the target is to have all points at the specified radius from the center
         double[] prescribedErrors = new double[target.size()];
@@ -57,7 +60,7 @@ public class AbstractFitter<T, X> {
                 start(destructor.apply(initial)).
                 model(fj(
                         f(constructor, assessor, target),
-                        1e-3,
+                        1e-2,
                         target.size(),
                         nParameters)
                 ).
@@ -66,14 +69,19 @@ public class AbstractFitter<T, X> {
                 maxEvaluations(1000).
                 maxIterations(1000).
                 build();
-        LeastSquaresOptimizer.Optimum optimum = new LevenbergMarquardtOptimizer().optimize(problem);
-        System.out.println("RMS: " + optimum.getRMS());
-        System.out.println("evaluations: " + optimum.getEvaluations());
-        System.out.println("iterations: " + optimum.getIterations());
-        return constructor.apply(optimum.getPoint().toArray());
+        try {
+            LeastSquaresOptimizer.Optimum optimum = new LevenbergMarquardtOptimizer().optimize(problem);
+            System.out.println("RMS: " + optimum.getRMS());
+            System.out.println("evaluations: " + optimum.getEvaluations());
+            System.out.println("iterations: " + optimum.getIterations());
+            return constructor.apply(optimum.getPoint().toArray());
+        } catch (TooManyEvaluationsException | TooManyIterationsException ex) {
+            throw new Geom2DException("Failed to solve least-squares problem", ex);
+        }
+
     }
 
-    public T fit(List<X> target) {
+    public T fit(List<X> target) throws Geom2DException {
         return fit(target, guesser.apply(target));
     }
 

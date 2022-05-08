@@ -6,6 +6,7 @@ package math.geom3d.plane;
 
 import java.util.List;
 import java.util.stream.Collectors;
+import math.geom2d.exceptions.Geom2DException;
 import math.geom2d.polygon.LinearRing2D;
 import math.geom3d.Point3D;
 
@@ -15,7 +16,7 @@ import math.geom3d.Point3D;
  */
 public class PlanarLinearRing3D extends PlanarShape3D<LinearRing2D> {
 
-    public PlanarLinearRing3D(List<Point3D> points) {
+    public PlanarLinearRing3D(List<Point3D> points) throws Geom2DException {
         this(Plane3D.fromPoints(points), points);
     }
 

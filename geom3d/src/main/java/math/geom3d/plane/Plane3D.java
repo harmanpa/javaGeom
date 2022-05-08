@@ -6,6 +6,7 @@ package math.geom3d.plane;
 import java.util.List;
 import math.geom2d.Point2D;
 import math.geom2d.Tolerance2D;
+import math.geom2d.exceptions.Geom2DException;
 import math.geom3d.Box3D;
 import math.geom3d.Vector3D;
 import math.geom3d.Point3D;
@@ -63,7 +64,7 @@ public class Plane3D implements Shape3D {
         return fromNormal(new Point3D(0, 0, 0).plus(normal.times(dist)), normal);
     }
 
-    public final static Plane3D fromPoints(List<Point3D> points) {
+    public final static Plane3D fromPoints(List<Point3D> points) throws Geom2DException {
         return new Plane3DFitter().fit(points);
     }
 
