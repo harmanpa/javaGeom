@@ -100,7 +100,7 @@ public class FitPlaneTest {
         }
 
         Plane3DFitter fitter = new Plane3DFitter();
-        Plane3D plane = fitter.fit(observedPoints);
+        Plane3D plane = fitter.optifit(observedPoints, Plane3D.createYZPlane());
         System.out.println(examplePlane.normal());
         System.out.println(examplePlane.dist());
         System.out.println(plane.normal());

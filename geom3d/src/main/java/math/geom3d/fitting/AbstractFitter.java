@@ -8,7 +8,9 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.function.BiFunction;
 import java.util.function.Function;
+import java.util.stream.DoubleStream;
 import math.geom2d.exceptions.Geom2DException;
+import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.MultivariateVectorFunction;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
 import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
@@ -22,6 +24,14 @@ import org.apache.commons.math3.linear.RealVector;
 import org.apache.commons.math3.util.Pair;
 import org.apache.commons.math3.exception.TooManyEvaluationsException;
 import org.apache.commons.math3.exception.TooManyIterationsException;
+import org.apache.commons.math3.optim.InitialGuess;
+import org.apache.commons.math3.optim.MaxEval;
+import org.apache.commons.math3.optim.MaxIter;
+import org.apache.commons.math3.optim.PointValuePair;
+import org.apache.commons.math3.optim.SimpleBounds;
+import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
+import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
+import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
 
 /**
  *
@@ -76,13 +86,31 @@ public class AbstractFitter<T, X> {
             System.out.println("iterations: " + optimum.getIterations());
             return constructor.apply(optimum.getPoint().toArray());
         } catch (TooManyEvaluationsException | TooManyIterationsException ex) {
-            throw new Geom2DException("Failed to solve least-squares problem", ex);
+            return optifit(target, initial);
         }
-
     }
 
     public T fit(List<X> target) throws Geom2DException {
         return fit(target, guesser.apply(target));
+    }
+
+    public T optifit(List<X> target, T initial) throws Geom2DException {
+        try {
+            PointValuePair pvp = new BOBYQAOptimizer(nParameters + 2).optimize(
+                    SimpleBounds.unbounded(nParameters),
+                    new MaxEval(1000),
+                    new MaxIter(1000),
+                    GoalType.MINIMIZE,
+                    new InitialGuess(destructor.apply(initial)),
+                    new ObjectiveFunction(fS(f(constructor, assessor, target))));
+            return constructor.apply(pvp.getPoint());
+        } catch (TooManyEvaluationsException | TooManyIterationsException ex) {
+            throw new Geom2DException("Failed to solve least-squares and optimisation approaches", ex);
+        }
+    }
+
+    private MultivariateFunction fS(MultivariateVectorFunction fv) {
+        return (double[] x) -> DoubleStream.of(fv.value(x)).map(v -> Math.pow(v, 2.0)).sum();
     }
 
     private MultivariateVectorFunction f(Function<double[], T> constructor, BiFunction<T, X, Double> assessor, List<X> target) {
