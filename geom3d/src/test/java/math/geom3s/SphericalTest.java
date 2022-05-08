@@ -23,4 +23,13 @@ public class SphericalTest {
             Assert.assertTrue(Vector3S.fromCartesian(v).toCartesian().minus(v).norm() < 1e-12);
         }
     }
+
+    @Test
+    public void testNorm() {
+        Random r = new Random();
+        for (int i = 0; i < 100; i++) {
+            Vector3S v = new Vector3S(r.nextDouble(), r.nextDouble());
+            Assert.assertTrue(Math.abs(v.toCartesian().norm() - 1.0) < 1e-12);
+        }
+    }
 }

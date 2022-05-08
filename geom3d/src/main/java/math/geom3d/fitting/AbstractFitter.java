@@ -65,7 +65,7 @@ public class AbstractFitter<T, X> {
         double[] prescribedErrors = new double[target.size()];
         Arrays.fill(prescribedErrors, 0.0);
 
-        // least squares problem to solve : modeled radius should be close to target radius
+        // least squares problem to solve
         LeastSquaresProblem problem = new LeastSquaresBuilder().
                 start(destructor.apply(initial)).
                 model(fj(

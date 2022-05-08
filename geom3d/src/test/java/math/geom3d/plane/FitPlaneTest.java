@@ -5,24 +5,13 @@
 package math.geom3d.plane;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
-import java.util.Spliterator.OfDouble;
 import math.geom2d.Point2D;
 import math.geom2d.exceptions.Geom2DException;
 import math.geom3d.Point3D;
 import math.geom3d.fitting.Plane3DFitter;
-import org.apache.commons.math3.fitting.leastsquares.LeastSquaresBuilder;
-import org.apache.commons.math3.fitting.leastsquares.LeastSquaresOptimizer;
-import org.apache.commons.math3.fitting.leastsquares.LeastSquaresProblem;
-import org.apache.commons.math3.fitting.leastsquares.LevenbergMarquardtOptimizer;
-import org.apache.commons.math3.fitting.leastsquares.MultivariateJacobianFunction;
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
-import org.apache.commons.math3.linear.ArrayRealVector;
-import org.apache.commons.math3.linear.RealMatrix;
-import org.apache.commons.math3.linear.RealVector;
-import org.apache.commons.math3.util.Pair;
+import math.geom3s.Vector3S;
 import org.junit.Test;
 
 /**
@@ -89,10 +78,11 @@ public class FitPlaneTest {
 //    }
     @Test
     public void testPlane() throws Geom2DException {
-        // Construct a plane to generate accurate fitting data
-        Plane3D examplePlane = Plane3D.createXZPlane();
-        // Generate some random 2D points and turn into 3D
         Random r = new Random();
+
+        // Construct a plane to generate accurate fitting data
+        Plane3D examplePlane = Plane3D.fromNormal(new Vector3S(r.nextDouble(), r.nextDouble()).toCartesian(), r.nextDouble());
+        // Generate some random 2D points and turn into 3D
         int n = 80;
         List<Point3D> observedPoints = new ArrayList<>(n);
         for (int i = 0; i < n; i++) {
