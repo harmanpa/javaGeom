@@ -10,6 +10,7 @@ import java.util.Random;
 import math.geom2d.Point2D;
 import math.geom2d.exceptions.Geom2DException;
 import math.geom3d.Point3D;
+import math.geom3d.Vector3D;
 import math.geom3d.fitting.Plane3DFitter;
 import math.geom3s.Vector3S;
 import org.junit.Test;
@@ -151,5 +152,21 @@ public class FitPlaneTest {
 //        System.out.println("RMS: " + optimum.getRMS());
 //        System.out.println("evaluations: " + optimum.getEvaluations());
 //        System.out.println("iterations: " + optimum.getIterations());
+    }
+
+    @Test
+    public void test2() throws Geom2DException {
+        List<Point3D> observedPoints = new ArrayList<>();
+        observedPoints.add(new Point3D(-13663.5408714, -65691.9945102, 1372.0));
+        observedPoints.add(new Point3D(-13663.5408714, -65801.9945102, 1372.0));
+        observedPoints.add(new Point3D(-13626.5408714, -65801.9945102, 1372.0));
+        observedPoints.add(new Point3D(-13626.5408714, -65691.9945102, 1372.0));
+        Plane3DFitter fitter = new Plane3DFitter();
+        Plane3D plane = fitter.fit(observedPoints);
+        Vector3D normal = plane.normal();
+        double d = plane.dist();
+        System.out.println(normal);
+        System.out.println(normal.norm());
+        System.out.println(d);
     }
 }

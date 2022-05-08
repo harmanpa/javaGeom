@@ -53,6 +53,21 @@ public class Plane3D implements Shape3D {
                 new Vector3D(0, 0, 1));
     }
 
+    public final static Plane3D createXYPlane(double z) {
+        return new Plane3D(new Point3D(0, 0, z), new Vector3D(1, 0, 0),
+                new Vector3D(0, 1, 0));
+    }
+
+    public final static Plane3D createXZPlane(double y) {
+        return new Plane3D(new Point3D(0, y, 0), new Vector3D(1, 0, 0),
+                new Vector3D(0, 0, 1));
+    }
+
+    public final static Plane3D createYZPlane(double x) {
+        return new Plane3D(new Point3D(x, 0, 0), new Vector3D(0, 1, 0),
+                new Vector3D(0, 0, 1));
+    }
+
     public final static Plane3D fromNormal(Point3D point, Vector3D normal) {
         Vector3D temp = normal.swapNonZero();
         Vector3D a = normal.cross(temp);

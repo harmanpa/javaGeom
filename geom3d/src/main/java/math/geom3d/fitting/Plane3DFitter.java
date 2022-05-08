@@ -31,13 +31,13 @@ public class Plane3DFitter extends Shape3DFitter<Plane3D> {
 
     private static Plane3D guess(List<Point3D> points) {
         if (valuesSame(points.stream().mapToDouble(point -> point.getX()))) {
-            return Plane3D.createYZPlane();
+            return Plane3D.createYZPlane(average(points.stream().mapToDouble(point -> point.getX())));
         }
         if (valuesSame(points.stream().mapToDouble(point -> point.getY()))) {
-            return Plane3D.createXZPlane();
+            return Plane3D.createXZPlane(average(points.stream().mapToDouble(point -> point.getY())));
         }
         if (valuesSame(points.stream().mapToDouble(point -> point.getZ()))) {
-            return Plane3D.createXYPlane();
+            return Plane3D.createXYPlane(average(points.stream().mapToDouble(point -> point.getZ())));
         }
         return random();
     }
@@ -50,6 +50,10 @@ public class Plane3DFitter extends Shape3DFitter<Plane3D> {
     private static boolean valuesSame(DoubleStream stream) {
         DoubleSummaryStatistics stats = stream.summaryStatistics();
         return stats.getMax() - stats.getMin() <= Tolerance2D.get();
+    }
+
+    private static double average(DoubleStream stream) {
+        return stream.average().orElse(0);
     }
 
 }

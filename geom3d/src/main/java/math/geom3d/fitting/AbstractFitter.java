@@ -94,6 +94,10 @@ public class AbstractFitter<T, X> {
         return fit(target, guesser.apply(target));
     }
 
+    public T optifit(List<X> target) throws Geom2DException {
+        return optifit(target, guesser.apply(target));
+    }
+
     public T optifit(List<X> target, T initial) throws Geom2DException {
         try {
             PointValuePair pvp = new BOBYQAOptimizer(nParameters + 2).optimize(
