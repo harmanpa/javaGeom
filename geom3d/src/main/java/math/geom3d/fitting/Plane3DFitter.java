@@ -39,12 +39,12 @@ public class Plane3DFitter extends Shape3DFitter<Plane3D> {
         if (valuesSame(points, Point3D::getZ)) {
             return Plane3D.createXYPlane(average(points, Point3D::getZ));
         }
-        return random();
+        return random(points);
     }
 
-    private static Plane3D random() {
+    private static Plane3D random(List<Point3D> points) {
         Random r = new Random();
-        return Plane3D.fromNormal(new Vector3S(r.nextDouble(), r.nextDouble()).toCartesian(), r.nextDouble());
+        return Plane3D.fromNormal(center(points), new Vector3S(r.nextDouble(), r.nextDouble()).toCartesian());
     }
 
     private static boolean valuesSame(List<Point3D> points, ToDoubleFunction<Point3D> getter) {
@@ -54,6 +54,10 @@ public class Plane3DFitter extends Shape3DFitter<Plane3D> {
 
     private static double average(List<Point3D> points, ToDoubleFunction<Point3D> getter) {
         return points.stream().mapToDouble(getter).average().orElse(0);
+    }
+
+    private static Point3D center(List<Point3D> points) {
+        return new Point3D(average(points, Point3D::getX), average(points, Point3D::getY), average(points, Point3D::getZ));
     }
 
 }

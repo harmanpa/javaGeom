@@ -91,4 +91,20 @@ public class FitPlaneTest {
         System.out.println(d);
     }
 
+    @Test
+    public void test5() throws Geom2DException {
+        List<Point3D> observedPoints = new ArrayList<>();
+        observedPoints.add(new Point3D(-17721.5408714, -67543.9945102, 4262.000000000007));
+        observedPoints.add(new Point3D(-17721.5408714, -67486.99451236041, 4205.000002160406));
+        observedPoints.add(new Point3D(-17611.5408714, -67486.99451236041, 4205.000002160406));
+        observedPoints.add(new Point3D(-17611.5408714, -67543.9945102, 4262.000000000007));
+        Plane3DFitter fitter = new Plane3DFitter();
+        Plane3D plane = fitter.fit(observedPoints);
+        Vector3D normal = plane.normal();
+        double d = plane.dist();
+        System.out.println(normal);
+        System.out.println(normal.norm());
+        System.out.println(d);
+    }
+
 }
