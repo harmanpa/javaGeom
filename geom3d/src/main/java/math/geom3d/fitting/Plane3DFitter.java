@@ -4,11 +4,8 @@
  */
 package math.geom3d.fitting;
 
-import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Random;
-import java.util.function.ToDoubleFunction;
-import math.geom2d.Tolerance2D;
 import math.geom3d.Point3D;
 import math.geom3d.plane.Plane3D;
 import math.geom3s.Vector3S;
@@ -26,7 +23,8 @@ public class Plane3DFitter extends Shape3DFitter<Plane3D> {
                     double dist = plane.dist();
                     return new double[]{normal.getTheta(), normal.getPhi(), dist};
                 },
-                (points) -> guess(points));
+                (points) -> guess(points),
+                true);
     }
 
     private static Plane3D guess(List<Point3D> points) {
@@ -45,19 +43,6 @@ public class Plane3DFitter extends Shape3DFitter<Plane3D> {
     private static Plane3D random(List<Point3D> points) {
         Random r = new Random();
         return Plane3D.fromNormal(center(points), new Vector3S(r.nextDouble(), r.nextDouble()).toCartesian());
-    }
-
-    private static boolean valuesSame(List<Point3D> points, ToDoubleFunction<Point3D> getter) {
-        DoubleSummaryStatistics stats = points.stream().mapToDouble(getter).summaryStatistics();
-        return stats.getMax() - stats.getMin() <= Tolerance2D.get();
-    }
-
-    private static double average(List<Point3D> points, ToDoubleFunction<Point3D> getter) {
-        return points.stream().mapToDouble(getter).average().orElse(0);
-    }
-
-    private static Point3D center(List<Point3D> points) {
-        return new Point3D(average(points, Point3D::getX), average(points, Point3D::getY), average(points, Point3D::getZ));
     }
 
 }

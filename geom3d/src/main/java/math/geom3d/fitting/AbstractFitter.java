@@ -46,20 +46,48 @@ public class AbstractFitter<T, X> {
     private final Function<T, double[]> destructor;
     private final BiFunction<T, X, Double> assessor;
     private final Function<List<X>, T> guesser;
+    private final PrePost<T, X> prePost;
 
     protected AbstractFitter(int nParameters,
             Function<double[], T> constructor,
             Function<T, double[]> destructor,
             BiFunction<T, X, Double> assessor,
             Function<List<X>, T> guesser) {
+        this(nParameters, constructor, destructor, assessor, guesser, null);
+    }
+
+    protected AbstractFitter(int nParameters,
+            Function<double[], T> constructor,
+            Function<T, double[]> destructor,
+            BiFunction<T, X, Double> assessor,
+            Function<List<X>, T> guesser,
+            PrePost<T, X> prePost) {
         this.nParameters = nParameters;
         this.constructor = constructor;
         this.destructor = destructor;
         this.assessor = assessor;
         this.guesser = guesser;
+        this.prePost = prePost;
     }
 
     public T fit(List<X> target, T initial) throws Geom2DException {
+        if (prePost == null) {
+            return fitInternal(target, initial);
+        } else {
+            return prePost.post(fitInternal(prePost.pre(target), initial));
+        }
+    }
+
+    public T fit(List<X> target) throws Geom2DException {
+        if (prePost == null) {
+            return fitInternal(target, guesser.apply(target));
+        } else {
+            List<X> processed = prePost.pre(target);
+            return prePost.post(fitInternal(processed, guesser.apply(processed)));
+        }
+    }
+
+    private T fitInternal(List<X> target, T initial) throws Geom2DException {
 
         // the target is to have all points at the specified radius from the center
         double[] prescribedErrors = new double[target.size()];
@@ -90,15 +118,7 @@ public class AbstractFitter<T, X> {
         }
     }
 
-    public T fit(List<X> target) throws Geom2DException {
-        return fit(target, guesser.apply(target));
-    }
-
-    public T optifit(List<X> target) throws Geom2DException {
-        return optifit(target, guesser.apply(target));
-    }
-
-    public T optifit(List<X> target, T initial) throws Geom2DException {
+    private T optifit(List<X> target, T initial) throws Geom2DException {
         try {
             PointValuePair pvp = new BOBYQAOptimizer(nParameters + 2).optimize(
                     SimpleBounds.unbounded(nParameters),
@@ -153,5 +173,12 @@ public class AbstractFitter<T, X> {
             }
             x.setEntry(i, v);
         }
+    }
+
+    protected static interface PrePost<T, X> {
+
+        public List<X> pre(List<X> target);
+
+        public T post(T result);
     }
 }
