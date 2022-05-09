@@ -7,7 +7,7 @@ package math.geom3d.fitting;
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
 import java.util.Random;
-import java.util.stream.DoubleStream;
+import java.util.function.ToDoubleFunction;
 import math.geom2d.Tolerance2D;
 import math.geom3d.Point3D;
 import math.geom3d.plane.Plane3D;
@@ -30,14 +30,14 @@ public class Plane3DFitter extends Shape3DFitter<Plane3D> {
     }
 
     private static Plane3D guess(List<Point3D> points) {
-        if (valuesSame(points.stream().mapToDouble(point -> point.getX()))) {
-            return Plane3D.createYZPlane(average(points.stream().mapToDouble(point -> point.getX())));
+        if (valuesSame(points, Point3D::getX)) {
+            return Plane3D.createYZPlane(average(points, Point3D::getZ));
         }
-        if (valuesSame(points.stream().mapToDouble(point -> point.getY()))) {
-            return Plane3D.createXZPlane(average(points.stream().mapToDouble(point -> point.getY())));
+        if (valuesSame(points, Point3D::getY)) {
+            return Plane3D.createXZPlane(average(points, Point3D::getZ));
         }
-        if (valuesSame(points.stream().mapToDouble(point -> point.getZ()))) {
-            return Plane3D.createXYPlane(average(points.stream().mapToDouble(point -> point.getZ())));
+        if (valuesSame(points, Point3D::getZ)) {
+            return Plane3D.createXYPlane(average(points, Point3D::getZ));
         }
         return random();
     }
@@ -47,13 +47,13 @@ public class Plane3DFitter extends Shape3DFitter<Plane3D> {
         return Plane3D.fromNormal(new Vector3S(r.nextDouble(), r.nextDouble()).toCartesian(), r.nextDouble());
     }
 
-    private static boolean valuesSame(DoubleStream stream) {
-        DoubleSummaryStatistics stats = stream.summaryStatistics();
+    private static boolean valuesSame(List<Point3D> points, ToDoubleFunction<Point3D> getter) {
+        DoubleSummaryStatistics stats = points.stream().mapToDouble(getter).summaryStatistics();
         return stats.getMax() - stats.getMin() <= Tolerance2D.get();
     }
 
-    private static double average(DoubleStream stream) {
-        return stream.average().orElse(0);
+    private static double average(List<Point3D> points, ToDoubleFunction<Point3D> getter) {
+        return points.stream().mapToDouble(getter).average().orElse(0);
     }
 
 }

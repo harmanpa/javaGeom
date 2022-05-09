@@ -21,62 +21,6 @@ import org.junit.Test;
  */
 public class FitPlaneTest {
 
-//    @Test
-//    public void testCircle() {
-//        final double radius = 70.0;
-//        final Point2D[] observedPoints = new Point2D[]{
-//            new Point2D(30.0, 68.0),
-//            new Point2D(50.0, -6.0),
-//            new Point2D(110.0, -20.0),
-//            new Point2D(35.0, 15.0),
-//            new Point2D(45.0, 97.0)
-//        };
-//
-//        // the model function components are the distances to current estimated center,
-//        // they should be as close as possible to the specified radius
-//        MultivariateJacobianFunction distancesToCurrentCenter = new MultivariateJacobianFunction() {
-//            public Pair<RealVector, RealMatrix> value(final RealVector point) {
-//
-//                Point2D center = new Point2D(point.getEntry(0), point.getEntry(1));
-//
-//                RealVector value = new ArrayRealVector(observedPoints.length);
-//                RealMatrix jacobian = new Array2DRowRealMatrix(observedPoints.length, 2);
-//
-//                for (int i = 0; i < observedPoints.length; ++i) {
-//                    Point2D o = observedPoints[i];
-//                    double modelI = o.distance(center);
-//                    value.setEntry(i, modelI);
-//                    // derivative with respect to p0 = x center
-//                    jacobian.setEntry(i, 0, (center.getX() - o.getX()) / modelI);
-//                    // derivative with respect to p1 = y center
-//                    jacobian.setEntry(i, 1, (center.getY() - o.getY()) / modelI);
-//                }
-//
-//                return new Pair<RealVector, RealMatrix>(value, jacobian);
-//
-//            }
-//        };
-//
-//        // the target is to have all points at the specified radius from the center
-//        double[] prescribedDistances = new double[observedPoints.length];
-//        Arrays.fill(prescribedDistances, radius);
-//
-//        // least squares problem to solve : modeled radius should be close to target radius
-//        LeastSquaresProblem problem = new LeastSquaresBuilder().
-//                start(new double[]{100.0, 50.0}).
-//                model(distancesToCurrentCenter).
-//                target(prescribedDistances).
-//                lazyEvaluation(false).
-//                maxEvaluations(1000).
-//                maxIterations(1000).
-//                build();
-//        LeastSquaresOptimizer.Optimum optimum = new LevenbergMarquardtOptimizer().optimize(problem);
-//        Point2D fittedCenter = new Point2D(optimum.getPoint().getEntry(0), optimum.getPoint().getEntry(1));
-//        System.out.println("fitted center: " + fittedCenter.getX() + " " + fittedCenter.getY());
-//        System.out.println("RMS: " + optimum.getRMS());
-//        System.out.println("evaluations: " + optimum.getEvaluations());
-//        System.out.println("iterations: " + optimum.getIterations());
-//    }
     @Test
     public void testPlane() throws Geom2DException {
         Random r = new Random();
@@ -91,67 +35,12 @@ public class FitPlaneTest {
         }
 
         Plane3DFitter fitter = new Plane3DFitter();
-        Plane3D plane = fitter.optifit(observedPoints, Plane3D.createYZPlane());
+        Plane3D plane = fitter.fit(observedPoints);
         System.out.println(examplePlane.normal());
         System.out.println(examplePlane.dist());
         System.out.println(plane.normal());
         System.out.println(plane.dist());
         System.out.println(plane.normal().angle(examplePlane.normal()));
-        // the model function components are the distances to current estimated center,
-        // they should be as close as possible to the specified radius
-//        MultivariateJacobianFunction planeError = new MultivariateJacobianFunction() {
-//            public Pair<RealVector, RealMatrix> value(final RealVector point) {
-//                RealVector value = new ArrayRealVector(n + 1);
-//                RealMatrix jacobian = new Array2DRowRealMatrix(n + 1, 4);
-//
-//                for (int i = 0; i < n; ++i) {
-//                    Point3D o = observedPoints.get(i);
-//                    double modelI = point.getEntry(0) * o.getX()
-//                            + point.getEntry(1) * o.getY()
-//                            + point.getEntry(2) * o.getZ()
-//                            - point.getEntry(3);
-//                    value.setEntry(i, modelI);
-//                    jacobian.setEntry(i, 0, o.getX());
-//                    jacobian.setEntry(i, 1, o.getY());
-//                    jacobian.setEntry(i, 2, o.getZ());
-//                    jacobian.setEntry(i, 3, -1);
-//                }
-//                double modelI = point.getEntry(0) * point.getEntry(0)
-//                        + point.getEntry(1) * point.getEntry(1)
-//                        + point.getEntry(2) * point.getEntry(2)
-//                        - 1;
-//                value.setEntry(n, modelI);
-//                jacobian.setEntry(n, 0, point.getEntry(0));
-//                jacobian.setEntry(n, 1, point.getEntry(1));
-//                jacobian.setEntry(n, 2, point.getEntry(2));
-//                jacobian.setEntry(n, 3, 0);
-//
-//                return new Pair<RealVector, RealMatrix>(value, jacobian);
-//
-//            }
-//        };
-//
-//        // the target is to have all points at the specified radius from the center
-//        double[] prescribedErrors = new double[n + 1];
-//        Arrays.fill(prescribedErrors, 0.0);
-//
-//        // least squares problem to solve : modeled radius should be close to target radius
-//        LeastSquaresProblem problem = new LeastSquaresBuilder().
-//                start(new double[]{0, 0, 1, 0}).
-//                model(planeError).
-//                target(prescribedErrors).
-//                lazyEvaluation(false).
-//                maxEvaluations(1000).
-//                maxIterations(1000).
-//                build();
-//        LeastSquaresOptimizer.Optimum optimum = new LevenbergMarquardtOptimizer().optimize(problem);
-//        Plane3D fittedPlane = Plane3D.fromABCD(new double[]{
-//            optimum.getPoint().getEntry(0), optimum.getPoint().getEntry(1),
-//            optimum.getPoint().getEntry(2), optimum.getPoint().getEntry(3)});
-//        System.out.println("fitted plane normal: " + fittedPlane.normal());
-//        System.out.println("RMS: " + optimum.getRMS());
-//        System.out.println("evaluations: " + optimum.getEvaluations());
-//        System.out.println("iterations: " + optimum.getIterations());
     }
 
     @Test
@@ -169,4 +58,37 @@ public class FitPlaneTest {
         System.out.println(normal.norm());
         System.out.println(d);
     }
+
+    @Test
+    public void test3() throws Geom2DException {
+        List<Point3D> observedPoints = new ArrayList<>();
+        observedPoints.add(new Point3D(-1.36065408735604, -6.58019945102, 0.13150000021603992));
+        observedPoints.add(new Point3D(-1.36635408714, -6.58019945102, 0.13720));
+        observedPoints.add(new Point3D(-1.36635408714, -6.56919945102, 0.13720));
+        observedPoints.add(new Point3D(-1.36065408735604, -6.56919945102, 0.13150000021603992));
+        Plane3DFitter fitter = new Plane3DFitter();
+        Plane3D plane = fitter.fit(observedPoints);
+        Vector3D normal = plane.normal();
+        double d = plane.dist();
+        System.out.println(normal);
+        System.out.println(normal.norm());
+        System.out.println(d);
+    }
+
+    @Test
+    public void test4() throws Geom2DException {
+        List<Point3D> observedPoints = new ArrayList<>();
+        observedPoints.add(new Point3D(-13606.5408735604, -65801.9945102, 1315.0000021603992));
+        observedPoints.add(new Point3D(-13663.5408714, -65801.9945102, 1372.0));
+        observedPoints.add(new Point3D(-13663.5408714, -65691.9945102, 1372.0));
+        observedPoints.add(new Point3D(-13606.5408735604, -65691.9945102, 1315.0000021603992));
+        Plane3DFitter fitter = new Plane3DFitter();
+        Plane3D plane = fitter.fit(observedPoints);
+        Vector3D normal = plane.normal();
+        double d = plane.dist();
+        System.out.println(normal);
+        System.out.println(normal.norm());
+        System.out.println(d);
+    }
+
 }

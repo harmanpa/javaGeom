@@ -70,7 +70,7 @@ public class Plane3D implements Shape3D {
 
     public final static Plane3D fromNormal(Point3D point, Vector3D normal) {
         Vector3D temp = normal.swapNonZero();
-        Vector3D a = normal.cross(temp);
+        Vector3D a = normal.cross(temp).normalize();
         Vector3D b = normal.cross(a);
         return new Plane3D(point, b, a);
     }
