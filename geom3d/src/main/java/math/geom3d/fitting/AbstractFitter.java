@@ -29,6 +29,7 @@ import org.apache.commons.math3.optim.MaxEval;
 import org.apache.commons.math3.optim.MaxIter;
 import org.apache.commons.math3.optim.PointValuePair;
 import org.apache.commons.math3.optim.SimpleBounds;
+import org.apache.commons.math3.optim.SimpleVectorValueChecker;
 import org.apache.commons.math3.optim.nonlinear.scalar.GoalType;
 import org.apache.commons.math3.optim.nonlinear.scalar.ObjectiveFunction;
 import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
@@ -104,8 +105,9 @@ public class AbstractFitter<T, X> {
                 ).
                 target(prescribedErrors).
                 lazyEvaluation(false).
-                maxEvaluations(1000).
-                maxIterations(1000).
+                checkerPair(new SimpleVectorValueChecker(1e-6, 1e-5, 1000)).
+                maxIterations(1001).
+                maxEvaluations(10000).
                 build();
         try {
             LeastSquaresOptimizer.Optimum optimum = new LevenbergMarquardtOptimizer().optimize(problem);

@@ -6,7 +6,6 @@ package math.geom3d.fitting;
 
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
-import java.util.function.BiFunction;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
@@ -23,8 +22,8 @@ import math.geom2d.Vector2D;
  */
 public class Shape2DFitter<T extends Shape2D> extends AbstractFitter<T, Point2D> {
 
-    public Shape2DFitter(int nParameters, Function<double[], T> constructor, Function<T, double[]> destructor, BiFunction<T, Point2D, Double> assessor, Function<List<Point2D>, T> guesser) {
-        super(nParameters, constructor, destructor, assessor, guesser);
+    public Shape2DFitter(int nParameters, Function<double[], T> constructor, Function<T, double[]> destructor, Function<List<Point2D>, T> guesser, boolean centred) {
+        super(nParameters, constructor, destructor, (shape, point) -> shape.distance(point), guesser, centred ? new CentredPrePost<>() : null);
     }
 
     protected static boolean valuesSame(List<Point2D> points, ToDoubleFunction<Point2D> getter) {
