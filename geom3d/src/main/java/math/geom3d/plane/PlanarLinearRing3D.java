@@ -16,6 +16,15 @@ import math.geom3d.Point3D;
  */
 public class PlanarLinearRing3D extends PlanarShape3D<LinearRing2D> {
 
+    public PlanarLinearRing3D withDirection(List<Point3D> points, boolean cw) throws Geom2DException {
+        PlanarLinearRing3D ring = new PlanarLinearRing3D(points);
+        boolean ringCW = ring.getShape().area() < 0;
+        if (cw != ringCW) {
+            return new PlanarLinearRing3D(ring.getPlane().flip(), points);
+        }
+        return ring;
+    }
+
     public PlanarLinearRing3D(List<Point3D> points) throws Geom2DException {
         this(Plane3D.fromPoints(points), points);
     }
