@@ -2,13 +2,15 @@
  * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
  * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Class.java to edit this template
  */
-package math.geom3d.plane;
+package math.geom3d.polygon;
 
 import java.util.List;
 import java.util.stream.Collectors;
 import math.geom2d.exceptions.Geom2DException;
 import math.geom2d.polygon.LinearRing2D;
 import math.geom3d.Point3D;
+import math.geom3d.plane.PlanarShape3D;
+import math.geom3d.plane.Plane3D;
 
 /**
  *

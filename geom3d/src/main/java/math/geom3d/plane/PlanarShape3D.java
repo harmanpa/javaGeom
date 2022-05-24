@@ -14,6 +14,7 @@ import math.geom3d.transform.AffineTransform3D;
 /**
  *
  * @author peter
+ * @param <T>
  */
 public class PlanarShape3D<T extends Shape2D> implements Shape3D {
 

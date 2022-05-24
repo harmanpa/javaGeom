@@ -111,6 +111,7 @@ public class LinearRing2D extends LinearCurve2D implements CirculinearRing2D {
      *
      * @return the signed area of the polyline.
      */
+    @Override
     public double area() {
         // start from edge joining last and first vertices
         Point2D prev = this.vertices.get(this.vertices.size() - 1);

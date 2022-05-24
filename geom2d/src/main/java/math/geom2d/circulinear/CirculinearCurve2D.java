@@ -71,6 +71,7 @@ public interface CirculinearCurve2D extends CirculinearShape2D, Curve2D {
      * 
      * @return a collection of continuous circulinear curves.
      */
+        @Override
     public Collection<? extends CirculinearContinuousCurve2D> continuousCurves();
 
     public CurveSet2D<? extends CirculinearCurve2D> clip(Box2D box);

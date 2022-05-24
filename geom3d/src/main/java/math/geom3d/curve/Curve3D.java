@@ -8,7 +8,6 @@ import java.util.Collection;
 
 import math.geom3d.Point3D;
 import math.geom3d.Shape3D;
-import math.geom3d.curve.Curve3D;
 import math.geom3d.transform.AffineTransform3D;
 
 /**
@@ -20,23 +19,27 @@ import math.geom3d.transform.AffineTransform3D;
 public interface Curve3D extends Shape3D {
 
     /**
-     * Get value of parameter t for the first point of the curve. It can be
-     * -Infinity, in this case the piece of curve is not bounded.
+     * Get value of parameter t for the first point of the curve.It can be
+ -Infinity, in this case the piece of curve is not bounded.
+     * @return 
      */
     public abstract double getT0();
 
     /**
-     * Get value of parameter t for the last point of the curve. It can be
-     * +Infinity, in this case the piece of curve is not bounded.
+     * Get value of parameter t for the last point of the curve.It can be
+ +Infinity, in this case the piece of curve is not bounded.
+     * @return 
      */
     public abstract double getT1();
 
     /**
-     * Gets the point from a parametric representation of the curve. If the
-     * parameter lies outside the definition range, the parameter corresponding
-     * to the closest bound is used instead. This method can be used to draw an
-     * approximated outline of a curve, by selecting multiple values for t and
-     * drawing lines between them.
+     * Gets the point from a parametric representation of the curve.If the
+ parameter lies outside the definition range, the parameter corresponding
+ to the closest bound is used instead.This method can be used to draw an
+ approximated outline of a curve, by selecting multiple values for t and
+ drawing lines between them.
+     * @param t
+     * @return 
      */
     public abstract Point3D point(double t);
 
@@ -86,6 +89,7 @@ public interface Curve3D extends Shape3D {
     /**
      * Returns the curve with same trace on the plane with parametrization in
      * reverse order.
+     * @return 
      */
     public abstract Curve3D reverseCurve();
 
@@ -107,9 +111,12 @@ public interface Curve3D extends Shape3D {
     public abstract Curve3D subCurve(double t0, double t1);
 
     /**
-     * Transforms the curve by an affine transform. The result is an instance of
-     * Curve3D.
+     * Transforms the curve by an affine transform.The result is an instance of
+ Curve3D.
+     * @param trans
+     * @return 
      */
+    @Override
     public abstract Curve3D transform(AffineTransform3D trans);
 
     // /**

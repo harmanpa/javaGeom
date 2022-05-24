@@ -5,11 +5,13 @@ package math.geom2d.curve;
 
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.NEGATIVE_INFINITY;
-import static java.lang.Math.*;
+import static java.lang.Math.PI;
+import static java.lang.Math.abs;
 
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -118,7 +120,7 @@ public abstract class Curves2D {
 
         // Unknown case
         System.err.println("Unknown curve class in Box2D.clipCurve()");
-        return new CurveArray2D<Curve2D>();
+        return new CurveArray2D<>();
     }
 
     /**
@@ -127,7 +129,7 @@ public abstract class Curves2D {
     public static CurveSet2D<? extends Curve2D> clipCurveSet(
             CurveSet2D<?> curveSet, Box2D box) {
         // Clip the current curve
-        CurveArray2D<Curve2D> result = new CurveArray2D<Curve2D>();
+        CurveArray2D<Curve2D> result = new CurveArray2D<>();
         CurveSet2D<?> clipped;
 
         // a clipped parts of current curve to the result
@@ -168,11 +170,11 @@ public abstract class Curves2D {
             ContinuousCurve2D curve, Box2D box) {
 
         // Create CurveSet2D for storing the result
-        CurveArray2D<ContinuousCurve2D> res = new CurveArray2D<ContinuousCurve2D>();
+        CurveArray2D<ContinuousCurve2D> res = new CurveArray2D<>();
 
         // ------ Compute ordered list of intersections
         // create array of intersection points
-        ArrayList<Point2D> points = new ArrayList<Point2D>();
+        List<Point2D> points = new ArrayList<>();
 
         // add all the intersections with edges of the box boundary
         for (LinearShape2D edge : box.edges()) {
@@ -181,9 +183,9 @@ public abstract class Curves2D {
 
         // convert list to point array, sorted wrt to their position on the
         // curve
-        SortedSet<Double> set = new TreeSet<Double>();
+        SortedSet<Double> set = new TreeSet<>();
         for (Point2D p : points) {
-            set.add(new Double(curve.position(p)));
+            set.add(curve.position(p));
         }
 
         // iterator on the intersection positions
@@ -208,7 +210,7 @@ public abstract class Curves2D {
         }
 
         // array of positions to remove
-        ArrayList<Double> toRemove = new ArrayList<Double>();
+        List<Double> toRemove = new ArrayList<>();
 
         // remove an intersection point if the curve portions before and after
         // are both either inside or outside of the box.
@@ -231,7 +233,7 @@ public abstract class Curves2D {
         // ----- Check case of no intersection point
         // if no intersection point, the curve is totally either inside or
         // outside the box
-        if (set.size() == 0) {
+        if (set.isEmpty()) {
             // compute position of an arbitrary point on the curve
             Point2D point;
             if (curve.isBounded()) {
@@ -250,7 +252,7 @@ public abstract class Curves2D {
 
         // ----- Check if the curve starts inside of the box
         // the flag for a curve that starts inside the box
-        boolean inside = false;
+        boolean inside;
         boolean touch = false;
 
         // different behavior if curve is bounded or not
@@ -309,9 +311,9 @@ public abstract class Curves2D {
         // ----- add portions of curve between each couple of intersections
         double pos1, pos2;
         while (iter.hasNext()) {
-            pos1 = iter.next().doubleValue();
+            pos1 = iter.next();
             if (iter.hasNext()) {
-                pos2 = iter.next().doubleValue();
+                pos2 = iter.next();
             } else {
                 pos2 = curve.isClosed() && !touch ? pos0 : curve.t1();
             }
@@ -327,7 +329,7 @@ public abstract class Curves2D {
      */
     public static CurveSet2D<SmoothCurve2D> clipSmoothCurve(
             SmoothCurve2D curve, Box2D box) {
-        CurveArray2D<SmoothCurve2D> result = new CurveArray2D<SmoothCurve2D>();
+        CurveArray2D<SmoothCurve2D> result = new CurveArray2D<>();
         for (ContinuousCurve2D cont : Curves2D.clipContinuousCurve(curve,
                 box)) {
             if (cont instanceof SmoothCurve2D) {
@@ -346,13 +348,13 @@ public abstract class Curves2D {
             SmoothCurve2D curve, StraightLine2D line) {
 
         // get the list of intersections with the line
-        ArrayList<Point2D> list = new ArrayList<Point2D>();
+        List<Point2D> list = new ArrayList<>();
         list.addAll(curve.intersections(line));
 
         // convert list to point array, sorted with respect to their position
         // on the curve, but do not add tangent points with curvature greater
         // than 0
-        SortedSet<java.lang.Double> set = new TreeSet<java.lang.Double>();
+        SortedSet<Double> set = new TreeSet<>();
         double position;
         Vector2D vector = line.direction();
         for (Point2D point : list) {
@@ -369,11 +371,11 @@ public abstract class Curves2D {
                     continue;
                 }
             }
-            set.add(new java.lang.Double(position));
+            set.add(position);
         }
 
         // Create CurveSet2D for storing the result
-        CurveArray2D<SmoothCurve2D> res = new CurveArray2D<SmoothCurve2D>();
+        CurveArray2D<SmoothCurve2D> res = new CurveArray2D<>();
 
         // extract first point of the curve, or a point arbitrarily far
         Point2D point1;
@@ -412,15 +414,15 @@ public abstract class Curves2D {
 
         // different behavior depending if first point lies inside the box
         if (line.signedDistance(point1) < 0 && !line.contains(point1)) {
-            pos1 = iter.next().doubleValue();
+            pos1 = iter.next();
             res.add(curve.subCurve(curve.t0(), pos1));
         }
 
         // add the portions of curve between couples of intersections
         while (iter.hasNext()) {
-            pos1 = iter.next().doubleValue();
+            pos1 = iter.next();
             if (iter.hasNext()) {
-                pos2 = iter.next().doubleValue();
+                pos2 = iter.next();
             } else {
                 pos2 = curve.t1();
             }
@@ -432,10 +434,10 @@ public abstract class Curves2D {
 
     public static int findNextCurveIndex(double[] positions, double pos) {
         int ind = -1;
-        double posMin = java.lang.Double.MAX_VALUE;
+        double posMin = Double.MAX_VALUE;
         for (int i = 0; i < positions.length; i++) {
             // avoid NaN
-            if (java.lang.Double.isNaN(positions[i])) {
+            if (Double.isNaN(positions[i])) {
                 continue;
             }
             // avoid values before
@@ -522,17 +524,19 @@ public abstract class Curves2D {
         }
 
         // check last position of last curve
-        return Double.isInfinite(lastCurve.t1());
+        return lastCurve == null ? false : Double.isInfinite(lastCurve.t1());
     }
 
     public static ContinuousCurve2D getFirstContinuousCurve(Curve2D curve) {
+        if (curve == null) {
+            return null;
+        }
         if (curve instanceof ContinuousCurve2D) {
             return (ContinuousCurve2D) curve;
         }
-
         Collection<? extends ContinuousCurve2D> curves
                 = curve.continuousCurves();
-        if (curves.size() == 0) {
+        if (curves.isEmpty()) {
             return null;
         }
 
@@ -540,6 +544,9 @@ public abstract class Curves2D {
     }
 
     public static ContinuousCurve2D getLastContinuousCurve(Curve2D curve) {
+        if (curve == null) {
+            return null;
+        }
         if (curve instanceof ContinuousCurve2D) {
             return (ContinuousCurve2D) curve;
         }
@@ -563,7 +570,7 @@ public abstract class Curves2D {
 
         Collection<? extends SmoothCurve2D> curves
                 = continuous.smoothPieces();
-        if (curves.size() == 0) {
+        if (curves.isEmpty()) {
             return null;
         }
 

@@ -1,43 +1,20 @@
-/* File CurveSet2D.java 
- *
- * Project : geometry
- *
- * ===========================================
- * 
- * This library is free software; you can redistribute it and/or modify it 
- * under the terms of the GNU Lesser General Public License as published by
- * the Free Software Foundation, either version 2.1 of the License, or (at
- * your option) any later version.
- *
- * This library is distributed in the hope that it will be useful, but 
- * WITHOUT ANY WARRANTY, without even the implied warranty of MERCHANTABILITY
- * or FITNESS FOR A PARTICULAR PURPOSE.
- *
- * See the GNU Lesser General Public License for more details.
- *
- * You should have received a copy of the GNU Lesser General Public License
- * along with this library. if not, write to :
- * The Free Software Foundation, Inc., 59 Temple Place, Suite 330,
- * Boston, MA 02111-1307, USA.
+/*
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
+ * Click nbfs://nbhost/SystemFileSystem/Templates/Classes/Interface.java to edit this template
  */
-package math.geom2d.curve;
+package math.geom3d.curve;
 
 import java.util.Collection;
-
-import math.geom2d.AffineTransform2D;
-import math.geom2d.ShapeSet2D;
+import math.geom3d.ShapeSet3D;
+import math.geom3d.transform.AffineTransform3D;
 
 /**
- * <p>
- * A parameterized set of curves. A curve cannot be included twice in a
- * CurveSet2D.
- * </p>
  *
- * @author Legland
+ * @author peter
  */
-public interface CurveSet2D<T extends Curve2D>
-        extends Curve2D, ShapeSet2D<T> {
-
+public interface CurveSet3D <T extends Curve3D>
+        extends Curve3D, ShapeSet3D<T> {
+    
     /**
      * Checks if the curve set contains the given curve.
      */
@@ -123,5 +100,5 @@ public interface CurveSet2D<T extends Curve2D>
      * Transforms each curve in the set and returns a new instance of
      * CurveSet2D.
      */
-    public CurveSet2D<? extends Curve2D> transform(AffineTransform2D trans);
+    public CurveSet3D<? extends Curve3D> transform(AffineTransform3D trans);
 }
