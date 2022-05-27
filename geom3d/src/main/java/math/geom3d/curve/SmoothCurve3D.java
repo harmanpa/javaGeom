@@ -38,8 +38,8 @@ public interface SmoothCurve3D extends ContinuousCurve3D {
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#clip(Box2D)
      */
-    @Override
-    public abstract CurveSet3D<? extends SmoothCurve3D> clip(Box3D box);
+//    @Override
+//    public abstract CurveSet3D<? extends SmoothCurve3D> clip(Box3D box);
 
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve2D#transform(AffineTransform2D)

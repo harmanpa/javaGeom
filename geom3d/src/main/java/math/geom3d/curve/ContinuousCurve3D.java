@@ -114,8 +114,8 @@ public interface ContinuousCurve3D extends Curve3D {
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve3D#clip(Box3D)
      */
-    @Override
-    public abstract CurveSet3D<? extends ContinuousCurve3D> clip(Box3D box);
+//    @Override
+//    public abstract CurveSet3D<? extends ContinuousCurve3D> clip(Box3D box);
 
     /* (non-Javadoc)
 	 * @see math.geom2d.curve.Curve3D#transform(AffineTransform3D)

@@ -4,8 +4,10 @@
  */
 package math.geom3d.line;
 
+import java.util.Collection;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
+import math.geom3d.circulinear.CirculinearContinuousCurve3D;
 import math.geom3d.circulinear.CirculinearCurve3D;
 import math.geom3d.transform.AffineTransform3D;
 

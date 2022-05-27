@@ -5,6 +5,7 @@
 package math.geom3d.polygon;
 
 import java.util.Collection;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
 import math.geom3d.curve.ContinuousCurve3D;
 import math.geom3d.line.LineSegment3D;
@@ -92,6 +93,11 @@ public class Polyline3D extends LinearCurve3D {
 
     @Override
     public double getT0() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     

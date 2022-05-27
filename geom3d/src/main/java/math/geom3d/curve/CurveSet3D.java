@@ -18,6 +18,7 @@ public interface CurveSet3D <T extends Curve3D>
     /**
      * Checks if the curve set contains the given curve.
      */
+    @Override
     public boolean contains(T curve);
 
     /**
@@ -34,6 +35,7 @@ public interface CurveSet3D <T extends Curve3D>
      * @return the i-th inner curve
      * @since 0.6.3
      */
+    @Override
     public T get(int index);
 
     /**
@@ -100,5 +102,6 @@ public interface CurveSet3D <T extends Curve3D>
      * Transforms each curve in the set and returns a new instance of
      * CurveSet2D.
      */
+    @Override
     public CurveSet3D<? extends Curve3D> transform(AffineTransform3D trans);
 }

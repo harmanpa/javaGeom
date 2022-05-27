@@ -10,6 +10,7 @@ import java.util.List;
 import math.geom2d.Tolerance2D;
 
 import math.geom3d.Box3D;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
 import math.geom3d.circulinear.CirculinearElement3D;
@@ -202,11 +203,11 @@ public class LineSegment3D implements CirculinearElement3D, LinearShape3D {
      * 
      * @see math.geom3d.Shape3D#clip(math.geom3d.Box3D)
      */
-    @Override
-    public CurveSet3D<? extends CirculinearElement3D> clip(Box3D box) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    @Override
+//    public CurveSet3D<? extends CirculinearElement3D> clip(Box3D box) {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
     /*
      * (non-Javadoc)
@@ -345,6 +346,13 @@ public class LineSegment3D implements CirculinearElement3D, LinearShape3D {
 
     public boolean isParallel(LinearShape3D line) {
         return line.direction().normalize().angle(direction().normalize()) < Tolerance2D.get();
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return obj instanceof LineSegment3D
+                && ((LineSegment3D) obj).firstPoint().almostEquals(firstPoint(), eps)
+                && ((LineSegment3D) obj).lastPoint().almostEquals(lastPoint(), eps);
     }
 
 }

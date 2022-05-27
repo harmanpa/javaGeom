@@ -33,7 +33,7 @@ import math.geom3d.transform.*;
  * 
  * @author dlegland
  */
-public interface Shape3D {
+public interface Shape3D extends GeometricObject3D {
 
     public abstract boolean isEmpty();
 
@@ -46,7 +46,7 @@ public interface Shape3D {
 
     public abstract Box3D boundingBox();
 
-    public abstract Shape3D clip(Box3D box);
+//    public abstract Shape3D clip(Box3D box);
 
     public abstract Shape3D transform(AffineTransform3D trans);
 

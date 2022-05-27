@@ -6,7 +6,6 @@ package math.geom3d;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.DoubleSummaryStatistics;
-import java.util.stream.Stream;
 
 /**
  * A 3-dimensional box, defined by its extent in each direction.

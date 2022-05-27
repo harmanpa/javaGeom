@@ -160,22 +160,22 @@ public class Point3D implements Shape3D {
      * @param box
      * @return
      */
-    @Override
-    public PointSet3D clip(Box3D box) {
-        PointSet3D set = new PointSet3D(1);
-        if (x < box.getMinX() || x > box.getMaxX()) {
-            return set;
-        }
-        if (y < box.getMinY() || y > box.getMaxY()) {
-            return set;
-        }
-        if (z < box.getMinZ() || z > box.getMaxZ()) {
-            return set;
-        }
-
-        set.addPoint(this);
-        return set;
-    }
+//    @Override
+//    public PointSet3D clip(Box3D box) {
+//        PointSet3D set = new PointSet3D(1);
+//        if (x < box.getMinX() || x > box.getMaxX()) {
+//            return set;
+//        }
+//        if (y < box.getMinY() || y > box.getMaxY()) {
+//            return set;
+//        }
+//        if (z < box.getMinZ() || z > box.getMaxZ()) {
+//            return set;
+//        }
+//
+//        set.addPoint(this);
+//        return set;
+//    }
 
     /**
      * Applies the given affine transform to the point, and return the
@@ -198,18 +198,7 @@ public class Point3D implements Shape3D {
     // methods overriding Object superclass
     @Override
     public boolean equals(Object obj) {
-        if (!(obj instanceof Point3D)) {
-            return false;
-        }
-        Point3D point = (Point3D) obj;
-
-        if (Math.abs(point.x - this.x) > Tolerance2D.get()) {
-            return false;
-        }
-        if (Math.abs(point.y - this.y) > Tolerance2D.get()) {
-            return false;
-        }
-        return Math.abs(point.z - this.z) <= Tolerance2D.get();
+        return almostEquals(this, Tolerance2D.get());
     }
 
     @Override
@@ -219,5 +208,21 @@ public class Point3D implements Shape3D {
         hash = 41 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
         hash = 41 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
         return hash;
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        if (!(obj instanceof Point3D)) {
+            return false;
+        }
+        Point3D point = (Point3D) obj;
+
+        if (Math.abs(point.x - this.x) > eps) {
+            return false;
+        }
+        if (Math.abs(point.y - this.y) > eps) {
+            return false;
+        }
+        return Math.abs(point.z - this.z) <= eps;
     }
 }

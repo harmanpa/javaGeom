@@ -557,22 +557,22 @@ public abstract class LinearCurve3D extends AbstractContinuousCurve3D
      * which contains only instances of Polyline3D. If the polyline is not
      * clipped, the result is an instance of CurveSet3D which contains 0 curves.
      */
-    @Override
-    public CurveSet3D<? extends LinearCurve3D> clip(Box3D box) {
-        // Clip the curve
-        CurveSet3D<? extends Curve3D> set = null;//Curves3D.clipCurve(this, box);
-
-        // Stores the result in appropriate structure
-        CurveArray3D<LinearCurve3D> result
-                = new CurveArray3D<>(set.size());
-
-        // convert the result
-        for (Curve3D curve : set.curves()) {
-            if (curve instanceof LinearCurve3D) {
-                result.add((LinearCurve3D) curve);
-            }
-        }
-        return result;
-    }
+//    @Override
+//    public CurveSet3D<? extends LinearCurve3D> clip(Box3D box) {
+//        // Clip the curve
+//        CurveSet3D<? extends Curve3D> set = null;//Curves3D.clipCurve(this, box);
+//
+//        // Stores the result in appropriate structure
+//        CurveArray3D<LinearCurve3D> result
+//                = new CurveArray3D<>(set.size());
+//
+//        // convert the result
+//        for (Curve3D curve : set.curves()) {
+//            if (curve instanceof LinearCurve3D) {
+//                result.add((LinearCurve3D) curve);
+//            }
+//        }
+//        return result;
+//    }
 
 }

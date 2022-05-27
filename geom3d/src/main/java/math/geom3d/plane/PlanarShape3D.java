@@ -7,6 +7,7 @@ package math.geom3d.plane;
 import math.geom2d.Box2D;
 import math.geom2d.Shape2D;
 import math.geom3d.Box3D;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
 import math.geom3d.Shape3D;
 import math.geom3d.transform.AffineTransform3D;
@@ -56,11 +57,6 @@ public class PlanarShape3D<T extends Shape2D> implements Shape3D {
     }
 
     @Override
-    public Shape3D clip(Box3D box) {
-        throw new UnsupportedOperationException("Not supported yet.");
-    }
-
-    @Override
     public Shape3D transform(AffineTransform3D trans) {
         return new PlanarShape3D((Plane3D) plane.transform(trans), shape);
     }
@@ -75,6 +71,13 @@ public class PlanarShape3D<T extends Shape2D> implements Shape3D {
     @Override
     public boolean contains(Point3D point) {
         return shape.contains(plane.pointPosition(point));
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return obj instanceof PlanarShape3D
+                && ((PlanarShape3D) obj).getPlane().almostEquals(getPlane(), eps)
+                && ((PlanarShape3D) obj).getShape().almostEquals(getShape(), eps);
     }
 
 }

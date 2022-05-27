@@ -39,4 +39,7 @@ public class PlanarLinearRing3D extends PlanarShape3D<LinearRing2D> {
         super(plane, shape);
     }
 
+    public List<Point3D> vertices() {
+        return getShape().vertices().stream().map(v -> getPlane().point(v)).collect(Collectors.toList());
+    }
 }

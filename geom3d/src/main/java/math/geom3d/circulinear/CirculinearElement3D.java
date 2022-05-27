@@ -8,6 +8,7 @@ import math.geom3d.Box3D;
 import math.geom3d.Point3D;
 import math.geom3d.curve.CurveSet3D;
 import math.geom3d.curve.SmoothCurve3D;
+import math.geom3d.transform.AffineTransform3D;
 
 /**
  *
@@ -23,8 +24,11 @@ public interface CirculinearElement3D extends CirculinearContinuousCurve3D, Smoo
     @Override
     public CirculinearElement3D reverseCurve();
 
+//    @Override
+//    public CurveSet3D<? extends CirculinearElement3D> clip(Box3D box);
+
     @Override
-    public CurveSet3D<? extends CirculinearElement3D> clip(Box3D box);
+    public CirculinearElement3D transform(AffineTransform3D trans);
 
     /**
      * Returns true if the orthogonal projection of the point <code>p</code> on

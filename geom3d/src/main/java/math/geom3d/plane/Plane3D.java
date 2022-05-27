@@ -8,6 +8,7 @@ import math.geom2d.Point2D;
 import math.geom2d.Tolerance2D;
 import math.geom2d.exceptions.Geom2DException;
 import math.geom3d.Box3D;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Vector3D;
 import math.geom3d.Point3D;
 import math.geom3d.Shape3D;
@@ -105,6 +106,24 @@ public class Plane3D implements Shape3D {
         return new Plane3D(origin, new Vector3D(dx1, dy1, dz1), new Vector3D(dx2, dy2, dz2));
     }
 
+    public boolean isParallel(Plane3D other) {
+        Vector3D n1 = normal();
+        Vector3D n2 = other.normal();
+        return Vector3D.isColinear(n1, n2);
+    }
+
+    public boolean isOpposing(Plane3D other) {
+        Vector3D n1 = normal();
+        Vector3D n2 = other.normal();
+        return Vector3D.isOpposite(n1, n2);
+    }
+
+    public boolean isParallelOrOpposing(Plane3D other) {
+        Vector3D n1 = normal();
+        Vector3D n2 = other.normal();
+        return Vector3D.isColinear(n1, n2) || Vector3D.isOpposite(n1, n2);
+    }
+
     public double dist() {
         Point3D globalOrigin = new Point3D(0, 0, 0);
         Point3D pointOnPlane = projectPoint(globalOrigin);
@@ -194,16 +213,18 @@ public class Plane3D implements Shape3D {
      * 
      * @see math.geom3d.Shape3D#clip(math.geom3d.Box3D)
      */
-    public Shape3D clip(Box3D box) {
-        // TODO Auto-generated method stub
-        return this;
-    }
+//    @Override
+//    public Shape3D clip(Box3D box) {
+//        // TODO Auto-generated method stub
+//        return this;
+//    }
 
     /*
      * (non-Javadoc)
      * 
      * @see math.geom3d.Shape3D#contains(math.geom3d.Point3D)
      */
+    @Override
     public boolean contains(Point3D point) {
         Point3D proj = this.projectPoint(point);
         return (point.distance(proj) < Tolerance2D.get());
@@ -214,6 +235,7 @@ public class Plane3D implements Shape3D {
      * 
      * @see math.geom3d.Shape3D#getBoundingBox()
      */
+    @Override
     public Box3D boundingBox() {
         // plane parallel to XY plane
         if (Math.abs(dz1) < Tolerance2D.get() && Math.abs(dz2) < Tolerance2D.get()) {
@@ -250,11 +272,16 @@ public class Plane3D implements Shape3D {
         return point.distance(this.projectPoint(point));
     }
 
+    public double distance(Plane3D plane) {
+        return isParallelOrOpposing(plane) ? distance(plane.origin()) : 0.0;
+    }
+
     /*
      * (non-Javadoc)
      * 
      * @see math.geom3d.Shape3D#isBounded()
      */
+    @Override
     public boolean isBounded() {
         return false;
     }
@@ -264,6 +291,7 @@ public class Plane3D implements Shape3D {
      * 
      * @see math.geom3d.Shape3D#isEmpty()
      */
+    @Override
     public boolean isEmpty() {
         return false;
     }
@@ -273,6 +301,7 @@ public class Plane3D implements Shape3D {
      * 
      * @see math.geom3d.Shape3D#transform(math.geom3d.transform.AffineTransform3D)
      */
+    @Override
     public Shape3D transform(AffineTransform3D trans) {
         return new Plane3D(this.origin().transform(trans), this.vector1()
                 .transform(trans), this.vector2().transform(trans));
@@ -282,36 +311,41 @@ public class Plane3D implements Shape3D {
     // methods overriding Object superclass
     @Override
     public boolean equals(Object obj) {
+        return almostEquals(this, Tolerance2D.get());
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
         if (!(obj instanceof Plane3D)) {
             return false;
         }
         Plane3D plane = (Plane3D) obj;
 
-        if (Math.abs(this.x0 - plane.x0) > Tolerance2D.get()) {
+        if (Math.abs(this.x0 - plane.x0) > eps) {
             return false;
         }
-        if (Math.abs(this.y0 - plane.y0) > Tolerance2D.get()) {
+        if (Math.abs(this.y0 - plane.y0) > eps) {
             return false;
         }
-        if (Math.abs(this.z0 - plane.z0) > Tolerance2D.get()) {
+        if (Math.abs(this.z0 - plane.z0) > eps) {
             return false;
         }
-        if (Math.abs(this.dx1 - plane.dx1) > Tolerance2D.get()) {
+        if (Math.abs(this.dx1 - plane.dx1) > eps) {
             return false;
         }
-        if (Math.abs(this.dy1 - plane.dy1) > Tolerance2D.get()) {
+        if (Math.abs(this.dy1 - plane.dy1) > eps) {
             return false;
         }
-        if (Math.abs(this.dz1 - plane.dz1) > Tolerance2D.get()) {
+        if (Math.abs(this.dz1 - plane.dz1) > eps) {
             return false;
         }
-        if (Math.abs(this.dx2 - plane.dx2) > Tolerance2D.get()) {
+        if (Math.abs(this.dx2 - plane.dx2) > eps) {
             return false;
         }
-        if (Math.abs(this.dy2 - plane.dy2) > Tolerance2D.get()) {
+        if (Math.abs(this.dy2 - plane.dy2) > eps) {
             return false;
         }
-        return Math.abs(this.dz2 - plane.dz2) <= Tolerance2D.get();
+        return Math.abs(this.dz2 - plane.dz2) <= eps;
     }
 
 }

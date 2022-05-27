@@ -5,6 +5,7 @@ package math.geom2d.polygon.convhull;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 import math.geom2d.Angle2D;
 import math.geom2d.Point2D;
@@ -37,6 +38,7 @@ public class JarvisMarch2D implements ConvexHull2D {
      * SimplePolygon2D. Complexity is O(n*h), with n number of points, h number
      * of points of the hull. Worst case complexity is O(n^2).
      */
+    @Override
     public Polygon2D convexHull(Collection<? extends Point2D> points) {
         // Init iteration on points
         Point2D lowestPoint = null;
@@ -53,11 +55,11 @@ public class JarvisMarch2D implements ConvexHull2D {
         }
 
         // initialize array of points located on convex hull
-        ArrayList<Point2D> hullPoints = new ArrayList<Point2D>();
+        List<Point2D> hullPoints = new ArrayList<>();
 
         // Init iteration on points
         Point2D currentPoint = lowestPoint;
-        Point2D nextPoint = null;
+        Point2D nextPoint;
         double angle = 0;
 
         // Iterate on point set to find point with smallest angle with respect

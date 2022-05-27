@@ -66,11 +66,6 @@ public class PlanarContinuousCurve3D<T extends ContinuousCurve2D> extends Planar
     }
 
     @Override
-    public CurveSet3D<? extends ContinuousCurve3D> clip(Box3D box) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
     public ContinuousCurve3D transform(AffineTransform3D trans) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }

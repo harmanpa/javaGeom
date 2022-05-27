@@ -12,8 +12,8 @@ import java.util.List;
 import java.util.Objects;
 import math.geom2d.Tolerance2D;
 import math.geom3d.Box3D;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
-import math.geom3d.Shape3D;
 import math.geom3d.transform.AffineTransform3D;
 
 /**
@@ -647,13 +647,18 @@ public class CurveArray3D<T extends Curve3D>
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
+//    @Override
+//    public Shape3D clip(Box3D box) {
+//        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+//    }
+
     @Override
-    public Shape3D clip(Box3D box) {
+    public boolean contains(Point3D point) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public boolean contains(Point3D point) {
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

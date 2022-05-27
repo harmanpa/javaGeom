@@ -8,8 +8,11 @@ import java.util.Collection;
 import math.geom2d.Tolerance2D;
 
 import math.geom3d.Box3D;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
+import math.geom3d.circulinear.CirculinearContinuousCurve3D;
+import math.geom3d.circulinear.CirculinearElement3D;
 import math.geom3d.curve.ContinuousCurve3D;
 import math.geom3d.curve.CurveSet3D;
 import math.geom3d.curve.SmoothCurve3D;
@@ -19,7 +22,7 @@ import math.geom3d.transform.AffineTransform3D;
 /**
  * @author dlegland
  */
-public class StraightLine3D implements LinearShape3D, ContinuousCurve3D {
+public class StraightLine3D implements LinearShape3D, CirculinearContinuousCurve3D {
 
     // ===================================================================
     // Class variables
@@ -91,11 +94,11 @@ public class StraightLine3D implements LinearShape3D, ContinuousCurve3D {
      * 
      * @see math.geom3d.Shape3D#clip(math.geom3d.Box3D)
      */
-    @Override
-    public CurveSet3D<? extends ContinuousCurve3D> clip(Box3D box) {
-        // TODO Auto-generated method stub
-        return null;
-    }
+//    @Override
+//    public CurveSet3D<? extends ContinuousCurve3D> clip(Box3D box) {
+//        // TODO Auto-generated method stub
+//        return null;
+//    }
 
     /*
      * (non-Javadoc)
@@ -305,12 +308,19 @@ public class StraightLine3D implements LinearShape3D, ContinuousCurve3D {
     }
 
     @Override
-    public Collection<? extends SmoothCurve3D> smoothPieces() {
+    public Collection<? extends CirculinearElement3D> smoothPieces() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public LinearCurve3D asPolyline(int n) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return obj instanceof StraightLine3D
+                && ((StraightLine3D) obj).origin().almostEquals(origin(), eps)
+                && ((StraightLine3D) obj).direction().almostEquals(direction(), eps);
     }
 }

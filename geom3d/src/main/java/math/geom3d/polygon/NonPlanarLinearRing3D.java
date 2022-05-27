@@ -8,6 +8,8 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import math.geom2d.Tolerance2D;
+import math.geom2d.exceptions.Geom2DException;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
 import math.geom3d.circulinear.CirculinearRing3D;
 import math.geom3d.line.LineSegment3D;
@@ -199,6 +201,7 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
         return new Point3D(x0 + tl * dx, y0 + tl * dy, z0 + t1 * dz);
     }
     
+    @Override
     public double getT0() {
         return 0;
     }
@@ -206,6 +209,7 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
     /**
      * Returns the number of points in the linear ring.
      */
+    @Override
     public double getT1() {
         return vertices.size();
     }
@@ -250,6 +254,7 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
      * Return an instance of Polyline3D. If t1 is lower than t0, the returned
      * Polyline contains the origin of the curve.
      */
+    @Override
     public Polyline3D subCurve(double t0, double t1) {
         // code adapted from CurveSet3D
 
@@ -316,33 +321,6 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
         return new NonPlanarLinearRing3D(pts);
     }
 
-    /*
-     * (non-Javadoc)
-     * 
-     * @see math.geom2d.ContinuousCurve3D#appendPath(java.awt.geom.GeneralPath)
-     */
-    public java.awt.geom.GeneralPath appendPath(java.awt.geom.GeneralPath path) {
-
-        if (vertices.size() < 2) {
-            return path;
-        }
-
-        // move to last first point of the curve (then a line will be drawn to
-        // the first point)
-        Point3D p0 = this.lastPoint();
-        path.moveTo((float) p0.getX(), (float) p0.getY());
-
-        // process each point
-        for (Point3D point : vertices) {
-            path.lineTo((float) point.getX(), (float) point.getY());
-        }
-
-        // close the path, even if the path is already at the right position
-        path.closePath();
-
-        return path;
-    }
-
     // ===================================================================
     // methods implementing the GeometricObject3D interface
 
@@ -389,4 +367,16 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
         return true;
     }
 
+    public PlanarLinearRing3D asPlanar() throws Geom2DException {
+        return new PlanarLinearRing3D(vertices);
+    }
+    
+    public PlanarLinearRing3D asPlanar(boolean cw) throws Geom2DException {
+        return PlanarLinearRing3D.withDirection(vertices, cw);
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
 }

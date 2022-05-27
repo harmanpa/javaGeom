@@ -13,7 +13,7 @@ import math.geom3d.transform.AffineTransform3D;
  * Define a vector in 3 dimensions. Provides methods to compute cross product
  * and dot product, addition and subtraction of vectors.
  */
-public class Vector3D {
+public class Vector3D implements GeometricObject3D {
 
     // ===================================================================
     // class variables
@@ -244,9 +244,9 @@ public class Vector3D {
     }
 
     public Vector3D swapNonZero() {
-        if(Math.abs(x-y)>Tolerance2D.get()) {
+        if (Math.abs(x - y) > Tolerance2D.get()) {
             return new Vector3D(y, x, z);
-        } else if(Math.abs(x-z)>Tolerance2D.get()) {
+        } else if (Math.abs(x - z) > Tolerance2D.get()) {
             return new Vector3D(z, y, x);
         } else {
             return new Vector3D(x, z, y);
@@ -298,6 +298,14 @@ public class Vector3D {
     @Override
     public String toString() {
         return "Vector3D{" + "x=" + x + ", y=" + y + ", z=" + z + '}';
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return obj instanceof Vector3D
+                && Math.abs(((Vector3D) obj).getX() - getX()) <= eps
+                && Math.abs(((Vector3D) obj).getY() - getY()) <= eps
+                && Math.abs(((Vector3D) obj).getZ() - getZ()) <= eps;
     }
 
 }

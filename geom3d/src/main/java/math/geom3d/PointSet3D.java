@@ -115,18 +115,18 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
      * 
      * @see math.geom3d.Shape3D#clip(math.geom3d.Box3D)
      */
-    @Override
-    public Shape3D clip(Box3D box) {
-        PointSet3D res = new PointSet3D(this.points.size());
-        Shape3D clipped;
-        for (Point3D point : points) {
-            clipped = point.clip(box);
-            if (clipped != null) {
-                res.addPoint(point);
-            }
-        }
-        return res;
-    }
+//    @Override
+//    public Shape3D clip(Box3D box) {
+//        PointSet3D res = new PointSet3D(this.points.size());
+//        Shape3D clipped;
+//        for (Point3D point : points) {
+//            clipped = point.clip(box);
+//            if (clipped != null) {
+//                res.addPoint(point);
+//            }
+//        }
+//        return res;
+//    }
 
     @Override
     public Box3D boundingBox() {
@@ -198,5 +198,10 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
     @Override
     public Iterator<Point3D> iterator() {
         return points.iterator();
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

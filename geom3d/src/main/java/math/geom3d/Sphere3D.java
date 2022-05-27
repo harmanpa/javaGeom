@@ -39,11 +39,10 @@ public class Sphere3D implements Shape3D {
                 center.getZ() - radius, center.getZ() + radius);
     }
 
-    @Override
-    public Shape3D clip(Box3D box) {
-        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
-    }
-
+//    @Override
+//    public Shape3D clip(Box3D box) {
+//        throw new UnsupportedOperationException("Not supported yet."); //To change body of generated methods, choose Tools | Templates.
+//    }
     @Override
     public Shape3D transform(AffineTransform3D trans) {
         Point3D newCenter = trans.transformPoint(center);
@@ -59,6 +58,11 @@ public class Sphere3D implements Shape3D {
     @Override
     public boolean contains(Point3D point) {
         return distance(point) < 0;
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return obj instanceof Sphere3D && ((Sphere3D) obj).center.almostEquals(center, eps) && Math.abs(((Sphere3D) obj).radius - radius) <= eps;
     }
 
 }
