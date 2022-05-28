@@ -78,7 +78,7 @@ public class Vector3D implements GeometricObject3D {
     public final static boolean isOpposite(Vector3D v1, Vector3D v2) {
         return v1.normalize().plus(v2.normalize()).norm() < Tolerance2D.get();
     }
-    
+
     public final static boolean isColinearOrOpposite(Vector3D v1, Vector3D v2) {
         return isColinear(v1, v2) || isOpposite(v1, v2);
     }
@@ -293,9 +293,9 @@ public class Vector3D implements GeometricObject3D {
     @Override
     public int hashCode() {
         int hash = 7;
-        hash = 41 * hash + (int) (Double.doubleToLongBits(this.x) ^ (Double.doubleToLongBits(this.x) >>> 32));
-        hash = 41 * hash + (int) (Double.doubleToLongBits(this.y) ^ (Double.doubleToLongBits(this.y) >>> 32));
-        hash = 41 * hash + (int) (Double.doubleToLongBits(this.z) ^ (Double.doubleToLongBits(this.z) >>> 32));
+        hash = 41 * hash + Tolerance2D.hash(x);
+        hash = 41 * hash + Tolerance2D.hash(y);
+        hash = 41 * hash + Tolerance2D.hash(z);
         return hash;
     }
 

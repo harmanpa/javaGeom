@@ -4,11 +4,14 @@
  */
 package math.geom3d.fitting;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 import math.geom2d.Point2D;
-import math.geom2d.circulinear.CirculinearRing2D;
+import math.geom2d.circulinear.CirculinearElement2D;
 import math.geom2d.conic.Circle2D;
+import math.geom2d.conic.CircleArc2D;
+import math.geom2d.conic.CircularShape2D;
 import math.geom2d.exceptions.ColinearPoints2DException;
 
 /**
@@ -21,6 +24,12 @@ public class CirculinearRing2DFitter {
         List<Circle2D> arcCircles = FittingUtils.sequentials(Point2D.class, points, 3, true)
                 .map(triplet -> fitCircle(triplet))
                 .collect(Collectors.toList());
+        List<Integer> colinearPoints = new ArrayList<>();
+        // 1. Remove all colinear points
+        // 2. Check accuracy of circles (i.e. would cause > than maxError)
+        
+        // 3. Arc requires min 4 points - 2 sequential arcs with same centre and radius
+        System.out.println();
     }
 
     private Circle2D fitCircle(Point2D[] points) {
@@ -30,4 +39,12 @@ public class CirculinearRing2DFitter {
             return null;
         }
     }
+    
+//    private CirculinearElement2D makeElements(Circle2D circle, Point2D[] points) {
+//        
+//    }
+//    
+//    private void joinElements(CirculinearElement2D a, CirculinearElement2D b) {
+//        
+//    }
 }

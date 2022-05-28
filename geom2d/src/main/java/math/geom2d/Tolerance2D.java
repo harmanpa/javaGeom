@@ -67,6 +67,10 @@ public class Tolerance2D {
         return round(new BigDecimal(d, MathContext.UNLIMITED));
     }
 
+    public static int hash(double d) {
+        return Double.valueOf(round(d).doubleValue()).hashCode();
+    }
+
     static Integer scale() {
         return SCALE.get();
     }
