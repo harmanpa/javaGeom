@@ -14,6 +14,7 @@ import math.geom2d.Tolerance2D;
 import math.geom3d.Box3D;
 import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
+import math.geom3d.line.LinearShape3D;
 import math.geom3d.transform.AffineTransform3D;
 
 /**
@@ -644,6 +645,11 @@ public class CurveArray3D<T extends Curve3D>
 
     @Override
     public Curve3D reverseCurve() {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Collection<Point3D> intersections(LinearShape3D line) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 

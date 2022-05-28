@@ -10,6 +10,7 @@ import math.geom2d.curve.Curve2D;
 import math.geom3d.Point3D;
 import math.geom3d.curve.ContinuousCurve3D;
 import math.geom3d.curve.Curve3D;
+import math.geom3d.line.LinearShape3D;
 import math.geom3d.transform.AffineTransform3D;
 
 /**
@@ -85,6 +86,12 @@ public class PlanarCurve3D<T extends Curve2D> extends PlanarShape3D<T> implement
     @Override
     public Curve3D transform(AffineTransform3D trans) {
         return (Curve3D) super.transform(trans);
+    }
+
+    @Override
+    public Collection<Point3D> intersections(LinearShape3D line) {
+        
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
     
 }

@@ -78,6 +78,10 @@ public class Vector3D implements GeometricObject3D {
     public final static boolean isOpposite(Vector3D v1, Vector3D v2) {
         return v1.normalize().plus(v2.normalize()).norm() < Tolerance2D.get();
     }
+    
+    public final static boolean isColinearOrOpposite(Vector3D v1, Vector3D v2) {
+        return isColinear(v1, v2) || isOpposite(v1, v2);
+    }
 
     /**
      * test if the two vectors are orthogonal

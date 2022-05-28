@@ -13,9 +13,7 @@ import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
 import math.geom3d.circulinear.CirculinearContinuousCurve3D;
 import math.geom3d.circulinear.CirculinearElement3D;
-import math.geom3d.curve.ContinuousCurve3D;
-import math.geom3d.curve.CurveSet3D;
-import math.geom3d.curve.SmoothCurve3D;
+import math.geom3d.fitting.CurveIntersector;
 import math.geom3d.polygon.LinearCurve3D;
 import math.geom3d.transform.AffineTransform3D;
 
@@ -264,7 +262,7 @@ public class StraightLine3D implements LinearShape3D, CirculinearContinuousCurve
 
     @Override
     public Point3D intersection(LinearShape3D line) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return CurveIntersector.intersect(this, line);
     }
 
     @Override
@@ -322,5 +320,10 @@ public class StraightLine3D implements LinearShape3D, CirculinearContinuousCurve
         return obj instanceof StraightLine3D
                 && ((StraightLine3D) obj).origin().almostEquals(origin(), eps)
                 && ((StraightLine3D) obj).direction().almostEquals(direction(), eps);
+    }
+
+    @Override
+    public Collection<Point3D> intersections(LinearShape3D line) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }

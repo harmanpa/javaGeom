@@ -56,6 +56,22 @@ public class Point3D implements Shape3D {
         this.z = z;
     }
 
+    public static Point3D midpoint(Point3D... points) {
+        switch(points.length) {
+            case 0:
+                return new Point3D();
+            case 1:
+                return points[0];
+            case 2:
+                return new Point3D(
+                        (points[0].getX()+points[1].getX())/2,
+                        (points[0].getY()+points[1].getY())/2,
+                        (points[0].getZ()+points[1].getZ())/2);
+            default:
+                return new PointSet3D(points).boundingBox().getCenter();
+        }
+    }
+
     // ===================================================================
     // Methods specific to Point3D
     public double getX() {
@@ -176,7 +192,6 @@ public class Point3D implements Shape3D {
 //        set.addPoint(this);
 //        return set;
 //    }
-
     /**
      * Applies the given affine transform to the point, and return the
      * transformed point.
@@ -224,5 +239,10 @@ public class Point3D implements Shape3D {
             return false;
         }
         return Math.abs(point.z - this.z) <= eps;
+    }
+    
+    @Override
+    public String toString() {
+        return "Point3D{" + "x=" + x + ", y=" + y + ", z=" + z + '}';
     }
 }

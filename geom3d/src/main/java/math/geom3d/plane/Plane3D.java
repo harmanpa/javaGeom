@@ -17,6 +17,7 @@ import math.geom3d.line.StraightLine3D;
 import math.geom3d.transform.AffineTransform3D;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.ArrayRealVector;
+import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.QRDecomposition;
 import org.apache.commons.math3.linear.RealVector;
 
@@ -268,12 +269,67 @@ public class Plane3D implements Shape3D {
      * 
      * @see math.geom3d.Shape3D#getDistance(math.geom3d.Point3D)
      */
+    @Override
     public double distance(Point3D point) {
         return point.distance(this.projectPoint(point));
     }
 
     public double distance(Plane3D plane) {
         return isParallelOrOpposing(plane) ? distance(plane.origin()) : 0.0;
+    }
+
+    /**
+     * Krumm method:
+     * https://www.microsoft.com/en-us/research/publication/intersection-of-two-planes/
+     *
+     * @param other
+     * @return
+     */
+    public StraightLine3D intersection(Plane3D other) {
+        if (isParallelOrOpposing(other)) {
+            return null;
+        }
+        Vector3D n1 = normal();
+        Vector3D n2 = other.normal();
+        Point3D p1 = origin();
+        Point3D p2 = other.origin();
+        Vector3D n = n1.cross(n2).normalize();
+        Point3D p0 = Point3D.midpoint(p1, p2);
+        Array2DRowRealMatrix m = new Array2DRowRealMatrix(5, 5);
+        ArrayRealVector v = new ArrayRealVector(5);
+        m.setEntry(0, 0, 2);
+        m.setEntry(0, 1, 0);
+        m.setEntry(0, 2, 0);
+        m.setEntry(0, 3, n1.getX());
+        m.setEntry(0, 4, n2.getX());
+        m.setEntry(1, 0, 0);
+        m.setEntry(1, 1, 2);
+        m.setEntry(1, 2, 0);
+        m.setEntry(1, 3, n1.getY());
+        m.setEntry(1, 4, n2.getY());
+        m.setEntry(2, 0, 0);
+        m.setEntry(2, 1, 0);
+        m.setEntry(2, 2, 2);
+        m.setEntry(2, 3, n1.getZ());
+        m.setEntry(2, 4, n2.getZ());
+        m.setEntry(3, 0, n1.getX());
+        m.setEntry(3, 1, n1.getY());
+        m.setEntry(3, 2, n1.getZ());
+        m.setEntry(3, 3, 0);
+        m.setEntry(3, 4, 0);
+        m.setEntry(4, 0, n2.getX());
+        m.setEntry(4, 1, n2.getY());
+        m.setEntry(4, 2, n2.getZ());
+        m.setEntry(4, 3, 0);
+        m.setEntry(4, 4, 0);
+        v.setEntry(0, 2 * p0.getX());
+        v.setEntry(1, 2 * p0.getY());
+        v.setEntry(2, 2 * p0.getZ());
+        v.setEntry(3, p1.asVector().dot(n1));
+        v.setEntry(3, p2.asVector().dot(n2));
+        RealVector res = new LUDecomposition(m).getSolver().solve(v);
+        Point3D p = new Point3D(res.getEntry(0), res.getEntry(1), res.getEntry(2));
+        return new StraightLine3D(p, n);
     }
 
     /*

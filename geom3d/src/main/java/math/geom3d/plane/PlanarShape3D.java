@@ -4,12 +4,15 @@
  */
 package math.geom3d.plane;
 
+import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.Shape2D;
+import math.geom2d.Tolerance2D;
 import math.geom3d.Box3D;
 import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
 import math.geom3d.Shape3D;
+import math.geom3d.line.StraightLine3D;
 import math.geom3d.transform.AffineTransform3D;
 
 /**
@@ -80,4 +83,20 @@ public class PlanarShape3D<T extends Shape2D> implements Shape3D {
                 && ((PlanarShape3D) obj).getShape().almostEquals(getShape(), eps);
     }
 
+    protected <X extends Shape2D> void apply2DAlgorithm(PlanarShape3D<X> other) {
+        if (getPlane().isParallel(other.getPlane())) {
+            if (getPlane().almostEquals(other.getPlane(), Tolerance2D.get())) {
+                // In same plane, just apply algorithm
+            } else {
+                // Do not intersect
+            }
+        } else if (getPlane().isOpposing(other.getPlane())) {
+            // Flip and try again
+
+        } else {
+            // Intersect the planes
+            StraightLine3D line3D = getPlane().intersection(other.getPlane());
+            
+        }
+    }
 }

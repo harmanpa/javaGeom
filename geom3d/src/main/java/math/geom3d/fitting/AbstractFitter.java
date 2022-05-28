@@ -40,7 +40,7 @@ import org.apache.commons.math3.optim.nonlinear.scalar.noderiv.BOBYQAOptimizer;
  * @param <T>
  * @param <X>
  */
-public class AbstractFitter<T, X> {
+public class AbstractFitter<T, X> extends AbstractLeastSquares {
 
     private final int nParameters;
     private final Function<double[], T> constructor;
@@ -135,11 +135,7 @@ public class AbstractFitter<T, X> {
         }
     }
 
-    private MultivariateFunction fS(MultivariateVectorFunction fv) {
-        return (double[] x) -> DoubleStream.of(fv.value(x)).map(v -> Math.pow(v, 2.0)).sum();
-    }
-
-    private MultivariateVectorFunction f(Function<double[], T> constructor, BiFunction<T, X, Double> assessor, List<X> target) {
+    protected MultivariateVectorFunction f(Function<double[], T> constructor, BiFunction<T, X, Double> assessor, List<X> target) {
         return (double[] x) -> {
             double[] out = new double[target.size()];
             T obj = constructor.apply(x);
@@ -148,33 +144,6 @@ public class AbstractFitter<T, X> {
             }
             return out;
         };
-    }
-
-    private MultivariateJacobianFunction fj(MultivariateVectorFunction f, double increment, int d, int p) {
-        return (RealVector x) -> {
-            RealVector value = new ArrayRealVector(d);
-            RealMatrix jacobian = new Array2DRowRealMatrix(d, p);
-            double[] a = f.value(x.toArray());
-            for (int j = 0; j < d; j++) {
-                value.setEntry(j, a[j]);
-            }
-            jacobian(f, jacobian, x, increment, d, p);
-            return new Pair<>(value, jacobian);
-        };
-    }
-
-    private void jacobian(MultivariateVectorFunction f, RealMatrix jacobian, RealVector x, double increment, int d, int p) {
-        for (int i = 0; i < p; i++) {
-            double v = x.getEntry(i);
-            x.setEntry(i, v + increment / 2);
-            double[] a = f.value(x.toArray());
-            x.setEntry(i, v - increment / 2);
-            double[] b = f.value(x.toArray());
-            for (int j = 0; j < d; j++) {
-                jacobian.setEntry(j, i, (a[j] - b[j]) / increment);
-            }
-            x.setEntry(i, v);
-        }
     }
 
     protected static interface PrePost<T, X> {

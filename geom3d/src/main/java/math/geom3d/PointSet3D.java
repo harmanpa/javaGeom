@@ -127,7 +127,6 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
 //        }
 //        return res;
 //    }
-
     @Override
     public Box3D boundingBox() {
         double xmin = Double.MAX_VALUE;

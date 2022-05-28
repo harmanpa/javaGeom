@@ -15,6 +15,7 @@ import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
 import math.geom3d.circulinear.CirculinearElement3D;
 import math.geom3d.curve.CurveSet3D;
+import math.geom3d.fitting.CurveIntersector;
 import math.geom3d.polygon.LinearCurve3D;
 import math.geom3d.transform.AffineTransform3D;
 
@@ -312,11 +313,7 @@ public class LineSegment3D implements CirculinearElement3D, LinearShape3D {
 
     @Override
     public Point3D intersection(LinearShape3D line) {
-        Point3D p = line.supportingLine().intersection(supportingLine());
-        if (contains(p)) {
-            return p;
-        }
-        return null;
+        return CurveIntersector.intersect(this, line);
     }
 
     @Override
@@ -353,6 +350,11 @@ public class LineSegment3D implements CirculinearElement3D, LinearShape3D {
         return obj instanceof LineSegment3D
                 && ((LineSegment3D) obj).firstPoint().almostEquals(firstPoint(), eps)
                 && ((LineSegment3D) obj).lastPoint().almostEquals(lastPoint(), eps);
+    }
+
+    @Override
+    public Collection<Point3D> intersections(LinearShape3D line) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
 }

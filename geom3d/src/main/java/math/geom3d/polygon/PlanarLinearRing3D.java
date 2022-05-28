@@ -15,6 +15,7 @@ import math.geom3d.circulinear.CirculinearContinuousCurve3D;
 import math.geom3d.circulinear.CirculinearElement3D;
 import math.geom3d.circulinear.CirculinearRing3D;
 import math.geom3d.curve.ContinuousCurve3D;
+import math.geom3d.line.LinearShape3D;
 import math.geom3d.plane.PlanarShape3D;
 import math.geom3d.plane.Plane3D;
 import math.geom3d.transform.AffineTransform3D;
@@ -152,6 +153,11 @@ public class PlanarLinearRing3D extends PlanarShape3D<LinearRing2D> implements C
 
     @Override
     public ContinuousCurve3D transform(AffineTransform3D trans) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public Collection<Point3D> intersections(LinearShape3D line) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 }
