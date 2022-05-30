@@ -60,7 +60,7 @@ public class CurveIntersector extends AbstractLeastSquares {
 
     protected static boolean parallel(Curve3D a, Curve3D b) {
         if (a instanceof LinearShape3D && b instanceof LinearShape3D) {
-            return Vector3D.isColinearOrOpposite(((LinearShape3D) a).direction(), ((LinearShape3D) b).direction());
+            return Vector3D.isColinear(((LinearShape3D) a).direction(), ((LinearShape3D) b).direction());
         }
         return false;
     }

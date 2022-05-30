@@ -114,7 +114,7 @@ public class Plane3D implements Shape3D {
     public boolean isParallel(Plane3D other) {
         Vector3D n1 = normal();
         Vector3D n2 = other.normal();
-        return Vector3D.isColinear(n1, n2);
+        return Vector3D.isCodirected(n1, n2);
     }
 
     public boolean isOpposing(Plane3D other) {
@@ -126,14 +126,14 @@ public class Plane3D implements Shape3D {
     public boolean isParallelOrOpposing(Plane3D other) {
         Vector3D n1 = normal();
         Vector3D n2 = other.normal();
-        return Vector3D.isColinear(n1, n2) || Vector3D.isOpposite(n1, n2);
+        return Vector3D.isColinear(n1, n2);
     }
 
     public Plane3DRelationship getRelationship(Plane3D other) {
         if (isParallel(other)) {
             return Plane3DRelationship.Parallel;
         } else if (isOpposing(other)) {
-            if (Vector3D.isColinear(normal(), new Vector3D(origin(), other.projectPoint(origin())))) {
+            if (Vector3D.isCodirected(normal(), new Vector3D(origin(), other.projectPoint(origin())))) {
                 return Plane3DRelationship.FaceToFace;
             } else {
                 return Plane3DRelationship.BackToBack;
