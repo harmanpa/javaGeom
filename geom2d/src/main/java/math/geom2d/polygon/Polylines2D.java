@@ -20,7 +20,7 @@ import math.geom2d.point.PointSets2D;
  */
 public abstract class Polylines2D {
 
-    static List<Point2D> simplifyPolyline(List<Point2D> vertices,
+    public static List<Point2D> simplifyPolyline(List<Point2D> vertices,
             double distMax) {
         // index of last vertex
         int last = vertices.size() - 1;

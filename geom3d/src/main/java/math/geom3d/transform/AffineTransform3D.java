@@ -28,6 +28,8 @@ package math.geom3d.transform;
 import math.geom2d.Tolerance2D;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.RealMatrix;
 
 /**
  * An affine transform in 3 dimensions. Contains also static methods for
@@ -96,6 +98,22 @@ public class AffineTransform3D implements Bijection3D {
 
     public final static AffineTransform3D createScaling(double sx, double sy, double sz) {
         return new AffineTransform3D(sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, 0);
+    }
+    
+    public final static AffineTransform3D fromMatrix(RealMatrix m) {
+        return new AffineTransform3D(
+                m.getEntry(0, 0),
+                m.getEntry(0, 1),
+                m.getEntry(0, 2),
+                m.getColumnDimension()>3 ? m.getEntry(0, 3) : 0.0,
+                m.getEntry(1, 0),
+                m.getEntry(1, 1),
+                m.getEntry(1, 2),
+                m.getColumnDimension()>3 ? m.getEntry(1, 3) : 0.0,
+                m.getEntry(2, 0),
+                m.getEntry(2, 1),
+                m.getEntry(2, 2),
+                m.getColumnDimension()>3 ? m.getEntry(2, 3) : 0.0);
     }
 
     // ===================================================================
@@ -220,7 +238,7 @@ public class AffineTransform3D implements Bijection3D {
         return m00 * (m11 * m22 - m12 * m21) - m01 * (m10 * m22 - m20 * m12)
                 + m02 * (m10 * m21 - m20 * m11);
     }
-
+    
     /**
      * Computes the inverse affine transform.
      *

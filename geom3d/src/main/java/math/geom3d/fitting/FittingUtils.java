@@ -22,7 +22,11 @@ public class FittingUtils {
     }
 
     public static <T> Stream<T[]> sequentials(Class<T> type, List<T> list, int each, final boolean looping) {
-        return indexStream(list.size(), each, looping).map(indices -> {
+        return sequentials(type, list, each, looping, 0);
+    }
+
+    public static <T> Stream<T[]> sequentials(Class<T> type, List<T> list, int each, final boolean looping, final int start) {
+        return indexStream(list.size(), each, looping, start).map(indices -> {
             T[] arr = (T[]) Array.newInstance(type, each);
             for (int i = 0; i < indices.length; i++) {
                 arr[i] = list.get(indices[i]);
@@ -36,12 +40,16 @@ public class FittingUtils {
     }
 
     public static Stream<int[]> indexStream(final int n, final int each, final boolean looping) {
+        return indexStream(n, each, looping, 0);
+    }
+
+    public static Stream<int[]> indexStream(final int n, final int each, final boolean looping, final int start) {
         if (looping ? n == 0 : (n == 0 || n < each)) {
             return Stream.of();
         }
         int[] seed = new int[each];
         for (int i = 0; i < each; i++) {
-            seed[i] = i % n;
+            seed[i] = (n + i + start) % n;
         }
         return Stream.iterate(seed, indices -> {
             int[] out = new int[indices.length];
@@ -61,7 +69,7 @@ public class FittingUtils {
      * @return
      */
     public static double error(Circle2D circle, Point2D a, Point2D b) {
-        Point2D mid = a.plus(new Vector2D(a, b).times(0.5));
-        return Math.abs(circle.center().distance(mid) - circle.radius());
+        Point2D mid = Point2D.midPoint(a, b);
+        return circle.radius() - circle.center().distance(mid);
     }
 }

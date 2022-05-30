@@ -4,10 +4,10 @@
  */
 package math.geom3d.plane;
 
-import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.Shape2D;
 import math.geom2d.Tolerance2D;
+import math.geom2d.line.StraightLine2D;
 import math.geom3d.Box3D;
 import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
@@ -64,6 +64,10 @@ public class PlanarShape3D<T extends Shape2D> implements Shape3D {
         return new PlanarShape3D((Plane3D) plane.transform(trans), shape);
     }
 
+    public PlanarShape3D<Shape2D> project(Plane3D plane) {
+        return new PlanarShape3D<>(plane, getShape().transform(getPlane().projectTransform(plane)));
+    }
+
     @Override
     public double distance(Point3D p) {
         Point3D pointOnPlane = plane.projectPoint(p);
@@ -96,7 +100,8 @@ public class PlanarShape3D<T extends Shape2D> implements Shape3D {
         } else {
             // Intersect the planes
             StraightLine3D line3D = getPlane().intersection(other.getPlane());
-            
+            StraightLine2D line2D1 = getPlane().lineInPlane(line3D);
+            StraightLine2D line2D2 = other.getPlane().lineInPlane(line3D);
         }
     }
 }
