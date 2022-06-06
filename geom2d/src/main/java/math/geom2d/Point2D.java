@@ -36,10 +36,8 @@ import math.geom2d.point.PointArray2D;
 import math.geom2d.point.PointSet2D;
 import math.geom2d.point.PointShape2D;
 import math.geom2d.transform.CircleInversion2D;
-import math.utils.EqualUtils;
 
 import static java.lang.Math.*;
-import math.geom2d.exceptions.Geom2DException;
 
 /**
  * <p>
@@ -608,6 +606,7 @@ public class Point2D
      * Test whether this object is the same as another point, with respect to a
      * given threshold along each coordinate.
      */
+    @Override
     public boolean almostEquals(GeometricObject2D obj, double eps) {
         if (this == obj) {
             return true;
@@ -652,7 +651,7 @@ public class Point2D
      */
     @Override
     public boolean equals(Object obj) {
-        return almostEquals(this, Tolerance2D.get());
+        return obj instanceof Point2D ? almostEquals((Point2D) obj, Tolerance2D.get()) : false;
     }
 
     @Override

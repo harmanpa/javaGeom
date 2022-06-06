@@ -340,7 +340,7 @@ public class Vector2D implements GeometricObject2D {
      */
     @Override
     public boolean equals(Object obj) {
-        return almostEquals(this, Tolerance2D.get());
+        return obj instanceof Vector2D ? almostEquals((Vector2D)obj, Tolerance2D.get()) : false;
     }
 
     @Override
