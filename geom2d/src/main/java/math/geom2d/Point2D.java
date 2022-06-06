@@ -652,31 +652,14 @@ public class Point2D
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (!(obj instanceof Point2D)) {
-            return false;
-        }
-        Point2D that = (Point2D) obj;
-
-        // Compare each field
-        if (!EqualUtils.areEqual(this.x, that.x)) {
-            return false;
-        }
-        if (!EqualUtils.areEqual(this.y, that.y)) {
-            return false;
-        }
-
-        return true;
+        return almostEquals(this, Tolerance2D.get());
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
-        hash = hash * 31 + Double.valueOf(this.x).hashCode();
-        hash = hash * 31 + Double.valueOf(this.y).hashCode();
+        hash = hash * 31 + Tolerance2D.hash(x);
+        hash = hash * 31 + Tolerance2D.hash(y);
         return hash;
     }
 }

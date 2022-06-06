@@ -23,7 +23,6 @@
 // package
 package math.geom2d;
 
-import math.geom2d.AffineTransform2D;
 import math.utils.EqualUtils;
 import static java.lang.Math.*;
 
@@ -92,6 +91,13 @@ public class Vector2D implements GeometricObject2D {
         return abs(v1.x * v2.x + v1.y * v2.y) < Tolerance2D.get();
     }
 
+    public final static boolean isCodirected(Vector2D v1, Vector2D v2) {
+        return v1.normalize().minus(v2.normalize()).norm() < Tolerance2D.get();
+    }
+
+    public final static boolean isOpposite(Vector2D v1, Vector2D v2) {
+        return v1.normalize().plus(v2.normalize()).norm() < Tolerance2D.get();
+    }
     // ===================================================================
     // class variables
     /**
@@ -312,24 +318,19 @@ public class Vector2D implements GeometricObject2D {
      * Test whether this object is the same as another vector, with respect to a
      * given threshold.
      */
+    @Override
     public boolean almostEquals(GeometricObject2D obj, double eps) {
         if (this == obj) {
             return true;
         }
-
         if (!(obj instanceof Vector2D)) {
             return false;
         }
         Vector2D v = (Vector2D) obj;
-
         if (Math.abs(this.x - v.x) > eps) {
             return false;
         }
-        if (Math.abs(this.y - v.y) > eps) {
-            return false;
-        }
-
-        return true;
+        return Math.abs(this.y - v.y) <= eps;
     }
 
     /**
@@ -339,31 +340,14 @@ public class Vector2D implements GeometricObject2D {
      */
     @Override
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-
-        if (!(obj instanceof Vector2D)) {
-            return false;
-        }
-        Vector2D that = (Vector2D) obj;
-
-        // Compare each field
-        if (!EqualUtils.areEqual(this.x, that.x)) {
-            return false;
-        }
-        if (!EqualUtils.areEqual(this.y, that.y)) {
-            return false;
-        }
-
-        return true;
+        return almostEquals(this, Tolerance2D.get());
     }
 
     @Override
     public int hashCode() {
         int hash = 1;
-        hash = hash * 31 + Double.valueOf(this.x).hashCode();
-        hash = hash * 31 + Double.valueOf(this.y).hashCode();
+        hash = hash * 31 + Tolerance2D.hash(x);
+        hash = hash * 31 + Tolerance2D.hash(y);
         return hash;
     }
 
