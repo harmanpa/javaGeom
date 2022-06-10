@@ -47,7 +47,7 @@ public class SVGUtils {
     public static void openSVG(Collection<Curve2D> curves) throws IOException {
         String svg = toSVG(curves);
         Path path = File.createTempFile("tmp", ".svg").toPath();
-        Files.writeString(path, svg);
+        Files.write(path, Arrays.asList(svg.split("\n")));
         Desktop.getDesktop().browse(path.toUri());
     }
 }
