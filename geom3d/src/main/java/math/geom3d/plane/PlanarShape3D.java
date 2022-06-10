@@ -4,6 +4,7 @@
  */
 package math.geom3d.plane;
 
+import java.util.function.Function;
 import math.geom2d.Box2D;
 import math.geom2d.Shape2D;
 import math.geom2d.Tolerance2D;
@@ -85,6 +86,14 @@ public class PlanarShape3D<T extends Shape2D> implements Shape3D {
         return obj instanceof PlanarShape3D
                 && ((PlanarShape3D) obj).getPlane().almostEquals(getPlane(), eps)
                 && ((PlanarShape3D) obj).getShape().almostEquals(getShape(), eps);
+    }
+
+    protected <Y extends Shape2D> PlanarShape3D<Y> map(Function<T, Y> mapper) {
+        return new PlanarShape3D<>(getPlane(), mapper.apply(getShape()));
+    }
+
+    protected <Y extends Shape2D, X extends Shape3D> X map(Function<T, Y> mapper, Class<X> asType) {
+        return asType.cast(new PlanarShape3D<>(getPlane(), mapper.apply(getShape())));
     }
 
     protected <X extends Shape2D> void apply2DAlgorithm(PlanarShape3D<X> other) {

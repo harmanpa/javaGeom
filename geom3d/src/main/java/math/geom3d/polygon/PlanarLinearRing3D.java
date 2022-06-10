@@ -16,7 +16,7 @@ import math.geom3d.circulinear.CirculinearElement3D;
 import math.geom3d.circulinear.CirculinearRing3D;
 import math.geom3d.curve.ContinuousCurve3D;
 import math.geom3d.line.LinearShape3D;
-import math.geom3d.plane.PlanarShape3D;
+import math.geom3d.plane.PlanarCurve3D;
 import math.geom3d.plane.Plane3D;
 import math.geom3d.transform.AffineTransform3D;
 
@@ -24,7 +24,7 @@ import math.geom3d.transform.AffineTransform3D;
  *
  * @author peter
  */
-public class PlanarLinearRing3D extends PlanarShape3D<LinearRing2D> implements CirculinearRing3D {
+public class PlanarLinearRing3D extends PlanarCurve3D<LinearRing2D> implements CirculinearRing3D {
 
     public static PlanarLinearRing3D withDirection(List<Point3D> points, boolean cw) throws Geom2DException {
         PlanarLinearRing3D ring = new PlanarLinearRing3D(points);
@@ -87,46 +87,6 @@ public class PlanarLinearRing3D extends PlanarShape3D<LinearRing2D> implements C
     }
 
     @Override
-    public double getT0() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public double getT1() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Point3D point(double t) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Point3D firstPoint() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Point3D lastPoint() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public Collection<Point3D> singularPoints() {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public double position(Point3D point) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
-    public double project(Point3D point) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
-
-    @Override
     public boolean isClosed() {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
@@ -156,8 +116,4 @@ public class PlanarLinearRing3D extends PlanarShape3D<LinearRing2D> implements C
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
-    @Override
-    public Collection<Point3D> intersections(LinearShape3D line) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
-    }
 }
