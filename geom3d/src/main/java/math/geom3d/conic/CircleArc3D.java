@@ -16,6 +16,10 @@ import math.geom3d.plane.Plane3D;
  */
 public class CircleArc3D extends PlanarContinuousCurve3D<CircleArc2D> {
 
+    public CircleArc3D(Plane3D plane, CircleArc2D shape) {
+        super(plane, shape);
+    }
+
     public CircleArc3D(Point3D centre, Vector3D normal, double radius, double start, double extent) {
         super(Plane3D.fromNormal(centre, normal), new CircleArc2D(0, 0, radius, start, extent));
     }

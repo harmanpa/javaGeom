@@ -16,6 +16,7 @@ import math.geom3d.Vector3D;
 import math.geom3d.Point3D;
 import math.geom3d.Shape3D;
 import math.geom3d.fitting.Plane3DFitter;
+import math.geom3d.line.LinearShape3D;
 import math.geom3d.line.StraightLine3D;
 import math.geom3d.transform.AffineTransform3D;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
@@ -201,6 +202,10 @@ public class Plane3D implements Shape3D {
         return this.lineIntersection(line);
     }
 
+    public boolean isVectorInPlane(Vector3D vect) {
+        return Vector3D.isOrthogonal(vect, normal());
+    }
+
     public Vector3D projectVector(Vector3D vect) {
         Point3D point = new Point3D(x0 + vect.getX(), y0 + vect.getY(), z0
                 + vect.getZ());
@@ -230,6 +235,14 @@ public class Plane3D implements Shape3D {
                 .getSolver()
                 .solve(new ArrayRealVector(new double[]{v.getX(), v.getY(), v.getZ()}));
         return new Vector2D(xy.getEntry(0), xy.getEntry(1));
+    }
+
+    public Vector3D vector(Vector2D v) {
+        return new Vector3D(v.getX() * dx1 + v.getY() * dx2, v.getX() * dy1 + v.getY() * dy2, v.getX() * dz1 + v.getY() * dz2);
+    }
+
+    public boolean isLineInPlane(LinearShape3D line) {
+        return contains(line.firstPoint()) && isVectorInPlane(line.direction());
     }
 
     public StraightLine2D lineInPlane(StraightLine3D line) {

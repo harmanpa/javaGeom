@@ -14,7 +14,6 @@ import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
 import math.geom3d.circulinear.CirculinearElement3D;
-import math.geom3d.curve.CurveSet3D;
 import math.geom3d.fitting.CurveIntersector;
 import math.geom3d.polygon.LinearCurve3D;
 import math.geom3d.transform.AffineTransform3D;
@@ -355,6 +354,33 @@ public class LineSegment3D implements CirculinearElement3D, LinearShape3D {
     @Override
     public Collection<Point3D> intersections(LinearShape3D line) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 97 * hash + Tolerance2D.hash(x1);
+        hash = 97 * hash + Tolerance2D.hash(y1);
+        hash = 97 * hash + Tolerance2D.hash(z1);
+        hash = 97 * hash + Tolerance2D.hash(x2);
+        hash = 97 * hash + Tolerance2D.hash(y2);
+        hash = 97 * hash + Tolerance2D.hash(z2);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final LineSegment3D other = (LineSegment3D) obj;
+        return almostEquals(other, Tolerance2D.get());
     }
 
 }
