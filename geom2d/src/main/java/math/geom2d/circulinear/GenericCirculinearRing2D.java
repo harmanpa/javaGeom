@@ -14,6 +14,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 import math.geom2d.AffineTransform2D;
+import math.geom2d.Point2D;
 import math.geom2d.circulinear.buffer.BufferCalculator;
 import math.geom2d.conic.ArcSegment2D;
 import math.geom2d.conic.CircleArc2D;
@@ -100,14 +101,31 @@ public class GenericCirculinearRing2D
                 .filter(element -> element instanceof CircleArc2D)
                 .map(element -> (CircleArc2D) element)
                 .collect(Collectors.toList());
-        double area = Math.abs(polygon.area());
+        double area = polygon.area();
+        double absArea = Math.abs(area);
+        double areaSign = Math.signum(area);
         for (CircleArc2D arc : arcs) {
             boolean inside = polygon.isInside(arc.point((arc.t1() + arc.t0()) / 2));
             double segmentArea = new ArcSegment2D(arc).area();
-            area += inside ? -segmentArea : segmentArea;
+            absArea += inside ? -segmentArea : segmentArea;
         }
-        return area;
+        return absArea * areaSign;
     }
+
+//    public boolean isInside(Point2D point) {
+//        // Split into a polygon, and a list of ArcSegment2Ds. Each segment either adds to or subtracts from the polygon area.
+//        List<CirculinearElement2D> elements = continuousCurves().stream()
+//                .flatMap(cc -> cc.smoothPieces().stream())
+//                .collect(Collectors.toList());
+//        LinearRing2D polygon = new LinearRing2D(elements.stream()
+//                .map(element -> element.point(element.t0()))
+//                .collect(Collectors.toList()));
+//        return polygon.isInside(point) || elements.stream()
+//                .filter(element -> element instanceof CircleArc2D)
+//                .map(element -> (CircleArc2D) element)
+//                .filter(arc -> !polygon.isInside(arc.point((arc.t1() + arc.t0()) / 2)))
+//                .anyMatch(arc -> new ArcSegment2D(arc).isInside(point));
+//    }
 
     // ===================================================================
     // methods specific to GenericCirculinearRing2D

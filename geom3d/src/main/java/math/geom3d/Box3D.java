@@ -6,6 +6,8 @@ package math.geom3d;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.DoubleSummaryStatistics;
+import java.util.function.Supplier;
+import java.util.stream.Stream;
 
 /**
  * A 3-dimensional box, defined by its extent in each direction.
@@ -67,6 +69,34 @@ public class Box3D {
         DoubleSummaryStatistics yStats = points.stream().mapToDouble(point -> point.getX()).summaryStatistics();
         DoubleSummaryStatistics zStats = points.stream().mapToDouble(point -> point.getX()).summaryStatistics();
         return new Box3D(xStats.getMin(), xStats.getMax(), yStats.getMin(), yStats.getMax(), zStats.getMin(), zStats.getMax());
+    }
+
+    public static Box3D fromShapes(Shape3D... shapes) {
+        return fromShapes(Arrays.asList(shapes));
+    }
+
+    public static Box3D fromShapes(Collection<Shape3D> shapes) {
+        Box3D box = new Box3D();
+        for (Shape3D shape : shapes) {
+            box = box.union(shape.boundingBox());
+        }
+        return box;
+    }
+
+    public static Box3D fromSuppliers(Supplier<Box3D>... suppliers) {
+        return fromSuppliers(Arrays.asList(suppliers));
+    }
+
+    public static Box3D fromSuppliers(Collection<Supplier<Box3D>> suppliers) {
+        Box3D box = new Box3D();
+        for (Supplier<Box3D> supplier : suppliers) {
+            box = box.union(supplier.get());
+        }
+        return box;
+    }
+
+    public static Box3D reduce(Stream<Box3D> stream) {
+        return stream.reduce(new Box3D(), (a, b) -> a.union(b));
     }
 
     /**
