@@ -8,6 +8,7 @@ import static java.lang.Math.max;
 import static java.lang.Math.min;
 import math.geom2d.Tolerance2D;
 import math.geom3d.transform.AffineTransform3D;
+import math.geom3s.Vector3S;
 
 /**
  * Define a vector in 3 dimensions. Provides methods to compute cross product
@@ -74,11 +75,11 @@ public class Vector3D implements GeometricObject3D {
         v2 = v2.normalize();
         return Vector3D.crossProduct(v1, v2).norm() < Tolerance2D.get();
     }
-    
+
     public final static boolean isCodirected(Vector3D v1, Vector3D v2) {
         return v1.normalize().minus(v2.normalize()).norm() < Tolerance2D.get();
     }
-    
+
     public final static boolean isOpposite(Vector3D v1, Vector3D v2) {
         return v1.normalize().plus(v2.normalize()).norm() < Tolerance2D.get();
     }
@@ -255,6 +256,13 @@ public class Vector3D implements GeometricObject3D {
         } else {
             return new Vector3D(x, z, y);
         }
+    }
+
+    public double[] range(Shape3D shape) {
+        AffineTransform3D transform = Vector3S.fromCartesian(this.normalize())
+                .transformTo(Vector3S.fromCartesian(new Vector3D(0, 0, 1)));
+        Box3D box = shape.transform(transform).boundingBox();
+        return new double[]{box.getMinZ(), box.getMaxZ()};
     }
 
     /**
