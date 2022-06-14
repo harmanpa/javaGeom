@@ -6,6 +6,8 @@ package math.geom3s;
 import static java.lang.Math.acos;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
+import math.geom2d.Tolerance2D;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Vector3D;
 import math.geom3d.transform.AffineTransform3D;
 
@@ -13,7 +15,7 @@ import math.geom3d.transform.AffineTransform3D;
  * Define a vector in 3 dimensions. Provides methods to compute cross product
  * and dot product, addition and subtraction of vectors.
  */
-public class Vector3S {
+public class Vector3S implements GeometricObject3D {
 
     // ===================================================================
     // class variables
@@ -161,6 +163,58 @@ public class Vector3S {
      */
     public Vector3S transform(AffineTransform3D trans) {
         return fromCartesian(toCartesian().transform(trans));
+    }
+
+    AffineTransform3D transformToZero() {
+        AffineTransform3D a = AffineTransform3D.createRotationOz(-phi);
+        Vector3S tmp = transform(a);
+        AffineTransform3D b = AffineTransform3D.createRotationOy(-tmp.theta);
+        return a.preConcatenate(b);
+    }
+
+    AffineTransform3D transformFromZero() {
+        return transformToZero().inverse();
+    }
+
+    public AffineTransform3D transformTo(Vector3S other) {
+        return transformToZero().preConcatenate(other.transformFromZero());
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return obj instanceof Vector3S
+                && Math.abs(((Vector3S) obj).getR() - getR()) <= eps
+                && Math.abs(((Vector3S) obj).getTheta() - getTheta()) <= eps
+                && Math.abs(((Vector3S) obj).getPhi() - getPhi()) <= eps;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 31 * hash + Tolerance2D.hash(r);
+        hash = 31 * hash + Tolerance2D.hash(phi);
+        hash = 31 * hash + Tolerance2D.hash(theta);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Vector3S other = (Vector3S) obj;
+        return almostEquals(other, Tolerance2D.get());
+    }
+
+    @Override
+    public String toString() {
+        return "Vector3S{" + "r=" + r + ", theta=" + theta + ", phi=" + phi + '}';
     }
 
 }

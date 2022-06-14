@@ -9,6 +9,7 @@ import math.geom2d.Point2D;
 import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
 import math.geom2d.exceptions.Geom2DException;
+import math.geom2d.line.LineSegment2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom3d.Box3D;
 import math.geom3d.GeometricObject3D;
@@ -16,6 +17,7 @@ import math.geom3d.Vector3D;
 import math.geom3d.Point3D;
 import math.geom3d.Shape3D;
 import math.geom3d.fitting.Plane3DFitter;
+import math.geom3d.line.LineSegment3D;
 import math.geom3d.line.LinearShape3D;
 import math.geom3d.line.StraightLine3D;
 import math.geom3d.transform.AffineTransform3D;
@@ -247,6 +249,10 @@ public class Plane3D implements Shape3D {
 
     public StraightLine2D lineInPlane(StraightLine3D line) {
         return new StraightLine2D(pointPosition(line.origin()), vectorInPlane(line.direction()));
+    }
+
+    public LineSegment2D lineInPlane(LineSegment3D line) {
+        return new LineSegment2D(pointPosition(line.firstPoint()), pointPosition(line.lastPoint()));
     }
 
     // ===================================================================
