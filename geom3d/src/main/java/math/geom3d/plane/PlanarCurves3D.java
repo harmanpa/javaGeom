@@ -63,13 +63,16 @@ public class PlanarCurves3D {
     public static Plane3D getPlane(Collection<Curve3D> curves) throws Geom2DException {
         // Get a plane from one of the PlanarShapes
         Optional<Plane3D> planeFromPlanarShapes = curves.stream()
-                .filter(curve -> curve instanceof PlanarShape3D)
+                .filter(curve -> curve != null && curve instanceof PlanarShape3D)
                 .map(curve -> ((PlanarShape3D) curve).getPlane())
                 .findAny();
         if (planeFromPlanarShapes.isPresent()) {
             return planeFromPlanarShapes.get();
         }
         // Get a plane from the start points
-        return Plane3D.fromPoints(curves.stream().map(curve -> curve.firstPoint()).collect(Collectors.toList()));
+        return Plane3D.fromPoints(curves.stream()
+                .filter(curve -> curve != null)
+                .map(curve -> curve.firstPoint())
+                .collect(Collectors.toList()));
     }
 }
