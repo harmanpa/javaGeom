@@ -5,6 +5,7 @@ package math.geom3d.plane;
 
 import java.util.List;
 import math.geom2d.AffineTransform2D;
+import math.geom2d.Angle2D;
 import math.geom2d.Point2D;
 import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
@@ -375,22 +376,15 @@ public class Plane3D implements Shape3D {
         Point2D otherOrigin = other.pointPosition(other.projectPoint(point(0, 0)));
         Point2D x1 = other.pointPosition(other.projectPoint(point(1, 0)));
         Point2D y1 = other.pointPosition(other.projectPoint(point(0, 1)));
-        Point2D xy1 = other.pointPosition(other.projectPoint(point(1, 1)));
-        return AffineTransform2D.createTranslation(new Vector2D(new Point2D(0, 0), otherOrigin));
-//        Array2DRowRealMatrix m1 = new Array2DRowRealMatrix(2, 2);
-//        m1.setEntry(0, 0, 1);
-//        m1.setEntry(0, 1, 0);
-//        m1.setEntry(1, 0, 0);
-//        m1.setEntry(1, 1, 1);
-//        Array2DRowRealMatrix m2 = new Array2DRowRealMatrix(2, 2);
-//        Point2D a = other.pointPosition(other.projectPoint(point(1, 0)));
-//        Point2D b = other.pointPosition(other.projectPoint(point(0, 1)));
-//        m2.setEntry(0, 0, a.getX());
-//        m2.setEntry(1, 0, a.getY());
-//        m2.setEntry(0, 1, b.getX());
-//        m2.setEntry(1, 1, b.getY());
-//        RealMatrix m = new QRDecomposition(m1).getSolver().solve(m2);
-//        return AffineTransform2D.create(m.getEntry(0, 0), m.getEntry(0, 1), 0, m.getEntry(1, 0), m.getEntry(1, 1), 0);
+        double rotX = Angle2D.formatAngle(Angle2D.horizontalAngle(otherOrigin, x1) - Angle2D.horizontalAngle(new Point2D(0, 0), new Point2D(1, 0)));
+        double rotY = Angle2D.formatAngle(Angle2D.horizontalAngle(otherOrigin, y1) - Angle2D.horizontalAngle(new Point2D(0, 0), new Point2D(0, 1)));
+        Vector2D translation = new Vector2D(new Point2D(0, 0), otherOrigin);
+        if (Angle2D.M_PI - Math.abs(rotX - rotY) <= Tolerance2D.get()) {
+            // If it is flipped on the x axis, we just shift the translation in x
+            //FIXME: Not sure how repeatable this is but it works so far
+            translation = new Vector2D(-translation.getX(), translation.getY());
+        }
+        return AffineTransform2D.createTranslation(translation);
     }
 
     /**
