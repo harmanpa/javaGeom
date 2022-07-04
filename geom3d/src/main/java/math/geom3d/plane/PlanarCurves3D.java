@@ -14,6 +14,7 @@ import math.geom2d.circulinear.CirculinearRing2D;
 import math.geom2d.circulinear.GenericCirculinearRing2D;
 import math.geom2d.curve.Curve2D;
 import math.geom2d.exceptions.Geom2DException;
+import math.geom3d.Point3D;
 import math.geom3d.circulinear.PlanarCirculinearRing3D;
 import math.geom3d.curve.Curve3D;
 import math.geom3d.line.LineSegment3D;
@@ -69,10 +70,14 @@ public class PlanarCurves3D {
         if (planeFromPlanarShapes.isPresent()) {
             return planeFromPlanarShapes.get();
         }
-        // Get a plane from the start points
-        return Plane3D.fromPoints(curves.stream()
+        List<Point3D> points = curves.stream()
                 .filter(curve -> curve != null)
                 .map(curve -> curve.firstPoint())
-                .collect(Collectors.toList()));
+                .collect(Collectors.toList());
+        if (points.size() < 3) {
+            throw new Geom2DException("Insufficient points in set of curves to determine a plane");
+        }
+        // Get a plane from the start points
+        return Plane3D.fromPoints(points);
     }
 }
