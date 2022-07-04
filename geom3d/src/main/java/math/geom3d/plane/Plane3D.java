@@ -476,7 +476,22 @@ public class Plane3D implements Shape3D {
     // methods overriding Object superclass
     @Override
     public boolean equals(Object obj) {
-        return almostEquals(this, Tolerance2D.get());
+        return obj instanceof Plane3D && almostEquals((Plane3D) obj, Tolerance2D.get());
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 71 * hash + Tolerance2D.hash(this.x0);
+        hash = 71 * hash + Tolerance2D.hash(this.y0);
+        hash = 71 * hash + Tolerance2D.hash(this.z0);
+        hash = 71 * hash + Tolerance2D.hash(this.dx1);
+        hash = 71 * hash + Tolerance2D.hash(this.dy1);
+        hash = 71 * hash + Tolerance2D.hash(this.dz1);
+        hash = 71 * hash + Tolerance2D.hash(this.dx2);
+        hash = 71 * hash + Tolerance2D.hash(this.dy2);
+        hash = 71 * hash + Tolerance2D.hash(this.dz2);
+        return hash;
     }
 
     @Override
