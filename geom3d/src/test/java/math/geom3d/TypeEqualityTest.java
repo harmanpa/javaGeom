@@ -31,7 +31,7 @@ public class TypeEqualityTest {
     @Parameterized.Parameters
     public static Collection<Object[]> getClasses() {
         List<Object[]> out = new ArrayList<>();
-        for (Class<?> c : new ClassGraph().acceptPackages(TypeEqualityTest.class.getPackageName()).scan().getAllClasses().loadClasses()) {
+        for (Class<?> c : new ClassGraph().acceptPackages(TypeEqualityTest.class.getPackage().getName()).scan().getAllClasses().loadClasses()) {
             if (!(isTest(c) || isUtilities(c))) {
                 out.add(new Object[]{c});
             }
