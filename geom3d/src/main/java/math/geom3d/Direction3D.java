@@ -23,15 +23,21 @@ public class Direction3D implements GeometricObject3D {
     }
 
     @Override
+    public String toString() {
+        return "Direction3D{" + "v=" + v + '}';
+    }
+
+    @Override
     public boolean almostEquals(GeometricObject3D obj, double eps) {
         return obj instanceof Direction3D
-                && (((Direction3D) obj).getV().almostEquals(getV(), eps)
-                || ((Direction3D) obj).getV().opposite().almostEquals(getV(), eps));
+                && (((Direction3D) obj).getV() == null ? getV() == null
+                : (((Direction3D) obj).getV().almostEquals(getV(), eps)
+                || ((Direction3D) obj).getV().opposite().almostEquals(getV(), eps)));
     }
 
     @Override
     public int hashCode() {
-        return v.hashCode() + v.opposite().hashCode();
+        return 23 + (v == null ? 0 : v.hashCode() + v.opposite().hashCode());
     }
 
     @Override

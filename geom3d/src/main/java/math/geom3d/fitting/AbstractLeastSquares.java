@@ -4,9 +4,6 @@
  */
 package math.geom3d.fitting;
 
-import java.util.List;
-import java.util.function.BiFunction;
-import java.util.function.Function;
 import java.util.stream.DoubleStream;
 import org.apache.commons.math3.analysis.MultivariateFunction;
 import org.apache.commons.math3.analysis.MultivariateVectorFunction;
@@ -21,8 +18,8 @@ import org.apache.commons.math3.util.Pair;
  *
  * @author peter
  */
-public class AbstractLeastSquares {
-    
+public abstract class AbstractLeastSquares {
+
     protected MultivariateFunction fS(MultivariateVectorFunction fv) {
         return (double[] x) -> DoubleStream.of(fv.value(x)).map(v -> Math.pow(v, 2.0)).sum();
     }
@@ -54,4 +51,13 @@ public class AbstractLeastSquares {
         }
     }
 
+    @Override
+    public boolean equals(Object obj) {
+        return super.equals(obj);
+    }
+
+    @Override
+    public int hashCode() {
+        return super.hashCode();
+    }
 }

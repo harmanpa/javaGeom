@@ -10,12 +10,12 @@ package math.geom3d.curve;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
 import math.geom3d.exceptions.UnboundedShape3DException;
 import math.geom3d.polygon.LinearCurve3D;
 import math.geom3d.polygon.NonPlanarLinearRing3D;
 import math.geom3d.polygon.Polyline3D;
-
 
 /**
  * Provides a base implementation for continuous curves.
@@ -27,16 +27,17 @@ public abstract class AbstractContinuousCurve3D
 
     /**
      * Wrap the given curve into an array list with the appropriate generic.
+     *
      * @param <T>
      * @param curve
-     * @return 
+     * @return
      */
     protected static <T extends ContinuousCurve3D> Collection<T> wrapCurve(T curve) {
         ArrayList<T> list = new ArrayList<>(1);
         list.add(curve);
         return list;
     }
-    
+
     /**
      * Converts this continuous curve to an instance of LinearCurve3D with the
      * given number of edges. Returns either an instance of Polyline3D or
@@ -143,4 +144,22 @@ public abstract class AbstractContinuousCurve3D
         }
         return this.point(t1);
     }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return GeometricObject3D.almostEquals(this, obj, eps);
+    }
+
+    @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+    public boolean equals(Object obj) {
+        return GeometricObject3D.equals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 129;
+        return hash;
+    }
+
 }

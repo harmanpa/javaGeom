@@ -58,7 +58,7 @@ public class CurveArray3D<T extends Curve3D>
     /**
      * The inner array of curves
      */
-    protected ArrayList<T> curves;
+    private final List<T> curves;
 
     // ===================================================================
     // Constructors
@@ -244,7 +244,7 @@ public class CurveArray3D<T extends Curve3D>
      * @return the inner collection of curves
      */
     @Override
-    public Collection<T> curves() {
+    public List<T> curves() {
         return curves;
     }
 
@@ -405,7 +405,8 @@ public class CurveArray3D<T extends Curve3D>
         // return the set of singular points
         return points;
     }
-/**
+
+    /**
      * Add a point to the set only if the distance between the candidate and the
      * closest point in the set is greater than the given threshold.
      *
@@ -416,13 +417,13 @@ public class CurveArray3D<T extends Curve3D>
     private void addPointWithGuardDistance(Collection<Point3D> pointSet,
             Point3D point, double eps) {
         for (Point3D p0 : pointSet) {
-            if (p0.distance(point)<=eps) {
+            if (p0.distance(point) <= eps) {
                 return;
             }
         }
         pointSet.add(point);
     }
-    
+
     @Override
     public double position(Point3D point) {
         double minDist = Double.MAX_VALUE, dist;
@@ -608,37 +609,6 @@ public class CurveArray3D<T extends Curve3D>
     }
 
     @Override
-    public boolean equals(Object obj) {
-        // check class, and cast type
-        if (!(obj instanceof CurveArray3D<?>)) {
-            return false;
-        }
-        CurveArray3D<?> curveSet = (CurveArray3D<?>) obj;
-
-        // check the number of curves in each set
-        if (this.size() != curveSet.size()) {
-            return false;
-        }
-
-        // return false if at least one couple of curves does not match
-        for (int i = 0; i < curves.size(); i++) {
-            if (!curves.get(i).equals(curveSet.curves.get(i))) {
-                return false;
-            }
-        }
-
-        // otherwise return true
-        return true;
-    }
-
-    @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 47 * hash + Objects.hashCode(this.curves);
-        return hash;
-    }
-
-    @Override
     public Iterator<T> iterator() {
         return curves.iterator();
     }
@@ -657,7 +627,6 @@ public class CurveArray3D<T extends Curve3D>
 //    public Shape3D clip(Box3D box) {
 //        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
 //    }
-
     @Override
     public boolean contains(Point3D point) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
@@ -665,7 +634,20 @@ public class CurveArray3D<T extends Curve3D>
 
     @Override
     public boolean almostEquals(GeometricObject3D obj, double eps) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+        return GeometricObject3D.almostEquals(this, obj, eps);
+    }
+
+    @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+    public boolean equals(Object obj) {
+        return GeometricObject3D.equals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 47 * hash + Objects.hashCode(this.curves);
+        return hash;
     }
 
 }

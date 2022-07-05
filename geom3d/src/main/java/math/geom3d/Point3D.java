@@ -33,13 +33,13 @@ import math.geom3d.transform.AffineTransform3D;
  *
  * @author dlegland
  */
-public class Point3D implements Shape3D {
+public final class Point3D implements Shape3D {
 
     // ===================================================================
     // Class variables
-    private double x = 0;
-    private double y = 0;
-    private double z = 0;
+    private final double x;
+    private final double y;
+    private final double z;
 
     // ===================================================================
     // Constructors
@@ -91,7 +91,7 @@ public class Point3D implements Shape3D {
     }
 
     public Point3D plus(Vector3D vec) {
-        return new Point3D(this.x + vec.x, this.y + vec.y, this.z + vec.z);
+        return new Point3D(this.x + vec.getX(), this.y + vec.getY(), this.z + vec.getZ());
     }
 
     public Point3D plus(Point3D p2) {
@@ -99,7 +99,7 @@ public class Point3D implements Shape3D {
     }
 
     public Point3D minus(Vector3D vec) {
-        return new Point3D(this.x - vec.x, this.y - vec.y, this.z - vec.z);
+        return new Point3D(this.x - vec.getX(), this.y - vec.getY(), this.z - vec.getZ());
     }
 
     public Point3D minus(Point3D p2) {
@@ -213,7 +213,7 @@ public class Point3D implements Shape3D {
     // methods overriding Object superclass
     @Override
     public boolean equals(Object obj) {
-        return obj instanceof Point3D && almostEquals((Point3D)obj, Tolerance2D.get());
+        return obj!=null && getClass().equals(obj.getClass()) && almostEquals((Point3D)obj, Tolerance2D.get());
     }
 
     @Override
@@ -231,14 +231,16 @@ public class Point3D implements Shape3D {
             return false;
         }
         Point3D point = (Point3D) obj;
-
-        if (Math.abs(point.x - this.x) > eps) {
+        if(Tolerance2D.compare(this.x, point.x, eps)!=0) {
             return false;
         }
-        if (Math.abs(point.y - this.y) > eps) {
+        if(Tolerance2D.compare(this.y, point.y, eps)!=0) {
             return false;
         }
-        return Math.abs(point.z - this.z) <= eps;
+        if(Tolerance2D.compare(this.z, point.z, eps)!=0) {
+            return false;
+        }
+        return true;
     }
     
     @Override

@@ -11,9 +11,10 @@ package math.geom3d.curve;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
-
 
 /**
  * Provides a base implementation for smooth curves.
@@ -85,4 +86,22 @@ public abstract class AbstractSmoothCurve3D extends AbstractContinuousCurve3D
     public boolean isSingular(double pos) {
         return false;
     }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return GeometricObject3D.almostEquals(this, obj, eps);
+    }
+
+    @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+    public boolean equals(Object obj) {
+        return GeometricObject3D.equals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 477;
+        return hash;
+    }
+
 }

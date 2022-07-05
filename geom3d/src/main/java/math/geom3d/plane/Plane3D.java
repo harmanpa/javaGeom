@@ -32,19 +32,19 @@ import org.apache.commons.math3.linear.RealVector;
 /**
  * @author dlegland
  */
-public class Plane3D implements Shape3D {
+public final class Plane3D implements Shape3D {
 
     // ===================================================================
     // class variables
-    protected double x0 = 0;
-    protected double y0 = 0;
-    protected double z0 = 0;
-    protected double dx1 = 1;
-    protected double dy1 = 0;
-    protected double dz1 = 0;
-    protected double dx2 = 0;
-    protected double dy2 = 1;
-    protected double dz2 = 0;
+    private final double x0;// = 0;
+    private final double y0;// = 0;
+    private final double z0;// = 0;
+    private final double dx1;// = 1;
+    private final double dy1;// = 0;
+    private final double dz1;// = 0;
+    private final double dx2;// = 0;
+    private final double dy2;// = 1;
+    private final double dz2;// = 0;
 
     // ===================================================================
     // static methods
@@ -94,15 +94,20 @@ public class Plane3D implements Shape3D {
     }
 
     public Plane3D(Point3D point, Vector3D vector1, Vector3D vector2) {
-        this.x0 = point.getX();
-        this.y0 = point.getY();
-        this.z0 = point.getZ();
-        this.dx1 = vector1.getX();
-        this.dy1 = vector1.getY();
-        this.dz1 = vector1.getZ();
-        this.dx2 = vector2.getX();
-        this.dy2 = vector2.getY();
-        this.dz2 = vector2.getZ();
+        this(point.getX(), point.getY(), point.getZ(), vector1.getX(), vector1.getY(),
+                 vector1.getZ(), vector2.getX(), vector2.getY(), vector2.getZ());
+    }
+
+    Plane3D(double x0, double y0, double z0, double dx1, double dy1, double dz1, double dx2, double dy2, double dz2) {
+        this.x0 = x0;
+        this.y0 = y0;
+        this.z0 = z0;
+        this.dx1 = dx1;
+        this.dy1 = dy1;
+        this.dz1 = dz1;
+        this.dx2 = dx2;
+        this.dy2 = dy2;
+        this.dz2 = dz2;
     }
 
     // ===================================================================
@@ -500,32 +505,34 @@ public class Plane3D implements Shape3D {
             return false;
         }
         Plane3D plane = (Plane3D) obj;
-
-        if (Math.abs(this.x0 - plane.x0) > eps) {
+        if (Tolerance2D.compare(this.x0, plane.x0) != 0) {
             return false;
         }
-        if (Math.abs(this.y0 - plane.y0) > eps) {
+        if (Tolerance2D.compare(this.y0, plane.y0) != 0) {
             return false;
         }
-        if (Math.abs(this.z0 - plane.z0) > eps) {
+        if (Tolerance2D.compare(this.z0, plane.z0) != 0) {
             return false;
         }
-        if (Math.abs(this.dx1 - plane.dx1) > eps) {
+        if (Tolerance2D.compare(this.dx1, plane.dx1) != 0) {
             return false;
         }
-        if (Math.abs(this.dy1 - plane.dy1) > eps) {
+        if (Tolerance2D.compare(this.dy1, plane.dy1) != 0) {
             return false;
         }
-        if (Math.abs(this.dz1 - plane.dz1) > eps) {
+        if (Tolerance2D.compare(this.dz1, plane.dz1) != 0) {
             return false;
         }
-        if (Math.abs(this.dx2 - plane.dx2) > eps) {
+        if (Tolerance2D.compare(this.dx2, plane.dx2) != 0) {
             return false;
         }
-        if (Math.abs(this.dy2 - plane.dy2) > eps) {
+        if (Tolerance2D.compare(this.dy2, plane.dy2) != 0) {
             return false;
         }
-        return Math.abs(this.dz2 - plane.dz2) <= eps;
+        if (Tolerance2D.compare(this.dz2, plane.dz2) != 0) {
+            return false;
+        }
+        return true;
     }
 
     public static enum Plane3DRelationship {

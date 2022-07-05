@@ -5,6 +5,7 @@
  */
 package math.geom3d;
 
+import java.util.Objects;
 import math.geom2d.Tolerance2D;
 import math.geom3d.transform.AffineTransform3D;
 
@@ -63,6 +64,32 @@ public class Sphere3D implements Shape3D {
     @Override
     public boolean almostEquals(GeometricObject3D obj, double eps) {
         return obj instanceof Sphere3D && ((Sphere3D) obj).center.almostEquals(center, eps) && Math.abs(((Sphere3D) obj).radius - radius) <= eps;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 29 * hash + Objects.hashCode(this.center);
+        hash = 29 * hash + Tolerance2D.hash(radius);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Sphere3D other = (Sphere3D) obj;
+        if (Tolerance2D.compare(radius, other.radius) != 0) {
+            return false;
+        }
+        return Objects.equals(this.center, other.center);
     }
 
 }

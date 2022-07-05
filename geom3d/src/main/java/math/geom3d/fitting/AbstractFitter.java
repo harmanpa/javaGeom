@@ -6,6 +6,7 @@ package math.geom3d.fitting;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.BiFunction;
 import java.util.function.Function;
 import math.geom2d.exceptions.Geom2DException;
@@ -139,6 +140,48 @@ public class AbstractFitter<T, X> extends AbstractLeastSquares {
             }
             return out;
         };
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + this.nParameters;
+        hash = 67 * hash + Objects.hashCode(this.constructor);
+        hash = 67 * hash + Objects.hashCode(this.destructor);
+        hash = 67 * hash + Objects.hashCode(this.assessor);
+        hash = 67 * hash + Objects.hashCode(this.guesser);
+        hash = 67 * hash + Objects.hashCode(this.prePost);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final AbstractFitter<?, ?> other = (AbstractFitter<?, ?>) obj;
+        if (this.nParameters != other.nParameters) {
+            return false;
+        }
+        if (!Objects.equals(this.constructor, other.constructor)) {
+            return false;
+        }
+        if (!Objects.equals(this.destructor, other.destructor)) {
+            return false;
+        }
+        if (!Objects.equals(this.assessor, other.assessor)) {
+            return false;
+        }
+        if (!Objects.equals(this.guesser, other.guesser)) {
+            return false;
+        }
+        return Objects.equals(this.prePost, other.prePost);
     }
 
     protected static interface PrePost<T, X> {

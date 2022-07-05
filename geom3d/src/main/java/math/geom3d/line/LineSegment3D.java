@@ -21,16 +21,16 @@ import math.geom3d.transform.AffineTransform3D;
 /**
  * @author dlegland
  */
-public class LineSegment3D implements CirculinearElement3D, LinearShape3D {
+public final class LineSegment3D implements CirculinearElement3D, LinearShape3D {
 
     // ===================================================================
     // class variables
-    protected double x1 = 0;
-    protected double y1 = 0;
-    protected double z1 = 0;
-    protected double x2 = 1;
-    protected double y2 = 0;
-    protected double z2 = 0;
+    private final double x1;
+    private final double y1;
+    private final double z1;
+    private final double x2;
+    private final double y2;
+    private final double z2;
 
     // ===================================================================
     // constructors
@@ -345,42 +345,24 @@ public class LineSegment3D implements CirculinearElement3D, LinearShape3D {
     }
 
     @Override
-    public boolean almostEquals(GeometricObject3D obj, double eps) {
-        return obj instanceof LineSegment3D
-                && ((LineSegment3D) obj).firstPoint().almostEquals(firstPoint(), eps)
-                && ((LineSegment3D) obj).lastPoint().almostEquals(lastPoint(), eps);
-    }
-
-    @Override
     public Collection<Point3D> intersections(LinearShape3D line) {
         throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
     public int hashCode() {
-        int hash = 7;
-        hash = 97 * hash + Tolerance2D.hash(x1);
-        hash = 97 * hash + Tolerance2D.hash(y1);
-        hash = 97 * hash + Tolerance2D.hash(z1);
-        hash = 97 * hash + Tolerance2D.hash(x2);
-        hash = 97 * hash + Tolerance2D.hash(y2);
-        hash = 97 * hash + Tolerance2D.hash(z2);
-        return hash;
+        return GeometricObject3D.hash(7, 93, x1, y1, z1, x2, y2, z2);
     }
 
     @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return GeometricObject3D.almostEquals(this, obj, eps);
+    }
+
+    @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
     public boolean equals(Object obj) {
-        if (this == obj) {
-            return true;
-        }
-        if (obj == null) {
-            return false;
-        }
-        if (getClass() != obj.getClass()) {
-            return false;
-        }
-        final LineSegment3D other = (LineSegment3D) obj;
-        return almostEquals(other, Tolerance2D.get());
+        return GeometricObject3D.equals(this, obj);
     }
 
 }

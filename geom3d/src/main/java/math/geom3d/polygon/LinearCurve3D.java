@@ -6,16 +6,15 @@ package math.geom3d.polygon;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Iterator;
+import java.util.List;
+import java.util.Objects;
 import math.geom2d.Tolerance2D;
 import math.geom3d.Box3D;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
 import math.geom3d.circulinear.CirculinearContinuousCurve3D;
 import math.geom3d.curve.AbstractContinuousCurve3D;
-import math.geom3d.curve.Curve3D;
-import math.geom3d.curve.CurveArray3D;
-import math.geom3d.curve.CurveSet3D;
-import math.geom3d.curve.Curves3D;
 import math.geom3d.line.LineSegment3D;
 import math.geom3d.line.LinearShape3D;
 
@@ -31,7 +30,7 @@ public abstract class LinearCurve3D extends AbstractContinuousCurve3D
 
     // ===================================================================
     // class variables
-    protected ArrayList<Point3D> vertices;
+    private final ArrayList<Point3D> vertices;
 
     // ===================================================================
     // Contructors
@@ -77,7 +76,7 @@ public abstract class LinearCurve3D extends AbstractContinuousCurve3D
      * override this method to return a more specialized type.
      */
     public abstract LinearCurve3D simplify(double distMax);
-    
+
     @Override
     public abstract LinearCurve3D reverseCurve();
 
@@ -157,7 +156,7 @@ public abstract class LinearCurve3D extends AbstractContinuousCurve3D
     /**
      * Returns the vertices of the polyline.
      */
-    public Collection<Point3D> vertices() {
+    public List<Point3D> vertices() {
         return vertices;
     }
 
@@ -232,6 +231,7 @@ public abstract class LinearCurve3D extends AbstractContinuousCurve3D
     /* (non-Javadoc)
 	 * @see math.geom2d.circulinear.CirculinearCurve3D#length()
      */
+    @Override
     public double length() {
         double sum = 0;
         for (LineSegment3D edge : this.edges()) {
@@ -316,7 +316,6 @@ public abstract class LinearCurve3D extends AbstractContinuousCurve3D
 //            return dist;
 //        }
 //    }
-
     // ===================================================================
     // Methods inherited from ContinuousCurve3D
 
@@ -381,10 +380,7 @@ public abstract class LinearCurve3D extends AbstractContinuousCurve3D
     }
 
     public boolean isSingular(double pos) {
-        if (Math.abs(pos - Math.round(pos)) < Tolerance2D.get()) {
-            return true;
-        }
-        return false;
+        return Math.abs(pos - Math.round(pos)) < Tolerance2D.get();
     }
 
     /*
@@ -392,6 +388,7 @@ public abstract class LinearCurve3D extends AbstractContinuousCurve3D
      * 
      * @see math.geom2d.Curve3D#position(math.geom2d.Point3D)
      */
+    @Override
     public double position(Point3D point) {
         int ind = 0;
         double dist, minDist = Double.POSITIVE_INFINITY;
@@ -416,6 +413,7 @@ public abstract class LinearCurve3D extends AbstractContinuousCurve3D
      * 
      * @see math.geom2d.Curve3D#intersections(math.geom2d.LinearShape3D)
      */
+    @Override
     public Collection<Point3D> intersections(LinearShape3D line) {
         ArrayList<Point3D> list = new ArrayList<>();
 
@@ -574,5 +572,22 @@ public abstract class LinearCurve3D extends AbstractContinuousCurve3D
 //        }
 //        return result;
 //    }
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return GeometricObject3D.almostEquals(this, obj, eps);
+    }
+
+    @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+    public boolean equals(Object obj) {
+        return GeometricObject3D.equals(this, obj);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 5;
+        hash = 67 * hash + Objects.hashCode(this.vertices);
+        return hash;
+    }
 
 }

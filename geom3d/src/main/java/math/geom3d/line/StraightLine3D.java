@@ -24,16 +24,22 @@ public class StraightLine3D implements LinearShape3D, CirculinearContinuousCurve
 
     // ===================================================================
     // Class variables
-    protected double x0 = 0;
-    protected double y0 = 0;
-    protected double z0 = 0;
-    protected double dx = 1;
-    protected double dy = 0;
-    protected double dz = 0;
+    private final double x0;
+    private final double y0;
+    private final double z0;
+    private final double dx;
+    private final double dy;
+    private final double dz;
 
     // ===================================================================
     // Constructors
     public StraightLine3D() {
+        this.x0 = 0;
+        this.y0 = 0;
+        this.z0 = 0;
+        this.dx = 0;
+        this.dy = 0;
+        this.dz = 0;
     }
 
     public StraightLine3D(Point3D origin, Vector3D direction) {
@@ -316,14 +322,23 @@ public class StraightLine3D implements LinearShape3D, CirculinearContinuousCurve
     }
 
     @Override
-    public boolean almostEquals(GeometricObject3D obj, double eps) {
-        return obj instanceof StraightLine3D
-                && ((StraightLine3D) obj).origin().almostEquals(origin(), eps)
-                && ((StraightLine3D) obj).direction().almostEquals(direction(), eps);
+    public Collection<Point3D> intersections(LinearShape3D line) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     @Override
-    public Collection<Point3D> intersections(LinearShape3D line) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public int hashCode() {
+        return GeometricObject3D.hash(7, 97, x0, y0, z0, dx, dy, dz);
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return GeometricObject3D.almostEquals(this, obj, eps);
+    }
+
+    @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+    public boolean equals(Object obj) {
+        return GeometricObject3D.equals(this, obj);
     }
 }

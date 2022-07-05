@@ -9,10 +9,8 @@
 package math.geom3d.circulinear;
 
 import java.util.Collection;
-import java.util.List;
 import java.util.stream.Collectors;
 import math.geom3d.transform.AffineTransform3D;
-
 
 /**
  * A basic implementation of a CirculinearRing3D, which is assumed to be always
@@ -52,43 +50,37 @@ public class NonPlanarCirculinearRing3D
     // ===================================================================
     // constructors
     public NonPlanarCirculinearRing3D() {
-        super();
-        this.closed = true;
+        super(0, true);
     }
 
     public NonPlanarCirculinearRing3D(int size) {
-        super(size);
-        this.closed = true;
+        super(size, true);
     }
 
     public NonPlanarCirculinearRing3D(CirculinearElement3D... curves) {
-        super(curves);
-        this.closed = true;
+        super(curves, true);
     }
 
     public NonPlanarCirculinearRing3D(
             Collection<? extends CirculinearElement3D> curves) {
-        super(curves);
-        this.closed = true;
+        super(curves, true);
     }
 
     public NonPlanarCirculinearRing3D(CirculinearCurve3D curve) {
         super(curve.continuousCurves().stream()
                 .flatMap(cc -> cc.smoothPieces().stream())
-                .collect(Collectors.toList()));
-        this.closed = true;
+                .collect(Collectors.toList()), true);
     }
-
 
     @Override
     public NonPlanarCirculinearRing3D reverseCurve() {
-        int n = curves.size();
+        int n = curves().size();
         // create array of reversed curves
         CirculinearElement3D[] curves2 = new CirculinearElement3D[n];
 
         // reverse each curve
         for (int i = 0; i < n; i++) {
-            curves2[i] = curves.get(n - 1 - i).reverseCurve();
+            curves2[i] = curves().get(n - 1 - i).reverseCurve();
         }
 
         // create the reversed final curve
@@ -97,7 +89,7 @@ public class NonPlanarCirculinearRing3D
 
     @Override
     public NonPlanarCirculinearRing3D transform(AffineTransform3D trans) {
-        return new NonPlanarCirculinearRing3D(curves.stream().map(c -> c.transform(trans)).collect(Collectors.toList()));
+        return new NonPlanarCirculinearRing3D(curves().stream().map(c -> c.transform(trans)).collect(Collectors.toList()));
     }
 
 }

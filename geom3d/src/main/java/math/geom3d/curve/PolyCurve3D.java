@@ -28,8 +28,8 @@ package math.geom3d.curve;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
+import java.util.Objects;
 import math.geom3d.Point3D;
-import math.geom3d.Box3D;
 import math.geom3d.GeometricObject3D;
 import math.geom3d.Vector3D;
 import math.geom3d.transform.AffineTransform3D;
@@ -119,7 +119,7 @@ public class PolyCurve3D<T extends ContinuousCurve3D> extends CurveArray3D<T>
      * flag for indicating if the curve is closed or not (default is false, for
      * open)
      */
-    protected boolean closed = false;
+    private final boolean closed;
 
     // ===================================================================
     // Constructors
@@ -127,13 +127,19 @@ public class PolyCurve3D<T extends ContinuousCurve3D> extends CurveArray3D<T>
      * Empty constructor.
      */
     public PolyCurve3D() {
+        this(0, false);
+    }
+
+    public PolyCurve3D(int n, boolean closed) {
+        super(n);
+        this.closed = closed;
     }
 
     /**
      * Constructor that reserves space for the specified number of inner curves.
      */
     public PolyCurve3D(int n) {
-        super(n);
+        this(n, false);
     }
 
     /**
@@ -143,7 +149,7 @@ public class PolyCurve3D<T extends ContinuousCurve3D> extends CurveArray3D<T>
      */
     @SafeVarargs
     public PolyCurve3D(T... curves) {
-        super(curves);
+        this(curves, false);
     }
 
     /**
@@ -162,7 +168,7 @@ public class PolyCurve3D<T extends ContinuousCurve3D> extends CurveArray3D<T>
      * @param curves the curves that constitutes this PolyCurve3D
      */
     public PolyCurve3D(Collection<? extends T> curves) {
-        super(curves);
+        this(curves, false);
     }
 
     /**
@@ -181,17 +187,7 @@ public class PolyCurve3D<T extends ContinuousCurve3D> extends CurveArray3D<T>
      * @param polyCurve the polyCurve object to copy.
      */
     public PolyCurve3D(PolyCurve3D<? extends T> polyCurve) {
-        super(polyCurve.curves);
-        this.closed = polyCurve.closed;
-    }
-
-    // ===================================================================
-    // Methods specific to PolyCurve3D
-    /**
-     * Toggle the 'closed' flag of this polycurve.
-     */
-    public void setClosed(boolean b) {
-        closed = b;
+        this(polyCurve.curves(), polyCurve.closed);
     }
 
     // ===================================================================
@@ -246,7 +242,7 @@ public class PolyCurve3D<T extends ContinuousCurve3D> extends CurveArray3D<T>
     @Override
     public Collection<? extends SmoothCurve3D> smoothPieces() {
         List<SmoothCurve3D> list = new ArrayList<>();
-        for (Curve3D curve : this.curves) {
+        for (Curve3D curve : this.curves()) {
             list.addAll(PolyCurve3D.getSmoothCurves(curve));
         }
         return list;
@@ -300,12 +296,12 @@ public class PolyCurve3D<T extends ContinuousCurve3D> extends CurveArray3D<T>
     @Override
     public PolyCurve3D<? extends ContinuousCurve3D> reverseCurve() {
         // create array for storing reversed curves
-        int n = curves.size();
+        int n = curves().size();
         ContinuousCurve3D[] curves2 = new ContinuousCurve3D[n];
 
         // reverse each curve
         for (int i = 0; i < n; i++) {
-            curves2[i] = curves.get(n - 1 - i).reverseCurve();
+            curves2[i] = curves().get(n - 1 - i).reverseCurve();
         }
 
         // create the new reversed curve
@@ -330,9 +326,6 @@ public class PolyCurve3D<T extends ContinuousCurve3D> extends CurveArray3D<T>
         // create result object, with appropriate numbe of curves
         PolyCurve3D<ContinuousCurve3D> subCurve
                 = new PolyCurve3D<>(set.size());
-
-        // If a part is selected, the result is obviously open
-        subCurve.setClosed(false);
 
         // convert to PolySmoothCurve by adding curves, after class cast
         for (Curve3D curve : set.curves()) {
@@ -368,7 +361,6 @@ public class PolyCurve3D<T extends ContinuousCurve3D> extends CurveArray3D<T>
 ////        return result;
 //        return null;
 //    }
-
     /**
      * Transforms each smooth piece in this PolyCurve3D and returns a new
      * instance of PolyCurve3D.
@@ -376,11 +368,10 @@ public class PolyCurve3D<T extends ContinuousCurve3D> extends CurveArray3D<T>
     @Override
     public PolyCurve3D<? extends ContinuousCurve3D> transform(
             AffineTransform3D trans) {
-        PolyCurve3D<ContinuousCurve3D> result = new PolyCurve3D<ContinuousCurve3D>();
-        for (ContinuousCurve3D curve : curves) {
+        PolyCurve3D<ContinuousCurve3D> result = new PolyCurve3D<>(curves().size(), this.isClosed());
+        for (ContinuousCurve3D curve : curves()) {
             result.add(curve.transform(trans));
         }
-        result.setClosed(this.isClosed());
         return result;
     }
 
@@ -388,37 +379,19 @@ public class PolyCurve3D<T extends ContinuousCurve3D> extends CurveArray3D<T>
     public int hashCode() {
         int hash = 7;
         hash = 79 * hash + (this.closed ? 1 : 0);
-        hash = 79 * hash + this.curves.hashCode();
+        hash = 79 * hash + Objects.hashCode(this.curves());
         return hash;
     }
 
     @Override
-    public boolean equals(Object obj) {
-        // check class, and cast type
-        if (!(obj instanceof CurveSet3D<?>)) {
-            return false;
-        }
-        PolyCurve3D<?> curveSet = (PolyCurve3D<?>) obj;
-
-        // check the number of curves in each set
-        if (this.size() != curveSet.size()) {
-            return false;
-        }
-
-        // return false if at least one couple of curves does not match
-        for (int i = 0; i < curves.size(); i++) {
-            if (!this.curves.get(i).equals(curveSet.curves.get(i))) {
-                return false;
-            }
-        }
-
-        // otherwise return true
-        return true;
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return GeometricObject3D.almostEquals(this, obj, eps);
     }
 
     @Override
-    public boolean almostEquals(GeometricObject3D obj, double eps) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+    public boolean equals(Object obj) {
+        return GeometricObject3D.equals(this, obj);
     }
 
     @Override

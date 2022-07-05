@@ -28,7 +28,6 @@ package math.geom3d.transform;
 import math.geom2d.Tolerance2D;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
-import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.RealMatrix;
 
 /**
@@ -37,22 +36,22 @@ import org.apache.commons.math3.linear.RealMatrix;
  *
  * @author dlegland
  */
-public class AffineTransform3D implements Bijection3D {
+public final class AffineTransform3D implements Bijection3D {
 
     /**
      * coefficients for x coordinate.
      */
-    protected double m00, m01, m02, m03;
+    private final double m00, m01, m02, m03;
 
     /**
      * coefficients for y coordinate.
      */
-    protected double m10, m11, m12, m13;
+    private final double m10, m11, m12, m13;
 
     /**
      * coefficients for z coordinate.
      */
-    protected double m20, m21, m22, m23;
+    private final double m20, m21, m22, m23;
 
     // ===================================================================
     // public static methods
@@ -135,12 +134,15 @@ public class AffineTransform3D implements Bijection3D {
                 m00 = coefs[0];
                 m01 = coefs[1];
                 m02 = coefs[2];
+                m03 = 0.0;
                 m10 = coefs[3];
                 m11 = coefs[4];
                 m12 = coefs[5];
+                m13 = 0.0;
                 m20 = coefs[6];
                 m21 = coefs[7];
                 m22 = coefs[8];
+                m23 = 0.0;
                 break;
             case 12:
                 m00 = coefs[0];
@@ -368,46 +370,62 @@ public class AffineTransform3D implements Bijection3D {
         if (!(obj instanceof AffineTransform3D)) {
             return false;
         }
-
         double tab[] = ((AffineTransform3D) obj).coefficients();
-
-        if (Math.abs(tab[0] - m00) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[0], m00)!=0) {
             return false;
         }
-        if (Math.abs(tab[1] - m01) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[1], m01)!=0) {
             return false;
         }
-        if (Math.abs(tab[2] - m02) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[2], m02)!=0) {
             return false;
         }
-        if (Math.abs(tab[3] - m03) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[3], m03)!=0) {
             return false;
         }
-        if (Math.abs(tab[4] - m10) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[4], m10)!=0) {
             return false;
         }
-        if (Math.abs(tab[5] - m11) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[5], m11)!=0) {
             return false;
         }
-        if (Math.abs(tab[6] - m12) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[6], m12)!=0) {
             return false;
         }
-        if (Math.abs(tab[7] - m13) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[7], m13)!=0) {
             return false;
         }
-        if (Math.abs(tab[8] - m20) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[8], m20)!=0) {
             return false;
         }
-        if (Math.abs(tab[9] - m21) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[9], m21)!=0) {
             return false;
         }
-        if (Math.abs(tab[10] - m22) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[10], m22)!=0) {
             return false;
         }
-        if (Math.abs(tab[11] - m23) > Tolerance2D.get()) {
+        if (Tolerance2D.compare(tab[11], m23)!=0) {
             return false;
         }
         return true;
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 67 * hash + Tolerance2D.hash(this.m00);
+        hash = 67 * hash + Tolerance2D.hash(this.m01);
+        hash = 67 * hash + Tolerance2D.hash(this.m02);
+        hash = 67 * hash + Tolerance2D.hash(this.m03);
+        hash = 67 * hash + Tolerance2D.hash(this.m10);
+        hash = 67 * hash + Tolerance2D.hash(this.m11);
+        hash = 67 * hash + Tolerance2D.hash(this.m12);
+        hash = 67 * hash + Tolerance2D.hash(this.m13);
+        hash = 67 * hash + Tolerance2D.hash(this.m20);
+        hash = 67 * hash + Tolerance2D.hash(this.m21);
+        hash = 67 * hash + Tolerance2D.hash(this.m22);
+        hash = 67 * hash + Tolerance2D.hash(this.m23);
+        return hash;
     }
 
 }

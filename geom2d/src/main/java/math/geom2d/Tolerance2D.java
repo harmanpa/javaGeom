@@ -8,8 +8,6 @@ package math.geom2d;
 import java.math.BigDecimal;
 import java.math.MathContext;
 import java.math.RoundingMode;
-import java.util.concurrent.Callable;
-import java.util.function.Predicate;
 import math.geom2d.circulinear.CirculinearCurve2D;
 
 /**
@@ -70,9 +68,18 @@ public class Tolerance2D {
     }
 
     public static int hash(double d) {
-        return Double.valueOf(round(d).doubleValue()).hashCode();
+        return Double.valueOf(Double.isNaN(d) ? d : round(d).doubleValue()).hashCode();
     }
-    
+
+    public static int compare(double a, double b) {
+        return compare(a, b, get());
+    }
+
+    public static int compare(double a, double b, double eps) {
+        int res = Double.compare(a, b);
+        return res == 0 ? 0 : (Math.abs(a - b) <= eps ? 0 : res);
+    }
+
     static Integer scale() {
         return SCALE.get();
     }

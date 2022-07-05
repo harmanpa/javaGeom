@@ -4,6 +4,7 @@
  */
 package math.geom3d.plane;
 
+import java.util.Objects;
 import java.util.function.Function;
 import math.geom2d.Box2D;
 import math.geom2d.Shape2D;
@@ -86,6 +87,32 @@ public class PlanarShape3D<T extends Shape2D> implements Shape3D {
         return obj instanceof PlanarShape3D
                 && ((PlanarShape3D) obj).getPlane().almostEquals(getPlane(), eps)
                 && ((PlanarShape3D) obj).getShape().almostEquals(getShape(), eps);
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 61 * hash + Objects.hashCode(this.plane);
+        hash = 61 * hash + Objects.hashCode(this.shape);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PlanarShape3D<?> other = (PlanarShape3D<?>) obj;
+        if (!Objects.equals(this.plane, other.plane)) {
+            return false;
+        }
+        return Objects.equals(this.shape, other.shape);
     }
 
     protected <Y extends Shape2D> PlanarShape3D<Y> map(Function<T, Y> mapper) {

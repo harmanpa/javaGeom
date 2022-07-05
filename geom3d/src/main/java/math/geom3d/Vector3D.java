@@ -14,13 +14,13 @@ import math.geom3s.Vector3S;
  * Define a vector in 3 dimensions. Provides methods to compute cross product
  * and dot product, addition and subtraction of vectors.
  */
-public class Vector3D implements GeometricObject3D {
+public final class Vector3D implements GeometricObject3D {
 
     // ===================================================================
     // class variables
-    protected double x = 1;
-    protected double y = 0;
-    protected double z = 0;
+    private final double x;
+    private final double y;
+    private final double z;
 
     // ===================================================================
     // static methods
@@ -283,41 +283,23 @@ public class Vector3D implements GeometricObject3D {
     // ===================================================================
     // methods implementing Object interface
     @Override
-    public boolean equals(Object obj) {
-        if (!(obj instanceof Vector3D)) {
-            return false;
-        }
-
-        Vector3D v = (Vector3D) obj;
-        if (Math.abs(x - v.x) > Tolerance2D.get()) {
-            return false;
-        }
-        if (Math.abs(y - v.y) > Tolerance2D.get()) {
-            return false;
-        }
-        return Math.abs(z - v.z) <= Tolerance2D.get();
+    public int hashCode() {
+        return GeometricObject3D.hash(7, 41, x, y, z);
     }
 
     @Override
-    public int hashCode() {
-        int hash = 7;
-        hash = 41 * hash + Tolerance2D.hash(x);
-        hash = 41 * hash + Tolerance2D.hash(y);
-        hash = 41 * hash + Tolerance2D.hash(z);
-        return hash;
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return GeometricObject3D.almostEquals(this, obj, eps);
+    }
+
+    @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+    public boolean equals(Object obj) {
+        return GeometricObject3D.equals(this, obj);
     }
 
     @Override
     public String toString() {
         return "Vector3D{" + "x=" + x + ", y=" + y + ", z=" + z + '}';
     }
-
-    @Override
-    public boolean almostEquals(GeometricObject3D obj, double eps) {
-        return obj instanceof Vector3D
-                && Math.abs(((Vector3D) obj).getX() - getX()) <= eps
-                && Math.abs(((Vector3D) obj).getY() - getY()) <= eps
-                && Math.abs(((Vector3D) obj).getZ() - getZ()) <= eps;
-    }
-
 }

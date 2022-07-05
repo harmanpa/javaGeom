@@ -65,7 +65,7 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
     }
 
     public NonPlanarLinearRing3D(LinearCurve3D lineString) {
-        super(lineString.vertices);
+        super(lineString.vertices());
     }
 
     // ===================================================================
@@ -83,14 +83,14 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
 
     /**
      * Returns an array of LineSegment3D. The number of edges is the same as the
-     * number of vertices.
+     * number of vertices().
      *
      * @return the edges of the polyline
      */
     @Override
     public Collection<LineSegment3D> edges() {
         // create resulting array
-        int n = vertices.size();
+        int n = vertices().size();
         List<LineSegment3D> edges = new ArrayList<>(n);
 
         // do not process empty polylines
@@ -100,12 +100,12 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
 
         // create one edge for each couple of vertices
         for (int i = 0; i < n - 1; i++) {
-            edges.add(new LineSegment3D(vertices.get(i), vertices.get(i + 1)));
+            edges.add(new LineSegment3D(vertices().get(i), vertices().get(i + 1)));
         }
 
         // add a supplementary edge at the end, but only if vertices differ
-        Point3D p0 = vertices.get(0);
-        Point3D pn = vertices.get(n - 1);
+        Point3D p0 = vertices().get(0);
+        Point3D pn = vertices().get(n - 1);
 
         // TODO: should not make the test...
         if (pn.distance(p0) > Tolerance2D.get()) {
@@ -118,7 +118,7 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
 
     @Override
     public int edgeNumber() {
-        int n = vertices.size();
+        int n = vertices().size();
         if (n > 1) {
             return n;
         }
@@ -127,8 +127,8 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
 
     @Override
     public LineSegment3D edge(int index) {
-        int i2 = (index + 1) % vertices.size();
-        return new LineSegment3D(vertices.get(index), vertices.get(i2));
+        int i2 = (index + 1) % vertices().size();
+        return new LineSegment3D(vertices().get(index), vertices().get(i2));
     }
 
     /**
@@ -137,11 +137,11 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
      */
     @Override
     public LineSegment3D lastEdge() {
-        int n = vertices.size();
+        int n = vertices().size();
         if (n < 2) {
             return null;
         }
-        return new LineSegment3D(vertices.get(n - 1), vertices.get(0));
+        return new LineSegment3D(vertices().get(n - 1), vertices().get(0));
     }
 
     // ===================================================================
@@ -167,7 +167,7 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
         double t1 = this.getT1();
         t = Math.max(Math.min(t, t1), t0);
 
-        int n = vertices.size();
+        int n = vertices().size();
 
         // index of vertex before point
         int ind0 = (int) Math.floor(t + Tolerance2D.get());
@@ -176,7 +176,7 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
         if (ind0 == n) {
             ind0 = 0;
         }
-        Point3D p0 = vertices.get(ind0);
+        Point3D p0 = vertices().get(ind0);
 
         // check if equal to a vertex
         if (Math.abs(t - ind0) < Tolerance2D.get()) {
@@ -188,7 +188,7 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
         if (ind1 == n) {
             ind1 = 0;
         }
-        Point3D p1 = vertices.get(ind1);
+        Point3D p1 = vertices().get(ind1);
 
         // position on line;
         double x0 = p0.getX();
@@ -200,7 +200,7 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
 
         return new Point3D(x0 + tl * dx, y0 + tl * dy, z0 + t1 * dz);
     }
-    
+
     @Override
     public double getT0() {
         return 0;
@@ -211,7 +211,7 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
      */
     @Override
     public double getT1() {
-        return vertices.size();
+        return vertices().size();
     }
 
     /**
@@ -219,10 +219,10 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
      */
     @Override
     public Point3D lastPoint() {
-        if (vertices.isEmpty()) {
+        if (vertices().isEmpty()) {
             return null;
         }
-        return vertices.get(0);
+        return vertices().get(0);
     }
 
     @Override
@@ -237,14 +237,14 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
      */
     @Override
     public NonPlanarLinearRing3D reverseCurve() {
-        Point3D[] points2 = new Point3D[vertices.size()];
-        int n = vertices.size();
+        Point3D[] points2 = new Point3D[vertices().size()];
+        int n = vertices().size();
         if (n > 0) {
-            points2[0] = vertices.get(0);
+            points2[0] = vertices().get(0);
         }
 
         for (int i = 1; i < n; i++) {
-            points2[i] = vertices.get(n - i);
+            points2[i] = vertices().get(n - i);
         }
 
         return new NonPlanarLinearRing3D(points2);
@@ -286,17 +286,17 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
         if (ind1 > ind0) {
             // add all the whole points between the 2 cuts
             for (int n = ind0 + 1; n <= ind1; n++) {
-                res.addVertex(vertices.get(n));
+                res.addVertex(vertices().get(n));
             }
         } else {
             // add all points until the end of the set
             for (int n = ind0 + 1; n < indMax; n++) {
-                res.addVertex(vertices.get(n));
+                res.addVertex(vertices().get(n));
             }
 
             // add all points from the beginning of the set
             for (int n = 0; n <= ind1; n++) {
-                res.addVertex(vertices.get(n));
+                res.addVertex(vertices().get(n));
             }
         }
 
@@ -314,69 +314,24 @@ public class NonPlanarLinearRing3D extends LinearCurve3D implements CirculinearR
      */
     @Override
     public NonPlanarLinearRing3D transform(AffineTransform3D trans) {
-        Point3D[] pts = new Point3D[vertices.size()];
-        for (int i = 0; i < vertices.size(); i++) {
-            pts[i] = trans.transformPoint(vertices.get(i));
+        Point3D[] pts = new Point3D[vertices().size()];
+        for (int i = 0; i < vertices().size(); i++) {
+            pts[i] = trans.transformPoint(vertices().get(i));
         }
         return new NonPlanarLinearRing3D(pts);
     }
 
-    // ===================================================================
-    // methods implementing the GeometricObject3D interface
-
-    /* (non-Javadoc)
-	 * @see math.geom2d.GeometricObject3D#almostEquals(math.geom2d.GeometricObject3D, double)
-     */
-//    public boolean almostEquals(GeometricObject3D obj, double eps) {
-//        if (this == obj) {
-//            return true;
-//        }
-//
-//        if (!(obj instanceof NonPlanarLinearRing3D)) {
-//            return false;
-//        }
-//        NonPlanarLinearRing3D ring = (NonPlanarLinearRing3D) obj;
-//
-//        if (vertices.size() != ring.vertices.size()) {
-//            return false;
-//        }
-//
-//        for (int i = 0; i < vertices.size(); i++) {
-//            if (!(vertices.get(i)).almostEquals(ring.vertices.get(i), eps)) {
-//                return false;
-//            }
-//        }
-//        return true;
-//    }
-
-    @Override
-    public boolean equals(Object object) {
-        if (!(object instanceof NonPlanarLinearRing3D)) {
-            return false;
-        }
-        NonPlanarLinearRing3D ring = (NonPlanarLinearRing3D) object;
-
-        if (vertices.size() != ring.vertices.size()) {
-            return false;
-        }
-        for (int i = 0; i < vertices.size(); i++) {
-            if (!(vertices.get(i)).equals(ring.vertices.get(i))) {
-                return false;
-            }
-        }
-        return true;
-    }
-
     public PlanarLinearRing3D asPlanar() throws Geom2DException {
-        return new PlanarLinearRing3D(vertices);
+        return new PlanarLinearRing3D(vertices());
     }
-    
+
     public PlanarLinearRing3D asPlanar(boolean cw) throws Geom2DException {
-        return PlanarLinearRing3D.withDirection(vertices, cw);
+        return PlanarLinearRing3D.withDirection(vertices(), cw);
     }
 
     @Override
-    public boolean almostEquals(GeometricObject3D obj, double eps) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public int hashCode() {
+        int hash = 3 * super.hashCode();
+        return hash;
     }
 }

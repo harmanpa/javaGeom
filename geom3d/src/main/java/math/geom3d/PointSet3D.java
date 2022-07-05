@@ -8,6 +8,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Objects;
 import math.geom2d.Tolerance2D;
 
 import math.geom3d.transform.AffineTransform3D;
@@ -197,6 +198,28 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
     @Override
     public Iterator<Point3D> iterator() {
         return points.iterator();
+    }
+
+    @Override
+    public int hashCode() {
+        int hash = 7;
+        hash = 29 * hash + Objects.hashCode(this.points);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final PointSet3D other = (PointSet3D) obj;
+        return Objects.equals(this.points, other.points);
     }
 
     @Override

@@ -8,22 +8,23 @@ import java.util.Collection;
 import java.util.DoubleSummaryStatistics;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
+import math.geom2d.Tolerance2D;
 
 /**
  * A 3-dimensional box, defined by its extent in each direction.
  *
  * @author dlegland
  */
-public class Box3D {
+public class Box3D implements GeometricObject3D {
 
     // ===================================================================
     // class variables
-    private double xmin = 0;
-    private double xmax = 0;
-    private double ymin = 0;
-    private double ymax = 0;
-    private double zmin = 0;
-    private double zmax = 0;
+    private final double xmin;
+    private final double xmax;
+    private final double ymin;
+    private final double ymax;
+    private final double zmin;
+    private final double zmax;
 
     /**
      * Empty constructor (size and position zero)
@@ -233,6 +234,22 @@ public class Box3D {
 
     public boolean containsAll(Collection<Point3D> points) {
         return points.stream().allMatch(p -> contains(p));
+    }
+
+    @Override
+    public int hashCode() {
+        return GeometricObject3D.hash(7, 23, xmin, xmax, ymin, ymax, zmin, zmax);
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        return GeometricObject3D.almostEquals(this, obj, eps);
+    }
+
+    @Override
+    @SuppressWarnings("EqualsWhichDoesntCheckParameterClass")
+    public boolean equals(Object obj) {
+        return GeometricObject3D.equals(this, obj);
     }
 
 }

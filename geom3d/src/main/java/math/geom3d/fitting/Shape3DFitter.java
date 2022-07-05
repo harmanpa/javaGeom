@@ -6,6 +6,7 @@ package math.geom3d.fitting;
 
 import java.util.DoubleSummaryStatistics;
 import java.util.List;
+import java.util.Objects;
 import java.util.function.Function;
 import java.util.function.ToDoubleFunction;
 import java.util.stream.Collectors;
@@ -41,7 +42,7 @@ public class Shape3DFitter<T extends Shape3D> extends AbstractFitter<T, Point3D>
 
     protected static class CentredPrePost<T extends Shape3D> implements PrePost<T, Point3D> {
 
-        private AffineTransform3D transform;
+        private transient AffineTransform3D transform;
 
         @Override
         public List<Point3D> pre(List<Point3D> target) {
@@ -54,6 +55,25 @@ public class Shape3DFitter<T extends Shape3D> extends AbstractFitter<T, Point3D>
         @Override
         public T post(T result) {
             return (T) result.transform(transform);
+        }
+
+        @Override
+        public boolean equals(Object obj) {
+            if (this == obj) {
+                return true;
+            }
+            if (obj == null) {
+                return false;
+            }
+            if (!getClass().equals(obj.getClass())) {
+                return false;
+            }
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            return 223;
         }
 
     }

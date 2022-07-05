@@ -13,13 +13,7 @@ import java.util.Collection;
 import java.util.List;
 import math.geom3d.curve.Curve3D;
 import math.geom3d.curve.ContinuousCurve3D;
-import math.geom3d.curve.Curves3D;
-import math.geom3d.curve.CurveSet3D;
 import math.geom3d.curve.PolyCurve3D;
-import math.geom3d.Point3D;
-import math.geom3d.Box3D;
-import math.geom3d.transform.AffineTransform3D;
-import math.geom3d.polygon.Polyline3D;
 
 /**
  * A continuous curve which is composed of several continuous circulinear
@@ -109,6 +103,14 @@ public class PolyCirculinearCurve3D<T extends CirculinearContinuousCurve3D>
         super(size);
     }
 
+    public PolyCirculinearCurve3D(boolean closed) {
+        super(0, closed);
+    }
+
+    public PolyCirculinearCurve3D(int size, boolean closed) {
+        super(size, closed);
+    }
+
     public PolyCirculinearCurve3D(T[] curves) {
         super(curves);
     }
@@ -169,7 +171,7 @@ public class PolyCirculinearCurve3D<T extends CirculinearContinuousCurve3D>
                 = new ArrayList<>();
 
         // add elements of each curve
-        curves.forEach((curve) -> {
+        curves().forEach((curve) -> {
             result.addAll(curve.smoothPieces());
         });
 
@@ -205,22 +207,21 @@ public class PolyCirculinearCurve3D<T extends CirculinearContinuousCurve3D>
 ////        return result;
 //        return null;
 //    }
-
     @Override
     public PolyCirculinearCurve3D<? extends CirculinearContinuousCurve3D>
             reverseCurve() {
         // create array of reversed curves
-        int n = curves.size();
+        int n = curves().size();
         CirculinearContinuousCurve3D[] curves2
                 = new CirculinearContinuousCurve3D[n];
 
         // reverse each curve
         for (int i = 0; i < n; i++) {
-            curves2[i] = curves.get(n - 1 - i).reverseCurve();
+            curves2[i] = curves().get(n - 1 - i).reverseCurve();
         }
 
         // create the reversed final curve
-        return PolyCirculinearCurve3D.create(curves2, this.closed);
+        return PolyCirculinearCurve3D.create(curves2, this.isClosed());
     }
 
     @Override

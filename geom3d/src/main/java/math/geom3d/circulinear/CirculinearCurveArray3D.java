@@ -17,7 +17,6 @@ import math.geom3d.curve.CurveArray3D;
 import math.geom3d.curve.CurveSet3D;
 import math.geom3d.curve.Curves3D;
 
-
 /**
  * A specialization of CurveArray3D that accepts only instances of
  * CirculinearCurve3D.
@@ -61,7 +60,7 @@ public class CirculinearCurveArray3D<T extends CirculinearCurve3D>
     @SafeVarargs
     public static <T extends CirculinearCurve3D> CirculinearCurveArray3D<T> create(
             T... curves) {
-        return new CirculinearCurveArray3D<T>(curves);
+        return new CirculinearCurveArray3D<>(curves);
     }
 
     // ===================================================================
@@ -70,7 +69,7 @@ public class CirculinearCurveArray3D<T extends CirculinearCurve3D>
      * Empty constructor. Initializes an empty array of curves.
      */
     public CirculinearCurveArray3D() {
-        this.curves = new ArrayList<T>();
+        this(new ArrayList<T>());
     }
 
     /**
@@ -78,7 +77,7 @@ public class CirculinearCurveArray3D<T extends CirculinearCurve3D>
      * size for allocating memory.
      */
     public CirculinearCurveArray3D(int n) {
-        this.curves = new ArrayList<T>(n);
+        this(new ArrayList<T>(n));
     }
 
     /**
@@ -88,7 +87,7 @@ public class CirculinearCurveArray3D<T extends CirculinearCurve3D>
      */
     @SafeVarargs
     public CirculinearCurveArray3D(T... curves) {
-        this.curves = new ArrayList<T>(curves.length);
+        this(new ArrayList<T>(curves.length));
         for (T element : curves) {
             this.add(element);
         }
@@ -101,8 +100,7 @@ public class CirculinearCurveArray3D<T extends CirculinearCurve3D>
      * @param curves the collection of curves to add to the set
      */
     public CirculinearCurveArray3D(Collection<? extends T> curves) {
-        this.curves = new ArrayList<T>(curves.size());
-        this.curves.addAll(curves);
+        super(curves);
     }
 
     // ===================================================================
@@ -111,6 +109,7 @@ public class CirculinearCurveArray3D<T extends CirculinearCurve3D>
     /* (non-Javadoc)
 	 * @see math.geom3d.circulinear.CirculinearCurve3D#length()
      */
+    @Override
     public double length() {
         double sum = 0;
         for (CirculinearCurve3D curve : this.curves()) {
@@ -122,6 +121,7 @@ public class CirculinearCurveArray3D<T extends CirculinearCurve3D>
     /* (non-Javadoc)
 	 * @see math.geom3d.circulinear.CirculinearCurve3D#length(double)
      */
+    @Override
     public double length(double pos) {
         return CirculinearCurves3D.getLength(this, pos);
     }
@@ -129,6 +129,7 @@ public class CirculinearCurveArray3D<T extends CirculinearCurve3D>
     /* (non-Javadoc)
 	 * @see math.geom3d.circulinear.CirculinearCurve3D#position(double)
      */
+    @Override
     public double position(double length) {
         return CirculinearCurves3D.getPosition(this, length);
     }
@@ -143,7 +144,7 @@ public class CirculinearCurveArray3D<T extends CirculinearCurve3D>
                 = new ArrayList<>();
 
         // iterate on curves, and extract each set of continuous curves
-        for (CirculinearCurve3D curve : curves) {
+        for (CirculinearCurve3D curve : curves()) {
             result.addAll(curve.continuousCurves());
         }
 
@@ -171,7 +172,6 @@ public class CirculinearCurveArray3D<T extends CirculinearCurve3D>
 //        // return the new set of curves
 //        return result;
 //    }
-
     @Override
     public CirculinearCurveArray3D<? extends CirculinearCurve3D>
             subCurve(double t0, double t1) {
@@ -197,13 +197,13 @@ public class CirculinearCurveArray3D<T extends CirculinearCurve3D>
     @Override
     public CirculinearCurveArray3D<? extends CirculinearCurve3D>
             reverseCurve() {
-        int n = curves.size();
+        int n = curves().size();
         // create array of reversed curves
         CirculinearCurve3D[] curves2 = new CirculinearCurve3D[n];
 
         // reverse each curve
         for (int i = 0; i < n; i++) {
-            curves2[i] = curves.get(n - 1 - i).reverseCurve();
+            curves2[i] = curves().get(n - 1 - i).reverseCurve();
         }
 
         // create the reversed final curve
