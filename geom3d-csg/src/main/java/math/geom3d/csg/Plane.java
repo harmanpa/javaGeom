@@ -87,6 +87,14 @@ public class Plane implements Cloneable {
         this.dist = dist;
     }
 
+    public Vector3D getNormal() {
+        return normal;
+    }
+
+    public double getDist() {
+        return dist;
+    }
+
     /**
      * Creates a plane defined by the the specified points.
      *

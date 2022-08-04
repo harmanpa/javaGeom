@@ -13,6 +13,7 @@ import java.util.stream.Stream;
 import math.geom2d.Angle2D;
 import math.geom2d.Point2D;
 import math.geom2d.Tolerance2D;
+import math.geom2d.Vector2D;
 import math.geom2d.circulinear.CirculinearElement2D;
 import math.geom2d.circulinear.CirculinearRing2D;
 import math.geom2d.circulinear.GenericCirculinearRing2D;
@@ -89,6 +90,7 @@ public class CirculinearRing2DFitter {
         private final Point2D[] points;
         private final Circle2D circle;
         private final double error;
+        private final double angle;
 
         PointsAndCircle(Point2D[] points) {
             this(points, null);
@@ -100,6 +102,7 @@ public class CirculinearRing2DFitter {
             this.error = circle == null ? 0.0 : Math.max(
                     FittingUtils.error(circle, points[0], points[1]),
                     FittingUtils.error(circle, points[1], points[2]));
+            this.angle = Angle2D.angle(new Vector2D(points[0], points[1]), new Vector2D(points[1], points[2]));
         }
 
         public Point2D[] getPoints() {
@@ -112,6 +115,10 @@ public class CirculinearRing2DFitter {
 
         public double getError() {
             return error;
+        }
+
+        public double getAngle() {
+            return angle;
         }
 
         public void append(Deque<CirculinearElement2D> list, double maxError) {

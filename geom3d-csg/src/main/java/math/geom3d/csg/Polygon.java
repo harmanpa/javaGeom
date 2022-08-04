@@ -161,6 +161,14 @@ public final class Polygon {
         return clone().flip();
     }
 
+    public Plane getPlane() {
+        return plane;
+    }
+
+    public Vector3D getNormal() {
+        return plane.getNormal();
+    }
+
     /**
      * Translates this polygon.
      *
