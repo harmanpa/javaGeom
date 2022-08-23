@@ -26,6 +26,7 @@ import math.geom2d.domain.Boundary2D;
 import math.geom2d.domain.Boundaries2D;
 import math.geom2d.domain.Contour2D;
 import math.geom2d.domain.ContourArray2D;
+import math.geom2d.line.LineSegment2D;
 import math.geom2d.point.PointSets2D;
 import math.geom2d.polygon.convhull.JarvisMarch2D;
 
@@ -325,6 +326,86 @@ public final class Polygons2D {
      */
     public final static Polygon2D convexHull(Collection<? extends Point2D> points) {
         return new JarvisMarch2D().convexHull(points);
+    }
+
+    /**
+     * Merge a pair of convex hulls. Incrementally adds points from the smaller
+     * to the larger.
+     *
+     * @param hull1
+     * @param hull2
+     * @return
+     */
+    public final static Polygon2D mergeHulls(Polygon2D hull1, Polygon2D hull2) {
+        if (hull1.vertexNumber() > hull2.vertexNumber()) {
+            return incrementalHull(hull1, hull2.vertices());
+        } else {
+            return incrementalHull(hull2, hull1.vertices());
+        }
+    }
+
+    /**
+     * Incrementally add points to an existing convex hull
+     *
+     * @param hull
+     * @param points
+     * @return
+     */
+    public final static Polygon2D incrementalHull(Polygon2D hull, Collection<? extends Point2D> points) {
+        for (Point2D point : points) {
+            hull = incrementalHull(hull, point);
+        }
+        return hull;
+    }
+
+    /**
+     * Add a point to an existing convex hull
+     * 
+     * @param hull
+     * @param point
+     * @return 
+     */
+    public final static Polygon2D incrementalHull(Polygon2D hull, Point2D point) {
+        // https://cs.jhu.edu/~misha/Spring16/07.pdf
+        int n = hull.vertexNumber();
+        if (n < 3) {
+            List<Point2D> newVertices = new ArrayList<>(n + 1);
+            newVertices.addAll(hull.vertices());
+            newVertices.add(point);
+            return new SimplePolygon2D(newVertices);
+        }
+        boolean[] left = new boolean[n];
+        int transition1 = -1;
+        int transition2 = -1;
+        for (int i = 0; i < n; i++) {
+            left[i] = new LineSegment2D(hull.vertex(i), hull.vertex(i == n - 1 ? 0 : i + 1)).isInside(point);
+        }
+        for (int i = 0; i < n; i++) {
+            if (left[i == 0 ? n - 1 : i - 1] && !left[i]) {
+                transition1 = i;
+            } else if (!left[i == 0 ? n - 1 : i - 1] && left[i]) {
+                transition2 = i;
+            }
+        }
+        if (transition1 == -1 || transition2 == -1) {
+            return hull;
+        }
+        List<Point2D> newVertices = new ArrayList<>(n + 1);
+        if (transition1 > transition2) {
+            for (int i = transition2; i <= transition1; i++) {
+                newVertices.add(hull.vertex(i));
+            }
+            newVertices.add(point);
+        } else {
+            for (int i = 0; i <= transition1; i++) {
+                newVertices.add(hull.vertex(i));
+            }
+            newVertices.add(point);
+            for (int i = transition2; i < n; i++) {
+                newVertices.add(hull.vertex(i));
+            }
+        }
+        return new SimplePolygon2D(newVertices);
     }
 
     /**

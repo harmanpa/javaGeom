@@ -350,29 +350,30 @@ public final class Polygon {
      * @return triangles
      */
     public List<Polygon> toTriangles() {
-
-        List<Polygon> result = new ArrayList<>();
-
-        if (this.vertices.size() >= 3) {
-
-            // TODO: improve the triangulation?
-            //
-            // If our polygon has more vertices, create
-            // multiple triangles:
-            Vertex firstVertexStl = this.vertices.get(0);
-            for (int i = 0; i < this.vertices.size() - 2; i++) {
-
-                // create triangle
-                Polygon polygon = Polygon.fromPoints(
-                        firstVertexStl.pos,
-                        this.vertices.get(i + 1).pos,
-                        this.vertices.get(i + 2).pos
-                );
-
-                result.add(polygon);
-            }
+        switch(this.vertices.size()) {
+            case 0:
+            case 1:
+            case 2:
+                return Arrays.asList();
+            case 3:
+                return Arrays.asList(this);
+            default:
+                List<Polygon> result = new ArrayList<>();
+                // TODO: improve the triangulation?
+                //
+                // If our polygon has more vertices, create
+                // multiple triangles:
+                Vertex firstVertexStl = this.vertices.get(0);
+                for (int i = 0; i < this.vertices.size() - 2; i++) {
+                    // create triangle
+                    Polygon polygon = new Polygon(
+                        firstVertexStl,
+                        this.vertices.get(i + 1),
+                        this.vertices.get(i + 2)
+                    );
+                    result.add(polygon);
+                }
+                return result;
         }
-
-        return result;
     }
 }

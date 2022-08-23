@@ -40,12 +40,15 @@ import java.util.List;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 import math.geom3d.Box3D;
+import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
+import math.geom3d.Shape3D;
 import math.geom3d.Vector3D;
 import math.geom3d.csg.primitives.Cube;
 import math.geom3d.csg.primitives.Sphere;
 import math.geom3d.csg.util.HullUtil;
 import math.geom3d.quickhull.QuickHullException;
+import math.geom3d.transform.AffineTransform3D;
 
 //import javafx.scene.paint.Color;
 //import javafx.scene.paint.PhongMaterial;
@@ -94,7 +97,7 @@ import math.geom3d.quickhull.QuickHullException;
  * is {@code A & B =
  * ~(~A | ~B)} where {@code ~} is the complement operator.
  */
-public class CSG {
+public class CSG implements Shape3D {
 
     private static int numFacesInOffset = 15;
 
@@ -120,6 +123,41 @@ public class CSG {
      * Instantiates a new csg.
      */
     public CSG() {
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return polygons.isEmpty();
+    }
+
+    @Override
+    public boolean isBounded() {
+        return true;
+    }
+
+    @Override
+    public Box3D boundingBox() {
+        return getBounds();
+    }
+
+    @Override
+    public Shape3D transform(AffineTransform3D trans) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public double distance(Point3D p) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean contains(Point3D point) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    }
+
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
     }
 
     /**
