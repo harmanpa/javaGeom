@@ -342,6 +342,14 @@ public final class Plane3D implements Shape3D {
         return isParallelOrOpposing(plane) ? distance(plane.origin()) : 0.0;
     }
 
+    public AffineTransform3D transform3D(AffineTransform2D transform) throws Geom2DException {
+        double[] m = transform.coefficients();
+        return new AffineTransform3D(new double[]{
+            m[0] * dx1 + m[3] * dx2, m[1] * dx1 + m[4] * dx2, 0, x0 + m[2] * dx1 + m[5] * dx2,
+            m[0] * dy1 + m[3] * dy2, m[1] * dy1 + m[4] * dy2, 0, y0 + m[2] * dy1 + m[5] * dy2,
+            m[0] * dz1 + m[3] * dz2, m[1] * dz1 + m[4] * dz2, 0, z0 + m[2] * dz1 + m[5] * dz2});
+    }
+
     public AffineTransform3D transform3D(Plane3D other) throws Geom2DException {
         List<Point3D> points = new ArrayList<>(3);
         List<Point3D> otherPoints = new ArrayList<>(3);

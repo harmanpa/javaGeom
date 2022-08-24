@@ -7,6 +7,7 @@ package math.geom3d.plane;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Random;
+import math.geom2d.AffineTransform2D;
 import math.geom2d.Point2D;
 import math.geom2d.exceptions.Geom2DException;
 import math.geom3d.Point3D;
@@ -57,5 +58,12 @@ public class PlaneTransformTest {
         System.out.println(a.point(p2).distance(new Point3D()));
         System.out.println(a.point(p2).transform(at3).distance(new Point3D()));
         System.out.println(Plane3D.createXYPlane().pointPosition(a.point(p2).transform(at3)));
+    }
+    
+    @Test
+    public void test2() throws Geom2DException {
+        Plane3D plane = Plane3D.createXYPlane();
+        AffineTransform2D t2 = AffineTransform2D.createTranslation(1, 1);
+        System.out.println(plane.pointPosition(new Point3D().transform(plane.transform3D(t2))));
     }
 }
