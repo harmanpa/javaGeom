@@ -25,10 +25,15 @@
  */
 package math.geom3d.transform;
 
+import java.util.List;
 import math.geom2d.Tolerance2D;
+import math.geom2d.exceptions.Geom2DException;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.linear.RealMatrix;
+import org.apache.commons.math3.linear.SingularValueDecomposition;
 
 /**
  * An affine transform in 3 dimensions. Contains also static methods for
@@ -427,5 +432,53 @@ public final class AffineTransform3D implements Bijection3D {
         hash = 67 * hash + Tolerance2D.hash(this.m23);
         return hash;
     }
+    
+    public static Point3D centroid(List<Point3D> points) {
+        return new Point3D(
+            points.stream().mapToDouble(p -> p.getX()).summaryStatistics().getAverage(),
+            points.stream().mapToDouble(p -> p.getY()).summaryStatistics().getAverage(),
+            points.stream().mapToDouble(p -> p.getZ()).summaryStatistics().getAverage());
+    }
 
+    public static AffineTransform3D calculate(List<Point3D> pointsA, List<Point3D> pointsB) throws Geom2DException {
+        if(pointsA.size()<3 || pointsA.size() != pointsB.size()) {
+            throw new Geom2DException("Need more points");
+        }
+        int n = pointsA.size();        
+        Point3D centroidA = centroid(pointsA);
+        Point3D centroidB = centroid(pointsB);
+        // Kabsch Algorithm
+        RealMatrix P = new Array2DRowRealMatrix(3, n);
+        RealMatrix Q = new Array2DRowRealMatrix(3, n);
+        for(int i=0; i<n; i++) {
+            P.setEntry(i, 0, pointsA.get(i).minus(centroidA).getX());
+            P.setEntry(i, 1, pointsA.get(i).minus(centroidA).getY());
+            P.setEntry(i, 2, pointsA.get(i).minus(centroidA).getZ());
+            Q.setEntry(i, 0, pointsB.get(i).minus(centroidB).getX());
+            Q.setEntry(i, 1, pointsB.get(i).minus(centroidB).getY());
+            Q.setEntry(i, 2, pointsB.get(i).minus(centroidB).getZ());
+        }
+        RealMatrix H = P.transpose().multiply(Q);
+        SingularValueDecomposition svd = new SingularValueDecomposition(H);
+        RealMatrix M = new Array2DRowRealMatrix(3, 3);
+        M.setEntry(0, 0, 1);
+        M.setEntry(1, 1, 1);
+        M.setEntry(2, 2, Math.signum(new LUDecomposition(svd.getV().multiply(svd.getUT())).getDeterminant()));
+        RealMatrix R = svd.getV().multiply(M).multiply(svd.getUT());
+        AffineTransform3D transform = AffineTransform3D.createTranslation(new Vector3D(centroidA, new Point3D()))
+                .preConcatenate(new AffineTransform3D(new double[]{
+                    R.getEntry(0, 0),
+                    R.getEntry(0, 1),
+                    R.getEntry(0, 2),
+                    R.getEntry(1, 0),
+                    R.getEntry(1, 1),
+                    R.getEntry(1, 2),
+                    R.getEntry(2, 0),
+                    R.getEntry(2, 1),
+                    R.getEntry(2, 2)})).preConcatenate(AffineTransform3D.createTranslation(centroidB.asVector()));
+        for(int i=0;i<pointsA.size();i++) {
+            System.out.println(pointsA.get(i).transform(transform) + " vs " + pointsB.get(i));
+        }
+        return transform;
+    }
 }

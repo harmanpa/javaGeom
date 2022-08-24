@@ -3,6 +3,7 @@
  */
 package math.geom3d.plane;
 
+import java.util.ArrayList;
 import java.util.List;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Angle2D;
@@ -93,9 +94,13 @@ public final class Plane3D implements Shape3D {
         return new Plane3DFitter().fit(points);
     }
 
+    public final static Plane3D fromCoefficients(double[] coeffs) {
+        return new Plane3D(coeffs[0], coeffs[1], coeffs[2], coeffs[3], coeffs[4], coeffs[5], coeffs[6], coeffs[7], coeffs[8]);
+    }
+
     public Plane3D(Point3D point, Vector3D vector1, Vector3D vector2) {
         this(point.getX(), point.getY(), point.getZ(), vector1.getX(), vector1.getY(),
-                 vector1.getZ(), vector2.getX(), vector2.getY(), vector2.getZ());
+                vector1.getZ(), vector2.getX(), vector2.getY(), vector2.getZ());
     }
 
     Plane3D(double x0, double y0, double z0, double dx1, double dy1, double dz1, double dx2, double dy2, double dz2) {
@@ -108,6 +113,10 @@ public final class Plane3D implements Shape3D {
         this.dx2 = dx2;
         this.dy2 = dy2;
         this.dz2 = dz2;
+    }
+
+    public double[] coefficients() {
+        return new double[]{x0, y0, z0, dx1, dy1, dz1, dx2, dy2, dz2};
     }
 
     // ===================================================================
@@ -333,31 +342,16 @@ public final class Plane3D implements Shape3D {
         return isParallelOrOpposing(plane) ? distance(plane.origin()) : 0.0;
     }
 
-    public AffineTransform3D transform3D(Plane3D other) {
-        Array2DRowRealMatrix m1 = new Array2DRowRealMatrix(3, 3);
-        Vector3D n1 = normal();
-        m1.setEntry(0, 0, x0 + n1.getX());
-        m1.setEntry(1, 0, y0 + n1.getY());
-        m1.setEntry(2, 0, z0 + n1.getZ());
-        m1.setEntry(0, 1, x0 + dx1);
-        m1.setEntry(1, 1, y0 + dy1);
-        m1.setEntry(2, 1, z0 + dz1);
-        m1.setEntry(0, 2, x0 + dx2);
-        m1.setEntry(1, 2, y0 + dy2);
-        m1.setEntry(2, 2, z0 + dz2);
-        Array2DRowRealMatrix m2 = new Array2DRowRealMatrix(3, 3);
-        Vector3D n2 = other.normal();
-        m2.setEntry(0, 0, other.x0 + n2.getX());
-        m2.setEntry(1, 0, other.y0 + n2.getY());
-        m2.setEntry(2, 0, other.z0 + n2.getZ());
-        m2.setEntry(0, 1, other.x0 + other.dx1);
-        m2.setEntry(1, 1, other.y0 + other.dy1);
-        m2.setEntry(2, 1, other.z0 + other.dz1);
-        m2.setEntry(0, 2, other.x0 + other.dx2);
-        m2.setEntry(1, 2, other.y0 + other.dy2);
-        m2.setEntry(2, 2, other.z0 + other.dz2);
-        RealMatrix m = new QRDecomposition(m1).getSolver().solve(m2);
-        return AffineTransform3D.fromMatrix(m);
+    public AffineTransform3D transform3D(Plane3D other) throws Geom2DException {
+        List<Point3D> points = new ArrayList<>(3);
+        List<Point3D> otherPoints = new ArrayList<>(3);
+        points.add(point(0, 0));
+        points.add(point(1, 0));
+        points.add(point(0, 1));
+        otherPoints.add(other.point(0, 0));
+        otherPoints.add(other.point(1, 0));
+        otherPoints.add(other.point(0, 1));
+        return AffineTransform3D.calculate(points, otherPoints);
     }
 
     public AffineTransform2D transform2D(Plane3D other) {
