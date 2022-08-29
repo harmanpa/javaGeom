@@ -4,6 +4,7 @@
 package math.geom3d.plane;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Angle2D;
@@ -343,11 +344,20 @@ public final class Plane3D implements Shape3D {
     }
 
     public AffineTransform3D transform3D(AffineTransform2D transform) throws Geom2DException {
-        double[] m = transform.coefficients();
-        return new AffineTransform3D(new double[]{
-            m[0] * dx1 + m[3] * dx2, m[1] * dx1 + m[4] * dx2, 0, x0 + m[2] * dx1 + m[5] * dx2,
-            m[0] * dy1 + m[3] * dy2, m[1] * dy1 + m[4] * dy2, 0, y0 + m[2] * dy1 + m[5] * dy2,
-            m[0] * dz1 + m[3] * dz2, m[1] * dz1 + m[4] * dz2, 0, z0 + m[2] * dz1 + m[5] * dz2});
+        List<Point2D> points2D = Arrays.asList(new Point2D(0, 0), new Point2D(1, 0), new Point2D(0, 1));
+        List<Point3D> points = new ArrayList<>(3);
+        List<Point3D> otherPoints = new ArrayList<>(3);
+        for (int i = 0; i < points2D.size(); i++) {
+            points.add(point(points2D.get(i)));
+            otherPoints.add(point(points2D.get(i).transform(transform)));
+        }
+        return AffineTransform3D.calculate(points, otherPoints);
+//        double[] m = transform.coefficients();
+//Vector3D n = normal();
+//        return new AffineTransform3D(new double[]{
+//            m[0] * dx1 + m[3] * dx2, m[1] * dx1 + m[4] * dx2, n.getX(), x0 + m[2] * dx1 + m[5] * dx2,
+//            m[0] * dy1 + m[3] * dy2, m[1] * dy1 + m[4] * dy2, n.getY(), y0 + m[2] * dy1 + m[5] * dy2,
+//            m[0] * dz1 + m[3] * dz2, m[1] * dz1 + m[4] * dz2, n.getZ(), z0 + m[2] * dz1 + m[5] * dz2});
     }
 
     public AffineTransform3D transform3D(Plane3D other) throws Geom2DException {

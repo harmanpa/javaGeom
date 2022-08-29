@@ -8,7 +8,8 @@ import java.util.Collection;
 import java.util.DoubleSummaryStatistics;
 import java.util.function.Supplier;
 import java.util.stream.Stream;
-import math.geom2d.Tolerance2D;
+import math.geom2d.Range1D;
+import math.geom3s.Vector3S;
 
 /**
  * A 3-dimensional box, defined by its extent in each direction.
@@ -252,4 +253,11 @@ public class Box3D implements GeometricObject3D {
         return GeometricObject3D.equals(this, obj);
     }
 
+    public static Box3D rotated(Shape3D shape, Vector3D direction) {
+        Box3D box = shape.transform(
+                Vector3S.fromCartesian(direction)
+                        .transformTo(Vector3S.fromCartesian(new Vector3D(0, 0, 1))))
+                .boundingBox();
+        return box;
+    }
 }

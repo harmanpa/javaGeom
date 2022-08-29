@@ -476,9 +476,13 @@ public final class AffineTransform3D implements Bijection3D {
                     R.getEntry(2, 0),
                     R.getEntry(2, 1),
                     R.getEntry(2, 2)})).preConcatenate(AffineTransform3D.createTranslation(centroidB.asVector()));
-        for(int i=0;i<pointsA.size();i++) {
-            System.out.println(pointsA.get(i).transform(transform) + " vs " + pointsB.get(i));
-        }
         return transform;
     }
+
+    @Override
+    public String toString() {
+        return "AffineTransform3D{" + "m00=" + m00 + ", m01=" + m01 + ", m02=" + m02 + ", m03=" + m03 + ", m10=" + m10 + ", m11=" + m11 + ", m12=" + m12 + ", m13=" + m13 + ", m20=" + m20 + ", m21=" + m21 + ", m22=" + m22 + ", m23=" + m23 + '}';
+    }
+    
+    
 }
