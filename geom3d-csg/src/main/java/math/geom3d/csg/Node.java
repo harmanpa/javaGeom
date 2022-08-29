@@ -135,7 +135,7 @@ final class Node {
         if (this.plane == null && !polygons.isEmpty()) {
             this.plane = polygons.get(0).plane.clone();
         } else if (this.plane == null && polygons.isEmpty()) {
-            throw new RuntimeException("Please fix me! I don't know what to do?");
+            return;
         }
 
         this.plane.flip();
