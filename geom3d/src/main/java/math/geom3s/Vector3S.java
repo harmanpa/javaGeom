@@ -62,6 +62,18 @@ public class Vector3S implements GeometricObject3D {
         return new Vector3D(r * Math.cos(phi) * Math.sin(theta), r * Math.sin(phi) * Math.sin(theta), r * Math.cos(theta));
     }
 
+    public Vector3S addToTheta(double a) {
+        return new Vector3S(r, theta + a, phi).canonicalize();
+    }
+
+    public Vector3S addToPhi(double a) {
+        return new Vector3S(r, theta, phi + a).canonicalize();
+    }
+
+    Vector3S canonicalize() {
+        return fromCartesian(toCartesian());
+    }
+
     // ===================================================================
     // basic arithmetic on vectors
     /**

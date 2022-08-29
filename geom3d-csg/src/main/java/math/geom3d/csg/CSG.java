@@ -322,7 +322,7 @@ public class CSG implements Shape3D {
     }
 
     public List<CSG> move(List<Transform> p) {
-        List<CSG> bits = new ArrayList<>();
+        List<CSG> bits = new ArrayList<>(p.size());
         p.forEach((_item) -> {
             bits.add(this.clone());
         });
@@ -330,7 +330,7 @@ public class CSG implements Shape3D {
     }
 
     public static List<CSG> move(List<CSG> slice, List<Transform> p) {
-        List<CSG> s = new ArrayList<>();
+        List<CSG> s = new ArrayList<>(Math.max(slice.size(), p.size()));
         // s.add(slice.get(0));
         for (int i = 0; i < slice.size() && i < p.size(); i++) {
             s.add(slice.get(i).transformed(p.get(i)));
@@ -482,21 +482,7 @@ public class CSG implements Shape3D {
         CSG csg = new CSG();
 
         csg.setOptType(this.getOptType());
-
-        // sequential code
-        // csg.polygons = new ArrayList<>();
-        // polygons.forEach((polygon) -> {
-        // csg.polygons.add(polygon.clone());
-        // });
-        Stream<Polygon> polygonStream;
-
-        if (getPolygons().size() > 200) {
-            polygonStream = getPolygons().parallelStream();
-        } else {
-            polygonStream = getPolygons().stream();
-        }
-
-        csg.setPolygons(polygonStream.map((Polygon p) -> p.clone()).collect(Collectors.toList()));
+        csg.setPolygons(streamPolygons().map((Polygon p) -> p.clone()).collect(Collectors.toList()));
 
         return csg;
     }
@@ -508,6 +494,10 @@ public class CSG implements Shape3D {
      */
     public List<Polygon> getPolygons() {
         return polygons;
+    }
+    
+    public Stream<Polygon> streamPolygons() {
+        return polygons.size() > 200 ? polygons.parallelStream() : polygons.stream();
     }
 
     /**
@@ -716,12 +706,12 @@ public class CSG implements Shape3D {
      * @return the csg
      */
     private CSG _unionPolygonBoundsOpt(CSG csg) {
-        List<Polygon> inner = new ArrayList<>();
-        List<Polygon> outer = new ArrayList<>();
+        List<Polygon> inner = new ArrayList<>(getPolygons().size());
+        List<Polygon> outer = new ArrayList<>(getPolygons().size());
 
         Box3D b = csg.getBounds();
 
-        this.getPolygons().stream().forEach((p) -> {
+        this.streamPolygons().forEach((p) -> {
             if (b.intersects(p.getBounds())) {
                 inner.add(p);
             } else {
@@ -729,7 +719,7 @@ public class CSG implements Shape3D {
             }
         });
 
-        List<Polygon> allPolygons = new ArrayList<>();
+        List<Polygon> allPolygons = new ArrayList<>(getPolygons().size()*2);
 
         if (!inner.isEmpty()) {
             CSG innerCSG = CSG.fromPolygons(inner);
@@ -753,18 +743,11 @@ public class CSG implements Shape3D {
      * @return the union of this csg and the specified csg
      */
     private CSG _unionIntersectOpt(CSG csg) {
-        boolean intersects = false;
-
         Box3D b = csg.getBounds();
+        
+        boolean intersects = streamPolygons().anyMatch(p -> b.intersects(p.getBounds()));
 
-        for (Polygon p : getPolygons()) {
-            if (b.intersects(p.getBounds())) {
-                intersects = true;
-                break;
-            }
-        }
-
-        List<Polygon> allPolygons = new ArrayList<>();
+        List<Polygon> allPolygons = new ArrayList<>(getPolygons().size()+csg.getPolygons().size());
 
         if (intersects) {
             return _unionNoOpt(csg);
@@ -867,7 +850,7 @@ public class CSG implements Shape3D {
             // Check to see if a CSG operation is attempting to difference with
             // no
             // polygons
-            if (this.getPolygons().size() > 0 && csg.getPolygons().size() > 0) {
+            if (!this.getPolygons().isEmpty() && !csg.getPolygons().isEmpty()) {
                 switch (getOptType()) {
                     case CSG_BOUND:
                         return _differenceCSGBoundsOpt(csg);
@@ -886,7 +869,7 @@ public class CSG implements Shape3D {
                 CSG intersectingParts = csg
                         .intersect(this);
 
-                if (intersectingParts.getPolygons().size() > 0) {
+                if (!intersectingParts.getPolygons().isEmpty()) {
                     switch (getOptType()) {
                         case CSG_BOUND:
                             return _differenceCSGBoundsOpt(intersectingParts);
@@ -927,12 +910,12 @@ public class CSG implements Shape3D {
      * @return the csg
      */
     private CSG _differencePolygonBoundsOpt(CSG csg) {
-        List<Polygon> inner = new ArrayList<>();
-        List<Polygon> outer = new ArrayList<>();
+        List<Polygon> inner = new ArrayList<>(getPolygons().size());
+        List<Polygon> outer = new ArrayList<>(getPolygons().size());
 
         Box3D b = csg.getBounds();
 
-        this.getPolygons().stream().forEach((p) -> {
+        this.streamPolygons().forEach((p) -> {
             if (b.intersects(p.getBounds())) {
                 inner.add(p);
             } else {
@@ -942,7 +925,7 @@ public class CSG implements Shape3D {
 
         CSG innerCSG = CSG.fromPolygons(inner);
 
-        List<Polygon> allPolygons = new ArrayList<>();
+        List<Polygon> allPolygons = new ArrayList<>(getPolygons().size()*2);
         allPolygons.addAll(outer);
         allPolygons.addAll(innerCSG._differenceNoOpt(csg).getPolygons());
 
@@ -1065,7 +1048,8 @@ public class CSG implements Shape3D {
         if (getPolygons().isEmpty()) {
             return clone();
         }
-        List<Polygon> newpolygons = this.getPolygons().stream().map(p -> p.transformed(transform))
+        List<Polygon> newpolygons = this.streamPolygons()
+                .map(p -> p.transformed(transform))
                 .collect(Collectors.toList());
         CSG result = CSG.fromPolygons(newpolygons).optimization(getOptType());
         return result;
@@ -1085,7 +1069,7 @@ public class CSG implements Shape3D {
             bounds = new Box3D();
             return bounds;
         }
-        bounds = Box3D.fromPoints(getPolygons().stream()
+        bounds = Box3D.fromPoints(streamPolygons()
                 .flatMap(p -> p.vertices.stream()
                 .map(v -> v.pos))
                 .collect(Collectors.toList()));
@@ -1394,7 +1378,7 @@ public class CSG implements Shape3D {
                 && this.getMaxZ() > incoming.getMinZ() && this.getMinZ() < incoming.getMaxZ()) {
             // Run a full intersection
             CSG inter = this.intersect(incoming);
-            if (inter.getPolygons().size() > 0) {
+            if (!inter.getPolygons().isEmpty()) {
                 // intersection success
                 return true;
             }
@@ -1450,24 +1434,11 @@ public class CSG implements Shape3D {
             return 0;
         }
         // triangulate polygons (parallel for larger meshes)
-        Stream<Polygon> polyStream;
-        if (getPolygons().size() > 200) {
-            polyStream = getPolygons().parallelStream();
-        } else {
-            polyStream = getPolygons().stream();
-        }
-        List<Polygon> triangles = polyStream.
-                flatMap(poly -> poly.toTriangles().stream()).
-                collect(Collectors.toList());
+        Stream<Polygon> triangleStream = streamPolygons()
+                .flatMap(poly -> poly.toTriangles().stream());
         // compute sum over signed volumes of triangles
         // we use parallel streams for larger meshes
         // see http://chenlab.ece.cornell.edu/Publication/Cha/icip01_Cha.pdf
-        Stream<Polygon> triangleStream;
-        if (triangles.size() > 200) {
-            triangleStream = triangles.parallelStream();
-        } else {
-            triangleStream = triangles.stream();
-        }
         double volume = triangleStream.mapToDouble(tri -> {
             Point3D p1 = tri.vertices.get(0).pos;
             Point3D p2 = tri.vertices.get(1).pos;

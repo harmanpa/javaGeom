@@ -153,7 +153,7 @@ public class Plane implements Cloneable {
         // Classify each point as well as the entire polygon into one of the above
         // four classes.
         int polygonType = 0;
-        List<Integer> types = new ArrayList<>();
+        List<Integer> types = new ArrayList<>(polygon.vertices.size());
         for (int i = 0; i < polygon.vertices.size(); i++) {
             double t = this.normal.dot(new Vector3D(polygon.vertices.get(i).pos)) - this.dist;
             int type = (t < -Plane.EPSILON) ? BACK : (t > Plane.EPSILON) ? FRONT : COPLANAR;
@@ -178,8 +178,8 @@ public class Plane implements Cloneable {
                 break;
             case SPANNING:
                 //System.out.println(" -> spanning");
-                List<Vertex> f = new ArrayList<>();
-                List<Vertex> b = new ArrayList<>();
+                List<Vertex> f = new ArrayList<>(polygon.vertices.size());
+                List<Vertex> b = new ArrayList<>(polygon.vertices.size());
                 for (int i = 0; i < polygon.vertices.size(); i++) {
                     int j = (i + 1) % polygon.vertices.size();
                     int ti = types.get(i);

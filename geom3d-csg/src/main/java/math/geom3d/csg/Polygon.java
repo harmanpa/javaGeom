@@ -127,7 +127,7 @@ public final class Polygon {
     @Override
     @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDeclaresCloneNotSupported"})
     public Polygon clone() {
-        List<Vertex> newVertices = new ArrayList<>();
+        List<Vertex> newVertices = new ArrayList<>(vertices.size());
         this.vertices.forEach((vertex) -> {
             newVertices.add(vertex.clone());
         });
@@ -282,7 +282,7 @@ public final class Polygon {
 
         Vector3D normal = (plane != null) ? plane.normal : new Vector3D(0, 0, 0);
 
-        List<Vertex> vertices = new ArrayList<>();
+        List<Vertex> vertices = new ArrayList<>(points.size());
 
         points.stream().map((p) -> new Vertex(p, normal)).forEachOrdered((vertex) -> {
             vertices.add(vertex);
@@ -358,7 +358,7 @@ public final class Polygon {
             case 3:
                 return Arrays.asList(this);
             default:
-                List<Polygon> result = new ArrayList<>();
+                List<Polygon> result = new ArrayList<>(this.vertices.size()-2);
                 // TODO: improve the triangulation?
                 //
                 // If our polygon has more vertices, create

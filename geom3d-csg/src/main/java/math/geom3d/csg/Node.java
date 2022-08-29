@@ -73,7 +73,7 @@ final class Node {
      * @param polygons polygons
      */
     public Node(List<Polygon> polygons) {
-        this.polygons = new ArrayList<>();
+        this.polygons = new ArrayList<>(polygons == null ? 0 : polygons.size());
         if (polygons != null) {
             this.build(polygons);
         }
@@ -90,6 +90,7 @@ final class Node {
      * @see java.lang.Object#clone()
      */
     @Override
+    @SuppressWarnings("CloneDoesntCallSuperClone")
     public Node clone() {
         Node node = new Node();
         node.plane = this.plane == null ? null : this.plane.clone();
@@ -166,8 +167,8 @@ final class Node {
             return new ArrayList<>(polygons);
         }
 
-        List<Polygon> frontP = new ArrayList<>();
-        List<Polygon> backP = new ArrayList<>();
+        List<Polygon> frontP = new ArrayList<>(polygons.size());
+        List<Polygon> backP = new ArrayList<>(polygons.size());
 
         for (Polygon polygon : polygons) {
             this.plane.splitPolygon(polygon, frontP, backP, frontP, backP);
@@ -242,8 +243,8 @@ final class Node {
             this.plane = polygons.get(0).plane.clone();
         }
 
-        List<Polygon> frontP = new ArrayList<>();
-        List<Polygon> backP = new ArrayList<>();
+        List<Polygon> frontP = new ArrayList<>(polygons.size());
+        List<Polygon> backP = new ArrayList<>(polygons.size());
 
         // parellel version does not work here
         polygons.forEach((polygon) -> {
@@ -251,13 +252,13 @@ final class Node {
                     polygon, this.polygons, this.polygons, frontP, backP);
         });
 
-        if (frontP.size() > 0) {
+        if (!frontP.isEmpty()) {
             if (this.front == null) {
                 this.front = new Node();
             }
             this.front.build(frontP);
         }
-        if (backP.size() > 0) {
+        if (!backP.isEmpty()) {
             if (this.back == null) {
                 this.back = new Node();
             }

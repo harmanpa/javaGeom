@@ -88,7 +88,7 @@ public class Edge {
      */
 //    }
     public static List<Edge> fromPolygon(Polygon poly) {
-        List<Edge> result = new ArrayList<>();
+        List<Edge> result = new ArrayList<>(poly.vertices.size());
 
         for (int i = 0; i < poly.vertices.size(); i++) {
             Edge e = new Edge(poly.vertices.get(i), poly.vertices.get((i + 1) % poly.vertices.size()));
@@ -152,7 +152,7 @@ public class Edge {
      */
     public static List<Polygon> toPolygons(List<Edge> boundaryEdges, Plane plane) {
 
-        List<Point3D> boundaryPath = new ArrayList<>();
+        List<Point3D> boundaryPath = new ArrayList<>(boundaryEdges.size());
 
         boolean[] used = new boolean[boundaryEdges.size()];
         Edge edge = boundaryEdges.get(0);
@@ -175,7 +175,7 @@ public class Edge {
             used[nextEdgeIndex] = true;
         }
 
-        List<Polygon> result = new ArrayList<>();
+        List<Polygon> result = new ArrayList<>(1);
 
         System.out.println("#bnd-path-length: " + boundaryPath.size());
 
