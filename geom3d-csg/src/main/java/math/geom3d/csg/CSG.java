@@ -482,9 +482,17 @@ public class CSG implements Shape3D {
         CSG csg = new CSG();
 
         csg.setOptType(this.getOptType());
-        csg.setPolygons(streamPolygons().map((Polygon p) -> p.clone()).collect(Collectors.toList()));
+        csg.setPolygons(clonePolygons());
 
         return csg;
+    }
+    
+    List<Polygon> clonePolygons() {
+        List<Polygon> out = new ArrayList<>(getPolygons().size());
+        for(Polygon polygon : getPolygons()) {
+            out.add(polygon.clone());
+        }
+        return out;
     }
 
     /**
@@ -544,7 +552,7 @@ public class CSG implements Shape3D {
 
     /**
      * Returns a csg consisting of the polygons of this csg and the specified
-     * csg.
+     * CSGs.
      *
      * The purpose of this method is to allow fast union operations for objects
      * that do not intersect.
@@ -552,21 +560,25 @@ public class CSG implements Shape3D {
      * WARNING: this method does not apply the csg algorithms. Therefore, please
      * ensure that this csg and the specified csg do not intersect.
      *
-     * @param csg csg
+     * @param csgs One or more CSGs
      *
      * @return a csg consisting of the polygons of this csg and the specified
-     * csg
+     * CSGs
      */
-    public CSG dumbUnion(CSG csg) {
-
-        CSG result = this.clone();
-        CSG other = csg.clone();
-
-        result.getPolygons().addAll(other.getPolygons());
-        bounds = null;
-        return result;
+    public CSG dumbUnion(CSG... csgs) {
+        return dumbUnion(Arrays.asList(csgs));
     }
-
+    
+    public CSG dumbUnion(List<CSG> csgs) {
+        int n = getPolygons().size() + csgs.stream().mapToInt(csg -> csg.getPolygons().size()).sum();
+        List<Polygon> polygons = new ArrayList<>(n);
+        polygons.addAll(clonePolygons());
+        for(CSG csg : csgs) {
+            polygons.addAll(csg.clonePolygons());
+        }
+        return fromPolygons(polygons);
+    }
+    
     /**
      * Return a new CSG solid representing the union of this csg and the
      * specified csgs.
