@@ -67,6 +67,7 @@ public class PlanarShape3D<T extends Shape2D> implements Shape3D {
     }
 
     public PlanarShape3D<Shape2D> project(Plane3D plane) {
+//        return new PlanarShape3D<>(plane, getShape().transform(getPlane().transform2D(plane)));
         return new PlanarShape3D<>(plane, getShape().transform(getPlane().projectTransform(plane)));
     }
 

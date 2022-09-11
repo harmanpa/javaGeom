@@ -4,6 +4,8 @@
  */
 package math.geom3d;
 
+import java.util.Comparator;
+import java.util.function.Function;
 import math.geom2d.Tolerance2D;
 
 /**
@@ -15,7 +17,7 @@ public class Direction3D implements GeometricObject3D {
     private final Vector3D v;
 
     public Direction3D(Vector3D v) {
-        this.v = v;
+        this.v = v != null && PREFERPOSITIVEDOMAIN.compare(v, v.opposite()) > 0 ? v.opposite() : v;
     }
 
     public Vector3D getV() {
@@ -55,4 +57,13 @@ public class Direction3D implements GeometricObject3D {
         return almostEquals(other, Tolerance2D.get());
     }
 
+    private static final Function<Vector3D, Integer> POSITIVEELEMENTS = (Vector3D v1) -> (v1.getX() > Tolerance2D.get() ? 1 : 0) + (v1.getY() > Tolerance2D.get() ? 1 : 0) + (v1.getZ() > Tolerance2D.get() ? 1 : 0);
+    private static final Function<Vector3D, Integer> NEGATIVEELEMENTS = (Vector3D v1) -> (v1.getX() < -Tolerance2D.get() ? -1 : 0) + (v1.getY() < -Tolerance2D.get() ? -1 : 0) + (v1.getZ() < -Tolerance2D.get() ? -1 : 0);
+    private static final Comparator<Vector3D> PREFERPOSITIVEDOMAIN = (Vector3D a, Vector3D b) -> {
+        int res = -Integer.compare(POSITIVEELEMENTS.apply(a), POSITIVEELEMENTS.apply(b));
+        if (res == 0) {
+            res = -Integer.compare(NEGATIVEELEMENTS.apply(a), NEGATIVEELEMENTS.apply(b));
+        }
+        return res;
+    };
 }

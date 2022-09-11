@@ -4,7 +4,6 @@
 package math.geom3d.plane;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import math.geom2d.AffineTransform2D;
 import math.geom2d.Angle2D;
@@ -54,56 +53,56 @@ public final class Plane3D implements Shape3D {
         return new Plane3D(new Point3D(0, 0, 0), new Vector3D(1, 0, 0),
                 new Vector3D(0, 1, 0));
     }
-    
+
     public final static Plane3D createXZPlane() {
         return new Plane3D(new Point3D(0, 0, 0), new Vector3D(1, 0, 0),
                 new Vector3D(0, 0, 1));
     }
-    
+
     public final static Plane3D createYZPlane() {
         return new Plane3D(new Point3D(0, 0, 0), new Vector3D(0, 1, 0),
                 new Vector3D(0, 0, 1));
     }
-    
+
     public final static Plane3D createXYPlane(double z) {
         return new Plane3D(new Point3D(0, 0, z), new Vector3D(1, 0, 0),
                 new Vector3D(0, 1, 0));
     }
-    
+
     public final static Plane3D createXZPlane(double y) {
         return new Plane3D(new Point3D(0, y, 0), new Vector3D(1, 0, 0),
                 new Vector3D(0, 0, 1));
     }
-    
+
     public final static Plane3D createYZPlane(double x) {
         return new Plane3D(new Point3D(x, 0, 0), new Vector3D(0, 1, 0),
                 new Vector3D(0, 0, 1));
     }
-    
+
     public final static Plane3D fromNormal(Point3D point, Vector3D normal) {
         Vector3D temp = normal.swapNonZero();
         Vector3D a = normal.cross(temp).normalize();
         Vector3D b = normal.cross(a);
         return new Plane3D(point, b, a);
     }
-    
+
     public final static Plane3D fromNormal(Vector3D normal, double dist) {
         return fromNormal(new Point3D(0, 0, 0).plus(normal.times(dist)), normal);
     }
-    
+
     public final static Plane3D fromPoints(List<Point3D> points) throws Geom2DException {
         return new Plane3DFitter().fit(points);
     }
-    
+
     public final static Plane3D fromCoefficients(double[] coeffs) {
         return new Plane3D(coeffs[0], coeffs[1], coeffs[2], coeffs[3], coeffs[4], coeffs[5], coeffs[6], coeffs[7], coeffs[8]);
     }
-    
+
     public Plane3D(Point3D point, Vector3D vector1, Vector3D vector2) {
         this(point.getX(), point.getY(), point.getZ(), vector1.getX(), vector1.getY(),
                 vector1.getZ(), vector2.getX(), vector2.getY(), vector2.getZ());
     }
-    
+
     Plane3D(double x0, double y0, double z0, double dx1, double dy1, double dz1, double dx2, double dy2, double dz2) {
         this.x0 = x0;
         this.y0 = y0;
@@ -115,7 +114,7 @@ public final class Plane3D implements Shape3D {
         this.dy2 = dy2;
         this.dz2 = dz2;
     }
-    
+
     public double[] coefficients() {
         return new double[]{x0, y0, z0, dx1, dy1, dz1, dx2, dy2, dz2};
     }
@@ -125,29 +124,29 @@ public final class Plane3D implements Shape3D {
     public Point3D origin() {
         return new Point3D(x0, y0, z0);
     }
-    
+
     public Plane3D withOrigin(Point3D origin) {
         return new Plane3D(origin, new Vector3D(dx1, dy1, dz1), new Vector3D(dx2, dy2, dz2));
     }
-    
+
     public boolean isParallel(Plane3D other) {
         Vector3D n1 = normal();
         Vector3D n2 = other.normal();
         return Vector3D.isCodirected(n1, n2);
     }
-    
+
     public boolean isOpposing(Plane3D other) {
         Vector3D n1 = normal();
         Vector3D n2 = other.normal();
         return Vector3D.isOpposite(n1, n2);
     }
-    
+
     public boolean isParallelOrOpposing(Plane3D other) {
         Vector3D n1 = normal();
         Vector3D n2 = other.normal();
         return Vector3D.isColinear(n1, n2);
     }
-    
+
     public Plane3DRelationship getRelationship(Plane3D other) {
         if (isParallel(other)) {
             return Plane3DRelationship.Parallel;
@@ -161,18 +160,18 @@ public final class Plane3D implements Shape3D {
             return Plane3DRelationship.Intersecting;
         }
     }
-    
+
     public double dist() {
         Point3D globalOrigin = new Point3D(0, 0, 0);
         Point3D pointOnPlane = projectPoint(globalOrigin);
         double d = globalOrigin.distance(pointOnPlane);
         return Math.signum(new Vector3D(globalOrigin, pointOnPlane).dot(normal())) * d;
     }
-    
+
     public Vector3D vector1() {
         return new Vector3D(dx1, dy1, dz1);
     }
-    
+
     public Vector3D vector2() {
         return new Vector3D(dx2, dy2, dz2);
     }
@@ -187,7 +186,7 @@ public final class Plane3D implements Shape3D {
         return Vector3D.crossProduct(this.vector1(), this.vector2())
                 .opposite();
     }
-    
+
     public Plane3D flip() {
         return fromNormal(origin(), normal().opposite());
     }
@@ -211,34 +210,34 @@ public final class Plane3D implements Shape3D {
         // see http://local.wasp.uwa.edu.au/~pbourke/geometry/planeline/
         double t = Vector3D.dotProduct(n, dp)
                 / Vector3D.dotProduct(n, line.direction());
-        
+
         return line.point(t);
     }
-    
+
     public Point3D projectPoint(Point3D point) {
         StraightLine3D line = new StraightLine3D(point, this.normal());
         return this.lineIntersection(line);
     }
-    
+
     public boolean isVectorInPlane(Vector3D vect) {
         return Vector3D.isOrthogonal(vect, normal());
     }
-    
+
     public Vector3D projectVector(Vector3D vect) {
         Point3D point = new Point3D(x0 + vect.getX(), y0 + vect.getY(), z0
                 + vect.getZ());
         point = this.projectPoint(point);
         return new Vector3D(point.getX() - x0, point.getY() - y0, point.getZ() - z0);
     }
-    
+
     public Point3D point(Point2D p) {
         return point(p.getX(), p.getY());
     }
-    
+
     public Point3D point(double u, double v) {
         return new Point3D(x0 + u * dx1 + v * dx2, y0 + u * dy1 + v * dy2, z0 + u * dz1 + v * dz2);
     }
-    
+
     public Point2D pointPosition(Point3D point) {
         RealVector xy = new QRDecomposition(
                 new Array2DRowRealMatrix(new double[][]{{dx1, dx2}, {dy1, dy2}, {dz1, dz2}}))
@@ -246,7 +245,7 @@ public final class Plane3D implements Shape3D {
                 .solve(new ArrayRealVector(new double[]{point.getX() - x0, point.getY() - y0, point.getZ() - z0}));
         return new Point2D(xy.getEntry(0), xy.getEntry(1));
     }
-    
+
     public Vector2D vectorInPlane(Vector3D v) {
         RealVector xy = new QRDecomposition(
                 new Array2DRowRealMatrix(new double[][]{{dx1, dx2}, {dy1, dy2}, {dz1, dz2}}))
@@ -254,19 +253,19 @@ public final class Plane3D implements Shape3D {
                 .solve(new ArrayRealVector(new double[]{v.getX(), v.getY(), v.getZ()}));
         return new Vector2D(xy.getEntry(0), xy.getEntry(1));
     }
-    
+
     public Vector3D vector(Vector2D v) {
         return new Vector3D(v.getX() * dx1 + v.getY() * dx2, v.getX() * dy1 + v.getY() * dy2, v.getX() * dz1 + v.getY() * dz2);
     }
-    
+
     public boolean isLineInPlane(LinearShape3D line) {
         return contains(line.firstPoint()) && isVectorInPlane(line.direction());
     }
-    
+
     public StraightLine2D lineInPlane(StraightLine3D line) {
         return new StraightLine2D(pointPosition(line.origin()), vectorInPlane(line.direction()));
     }
-    
+
     public LineSegment2D lineInPlane(LineSegment3D line) {
         return new LineSegment2D(pointPosition(line.firstPoint()), pointPosition(line.lastPoint()));
     }
@@ -323,7 +322,7 @@ public final class Plane3D implements Shape3D {
                     Double.POSITIVE_INFINITY, y0, y0, Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY);
         }
-        
+
         return new Box3D(Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
                 Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY,
                 Double.NEGATIVE_INFINITY, Double.POSITIVE_INFINITY);
@@ -338,28 +337,23 @@ public final class Plane3D implements Shape3D {
     public double distance(Point3D point) {
         return point.distance(this.projectPoint(point));
     }
-    
+
     public double distance(Plane3D plane) {
         return isParallelOrOpposing(plane) ? distance(plane.origin()) : 0.0;
     }
-    
+
     public AffineTransform3D transform3D(AffineTransform2D transform) throws Geom2DException {
-        List<Point2D> points2D = Arrays.asList(new Point2D(0, 0), new Point2D(1, 0), new Point2D(0, 1));
         List<Point3D> points = new ArrayList<>(3);
         List<Point3D> otherPoints = new ArrayList<>(3);
-        for (int i = 0; i < points2D.size(); i++) {
-            points.add(point(points2D.get(i)));
-            otherPoints.add(point(points2D.get(i).transform(transform)));
-        }
+        points.add(point(new Point2D(0, 0)).plus(normal()));
+        points.add(point(new Point2D(1, 0)));
+        points.add(point(new Point2D(0, 1)));
+        otherPoints.add(point(new Point2D(0, 0).transform(transform)).plus(normal()));
+        otherPoints.add(point(new Point2D(1, 0).transform(transform)));
+        otherPoints.add(point(new Point2D(0, 1).transform(transform)));
         return AffineTransform3D.calculate(points, otherPoints);
-//        double[] m = transform.coefficients();
-//Vector3D n = normal();
-//        return new AffineTransform3D(new double[]{
-//            m[0] * dx1 + m[3] * dx2, m[1] * dx1 + m[4] * dx2, n.getX(), x0 + m[2] * dx1 + m[5] * dx2,
-//            m[0] * dy1 + m[3] * dy2, m[1] * dy1 + m[4] * dy2, n.getY(), y0 + m[2] * dy1 + m[5] * dy2,
-//            m[0] * dz1 + m[3] * dz2, m[1] * dz1 + m[4] * dz2, n.getZ(), z0 + m[2] * dz1 + m[5] * dz2});
     }
-    
+
     public AffineTransform3D transform3D(Plane3D other) throws Geom2DException {
         List<Point3D> points = new ArrayList<>(3);
         List<Point3D> otherPoints = new ArrayList<>(3);
@@ -371,7 +365,7 @@ public final class Plane3D implements Shape3D {
         otherPoints.add(other.point(0, 1));
         return AffineTransform3D.calculate(points, otherPoints);
     }
-    
+
     public AffineTransform2D transform2D(Plane3D other) {
         Array2DRowRealMatrix m1 = new Array2DRowRealMatrix(2, 2);
         m1.setEntry(0, 0, 1);
@@ -388,20 +382,20 @@ public final class Plane3D implements Shape3D {
         RealMatrix m = new QRDecomposition(m1).getSolver().solve(m2);
         return AffineTransform2D.create(m.getEntry(0, 0), m.getEntry(0, 1), 0, m.getEntry(1, 0), m.getEntry(1, 1), 0);
     }
-    
+
     public AffineTransform2D projectTransform(Plane3D other) {
         Point2D otherOrigin = other.pointPosition(other.projectPoint(point(0, 0)));
         Point2D x1 = other.pointPosition(other.projectPoint(point(1, 0)));
         Point2D y1 = other.pointPosition(other.projectPoint(point(0, 1)));
         double rotX = Angle2D.formatAngle(Angle2D.horizontalAngle(otherOrigin, x1) - Angle2D.horizontalAngle(new Point2D(0, 0), new Point2D(1, 0)));
         double rotY = Angle2D.formatAngle(Angle2D.horizontalAngle(otherOrigin, y1) - Angle2D.horizontalAngle(new Point2D(0, 0), new Point2D(0, 1)));
-        Vector2D translation = new Vector2D(new Point2D(0, 0), otherOrigin);
+        AffineTransform2D transform = AffineTransform2D.createTranslation(otherOrigin.getX(), otherOrigin.getY());
         if (Angle2D.M_PI - Math.abs(rotX - rotY) <= Tolerance2D.get()) {
-            // If it is flipped on the x axis, we just shift the translation in x
-            //FIXME: Not sure how repeatable this is but it works so far
-            translation = new Vector2D(-translation.getX(), translation.getY());
+            // If it is flipped on the x axis
+            transform = AffineTransform2D.createLineReflection(
+                    new StraightLine2D(new Point2D(0, 0), new Vector2D(0, 1))).preConcatenate(transform);
         }
-        return AffineTransform2D.createTranslation(translation);
+        return transform;
     }
 
     /**
@@ -495,7 +489,7 @@ public final class Plane3D implements Shape3D {
     public boolean equals(Object obj) {
         return obj instanceof Plane3D && almostEquals((Plane3D) obj, Tolerance2D.get());
     }
-    
+
     @Override
     public int hashCode() {
         int hash = 5;
@@ -510,7 +504,7 @@ public final class Plane3D implements Shape3D {
         hash = 71 * hash + Tolerance2D.hash(this.dz2);
         return hash;
     }
-    
+
     @Override
     public boolean almostEquals(GeometricObject3D obj, double eps) {
         if (!(obj instanceof Plane3D)) {
@@ -546,7 +540,7 @@ public final class Plane3D implements Shape3D {
         }
         return true;
     }
-    
+
     public static enum Plane3DRelationship {
         Intersecting, Parallel, FaceToFace, BackToBack;
     }
