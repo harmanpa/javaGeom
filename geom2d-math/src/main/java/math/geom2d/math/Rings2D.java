@@ -702,6 +702,9 @@ public class Rings2D {
         if (elem1 == null || elem2 == null) {
             return false;
         }
+        if(elem1.length()<tolerance || elem2.length()<tolerance) {
+            return false;
+        }
 
         // find which shapes are linear
         boolean b1 = elem1 instanceof LinearShape2D;

@@ -30,6 +30,8 @@ import math.geom2d.transform.Bijection2D;
 import math.utils.EqualUtils;
 
 import static java.lang.Math.*;
+import java.util.List;
+import math.geom2d.exceptions.Geom2DException;
 
 
 /**
@@ -719,7 +721,7 @@ public class AffineTransform2D implements Bijection2D, GeometricObject2D {
 
         return true;
     }
-
+    
     // ===================================================================
     // Override the Object methods
     /**
