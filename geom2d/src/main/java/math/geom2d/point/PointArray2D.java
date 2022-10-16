@@ -292,8 +292,8 @@ public class PointArray2D
         // init with max values in each direction
         double xmin = Double.MAX_VALUE;
         double ymin = Double.MAX_VALUE;
-        double xmax = Double.MIN_VALUE;
-        double ymax = Double.MIN_VALUE;
+        double xmax = -Double.MAX_VALUE;
+        double ymax = -Double.MAX_VALUE;
 
         // update max values with each point
         for (Point2D point : points) {

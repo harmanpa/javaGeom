@@ -183,8 +183,8 @@ public class ShapeArray2D<T extends Shape2D>
     public Box2D boundingBox() {
         double xmin = Double.MAX_VALUE;
         double ymin = Double.MAX_VALUE;
-        double xmax = Double.MIN_VALUE;
-        double ymax = Double.MIN_VALUE;
+        double xmax = -Double.MAX_VALUE;
+        double ymax = -Double.MAX_VALUE;
 
         Box2D box;
         for (Shape2D shape : shapes) {

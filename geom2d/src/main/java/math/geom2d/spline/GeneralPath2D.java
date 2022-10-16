@@ -623,8 +623,8 @@ public class GeneralPath2D implements Curve2D {
         // Initialize with extreme values
         double xmin = Double.MAX_VALUE;
         double ymin = Double.MAX_VALUE;
-        double xmax = Double.MIN_VALUE;
-        double ymax = Double.MIN_VALUE;
+        double xmax = -Double.MAX_VALUE;
+        double ymax = -Double.MAX_VALUE;
 
         // coordinates of current point
         double x, y;

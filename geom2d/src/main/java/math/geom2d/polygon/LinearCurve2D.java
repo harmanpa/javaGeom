@@ -546,8 +546,8 @@ implements CirculinearContinuousCurve2D {
     public Box2D boundingBox() {
         double xmin = Double.MAX_VALUE;
         double ymin = Double.MAX_VALUE;
-        double xmax = Double.MIN_VALUE;
-        double ymax = Double.MIN_VALUE;
+        double xmax = -Double.MAX_VALUE;
+        double ymax = -Double.MAX_VALUE;
 
         Iterator<Point2D> iter = vertices.iterator();
         Point2D point;

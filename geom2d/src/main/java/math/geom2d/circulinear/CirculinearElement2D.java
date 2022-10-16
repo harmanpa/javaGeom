@@ -8,6 +8,7 @@
  */
 package math.geom2d.circulinear;
 
+import math.geom2d.AffineTransform2D;
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
 import math.geom2d.curve.CurveSet2D;
