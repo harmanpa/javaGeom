@@ -37,6 +37,7 @@ import javax.vecmath.Matrix4d;
 import javax.vecmath.Quat4d;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
+import math.geom3d.transform.AffineTransform3D;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -77,6 +78,43 @@ public final class Transform {
         getInternalMatrix().m11 = 1;
         getInternalMatrix().m22 = 1;
         getInternalMatrix().m33 = 1;
+    }
+
+    public static Transform from(double[] coefficients) {
+        switch (coefficients.length) {
+            case 9:
+                return from(new double[]{
+                    coefficients[0],
+                    coefficients[1],
+                    coefficients[2],
+                    0,
+                    coefficients[3],
+                    coefficients[4],
+                    coefficients[5],
+                    0,
+                    coefficients[6],
+                    coefficients[7],
+                    coefficients[8],
+                    0,
+                    0, 0, 0, 1
+                });
+            case 12:
+                double[] c16 = new double[16];
+                System.arraycopy(coefficients, 0, c16, 0, 12);
+                c16[12] = 0;
+                c16[13] = 0;
+                c16[14] = 0;
+                c16[15] = 1;
+                return from(c16);
+            default:
+                Transform t = new Transform();
+                t.m.set(coefficients);
+                return t;
+        }
+    }
+
+    public static Transform from(AffineTransform3D at) {
+        return from(at.coefficients());
     }
 
     /**

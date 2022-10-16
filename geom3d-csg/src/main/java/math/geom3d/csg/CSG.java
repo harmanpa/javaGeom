@@ -141,8 +141,8 @@ public class CSG implements Shape3D {
     }
 
     @Override
-    public Shape3D transform(AffineTransform3D trans) {
-        throw new UnsupportedOperationException("Not supported yet."); // Generated from nbfs://nbhost/SystemFileSystem/Templates/Classes/Code/GeneratedMethodBody
+    public CSG transform(AffineTransform3D trans) {
+        return transformed(Transform.from(trans));
     }
 
     @Override
