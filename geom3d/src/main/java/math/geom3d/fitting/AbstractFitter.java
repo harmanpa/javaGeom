@@ -107,9 +107,9 @@ public class AbstractFitter<T, X> extends AbstractLeastSquares {
                 build();
         try {
             LeastSquaresOptimizer.Optimum optimum = new LevenbergMarquardtOptimizer().optimize(problem);
-            System.out.println("RMS: " + optimum.getRMS());
-            System.out.println("evaluations: " + optimum.getEvaluations());
-            System.out.println("iterations: " + optimum.getIterations());
+//            System.out.println("RMS: " + optimum.getRMS());
+//            System.out.println("evaluations: " + optimum.getEvaluations());
+//            System.out.println("iterations: " + optimum.getIterations());
             return constructor.apply(optimum.getPoint().toArray());
         } catch (TooManyEvaluationsException | TooManyIterationsException ex) {
             return optifit(target, initial);

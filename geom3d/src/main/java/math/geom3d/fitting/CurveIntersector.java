@@ -84,9 +84,9 @@ public class CurveIntersector extends AbstractLeastSquares {
                 build();
         try {
             LeastSquaresOptimizer.Optimum optimum = new LevenbergMarquardtOptimizer().optimize(problem);
-            System.out.println("RMS: " + optimum.getRMS());
-            System.out.println("evaluations: " + optimum.getEvaluations());
-            System.out.println("iterations: " + optimum.getIterations());
+//            System.out.println("RMS: " + optimum.getRMS());
+//            System.out.println("evaluations: " + optimum.getEvaluations());
+//            System.out.println("iterations: " + optimum.getIterations());
             if (optimum.getRMS() <= Math.pow(Tolerance2D.get(), 2)) {
                 for (int i = 0; i < curves.size(); i++) {
                     if (curves.get(i).getT0() > optimum.getPoint().toArray()[i]
