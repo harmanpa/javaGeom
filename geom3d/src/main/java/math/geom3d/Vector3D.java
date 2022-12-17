@@ -3,24 +3,40 @@
  */
 package math.geom3d;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import static java.lang.Math.acos;
 import static java.lang.Math.max;
 import static java.lang.Math.min;
 import math.geom2d.Tolerance2D;
 import math.geom3d.transform.AffineTransform3D;
 import math.geom3s.Vector3S;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * Define a vector in 3 dimensions. Provides methods to compute cross product
  * and dot product, addition and subtraction of vectors.
  */
+@JsonClassDescription("")
+@JsonIgnoreProperties(ignoreUnknown = true, allowGetters = false, allowSetters = false)
 public final class Vector3D implements GeometricObject3D {
 
     // ===================================================================
     // class variables
-    private final double x;
-    private final double y;
-    private final double z;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double x;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double y;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double z;
 
     // ===================================================================
     // static methods

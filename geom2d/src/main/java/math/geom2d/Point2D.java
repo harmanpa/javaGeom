@@ -36,7 +36,11 @@ import math.geom2d.point.PointArray2D;
 import math.geom2d.point.PointSet2D;
 import math.geom2d.point.PointShape2D;
 import math.geom2d.transform.CircleInversion2D;
-
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import static java.lang.Math.*;
 
 /**
@@ -45,6 +49,8 @@ import static java.lang.Math.*;
  * class provides static methods to compute distance between two points.
  * </p>
  */
+@JsonClassDescription("")
+@JsonIgnoreProperties(ignoreUnknown = true, allowGetters = false, allowSetters = false)
 public class Point2D
         implements GeometricObject2D, PointShape2D, CirculinearShape2D {
 
@@ -53,11 +59,15 @@ public class Point2D
     /**
      * The x coordinate of this point.
      */
+    @JsonProperty
+    @JsonPropertyDescription("")
     protected double x;
 
     /**
      * The y coordinate of this point.
      */
+    @JsonProperty
+    @JsonPropertyDescription("")
     protected double y;
 
     // ===================================================================
@@ -373,6 +383,7 @@ public class Point2D
      *
      * @return an instance of java.awt.Point
      */
+    @JsonIgnore
     public java.awt.Point getAsInt() {
         return new java.awt.Point((int) x, (int) y);
     }
@@ -380,6 +391,7 @@ public class Point2D
     /**
      * Converts point to a double version.
      */
+    @JsonIgnore
     public java.awt.geom.Point2D.Double getAsDouble() {
         return new java.awt.geom.Point2D.Double(x, y);
     }
@@ -388,6 +400,7 @@ public class Point2D
      * Converts point to a float version. Coordinates are rounded to the nearest
      * float.
      */
+    @JsonIgnore
     public java.awt.geom.Point2D.Float getAsFloat() {
         return new java.awt.geom.Point2D.Float((float) x, (float) y);
     }
@@ -397,6 +410,7 @@ public class Point2D
     /**
      * Returns the x-coordinate of this point.
      */
+    @JsonIgnore
     public double x() {
         return x;
     }
@@ -410,6 +424,7 @@ public class Point2D
     /**
      * Returns the y-coordinate of this point.
      */
+    @JsonIgnore
     public double y() {
         return y;
     }
@@ -496,6 +511,7 @@ public class Point2D
      *
      * @return true if both coordinates of the point are finite
      */
+    @JsonIgnore
     public boolean isBounded() {
         if (java.lang.Double.isInfinite(this.x)) {
             return false;
@@ -515,6 +531,7 @@ public class Point2D
     /**
      * Returns false, as a point can not be empty.
      */
+    @JsonIgnore
     public boolean isEmpty() {
         return false;
     }

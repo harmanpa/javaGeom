@@ -11,6 +11,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
 import nl.jqno.equalsverifier.EqualsVerifier;
+import nl.jqno.equalsverifier.Warning;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
@@ -65,7 +66,7 @@ public class TypeEqualityTest {
 
     @Test
     public void test() {
-        EqualsVerifier.forClass(clazz).usingGetClass().verify();
+        EqualsVerifier.forClass(clazz).usingGetClass().suppress(Warning.NONFINAL_FIELDS).verify();
     }
     
 }

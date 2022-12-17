@@ -27,19 +27,32 @@ package math.geom3d;
 
 import math.geom2d.Tolerance2D;
 import math.geom3d.transform.AffineTransform3D;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 /**
  * A 3-dimensional point.
  *
  * @author dlegland
  */
+@JsonClassDescription("")
+@JsonIgnoreProperties(ignoreUnknown = true, allowGetters = false, allowSetters = false)
 public final class Point3D implements Shape3D {
 
     // ===================================================================
     // Class variables
-    private final double x;
-    private final double y;
-    private final double z;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double x;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double y;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double z;
 
     // ===================================================================
     // Constructors
@@ -150,6 +163,7 @@ public final class Point3D implements Shape3D {
      *
      * @return
      */
+    @JsonIgnore
     @Override
     public boolean isEmpty() {
         return false;
@@ -160,6 +174,7 @@ public final class Point3D implements Shape3D {
      *
      * @return
      */
+    @JsonIgnore
     @Override
     public boolean isBounded() {
         return true;

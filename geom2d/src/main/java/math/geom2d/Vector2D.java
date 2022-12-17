@@ -24,6 +24,10 @@
 package math.geom2d;
 
 import math.utils.EqualUtils;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
+import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import static java.lang.Math.*;
 
 // Imports
@@ -31,6 +35,8 @@ import static java.lang.Math.*;
  * A vector in the 2D plane. Provides methods to compute cross product and dot
  * product, addition and subtraction of vectors.
  */
+@JsonClassDescription("")
+@JsonIgnoreProperties(ignoreUnknown = true, allowGetters = false, allowSetters = false)
 public class Vector2D implements GeometricObject2D {
 
     // ===================================================================
@@ -103,11 +109,15 @@ public class Vector2D implements GeometricObject2D {
     /**
      * the x-coordinate of the vector
      */
+    @JsonProperty
+    @JsonPropertyDescription("")
     protected double x;
 
     /**
      * the y-coordinate of the vector
      */
+    @JsonProperty
+    @JsonPropertyDescription("")
     protected double y;
 
     // ===================================================================
