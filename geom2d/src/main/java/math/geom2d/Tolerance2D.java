@@ -6,8 +6,6 @@
 package math.geom2d;
 
 import java.math.BigDecimal;
-import java.math.MathContext;
-import java.math.RoundingMode;
 import math.geom2d.circulinear.CirculinearCurve2D;
 
 /**
@@ -17,10 +15,11 @@ import math.geom2d.circulinear.CirculinearCurve2D;
 public class Tolerance2D {
 
     private static Double ACCURACY = 1e-12;
-    private static final ThreadLocal<Integer> SCALE = new ThreadLocal<Integer>() {
+    private static Double TENPOWSCALE = 1000000000000.0;
+    private static final ThreadLocal<Double> THREAD_TENPOWSCALE = new ThreadLocal<Double>() {
         @Override
-        protected Integer initialValue() {
-            return new BigDecimal(Tolerance2D.get().toString()).scale();
+        protected Double initialValue() {
+            return TENPOWSCALE;
         }
     };
 
@@ -33,12 +32,13 @@ public class Tolerance2D {
 
     public static void setGlobal(Double accuracy) {
         ACCURACY = accuracy;
+        TENPOWSCALE = Math.pow(10, new BigDecimal(accuracy.toString()).scale());
         reset();
     }
 
     public static void set(Double accuracy) {
         THREAD_ACCURACY.set(accuracy);
-        SCALE.remove();
+        THREAD_TENPOWSCALE.set(Math.pow(10, new BigDecimal(accuracy.toString()).scale()));
     }
 
     public static Double get() {
@@ -56,19 +56,19 @@ public class Tolerance2D {
 
     public static void reset() {
         THREAD_ACCURACY.remove();
-        SCALE.remove();
+        THREAD_TENPOWSCALE.remove();
     }
 
-    public static BigDecimal round(BigDecimal bd) {
-        return bd.setScale(scale(), RoundingMode.HALF_UP);
+    public static double round(double d) {
+        return castRound(d, THREAD_TENPOWSCALE.get());
     }
 
-    public static BigDecimal round(Double d) {
-        return round(new BigDecimal(d, MathContext.UNLIMITED));
+    static double castRound(double d, double tenpowscale) {
+        return (long) (d * tenpowscale + 0.5) / tenpowscale;
     }
 
     public static int hash(double d) {
-        return Double.valueOf(Double.isNaN(d) ? d : round(d).doubleValue()).hashCode();
+        return Double.valueOf(Double.isNaN(d) ? d : round(d)).hashCode();
     }
 
     public static int compare(double a, double b) {
@@ -78,9 +78,5 @@ public class Tolerance2D {
     public static int compare(double a, double b, double eps) {
         int res = Double.compare(a, b);
         return res == 0 ? 0 : (Math.abs(a - b) <= eps ? 0 : res);
-    }
-
-    static Integer scale() {
-        return SCALE.get();
     }
 }
