@@ -40,6 +40,7 @@ import math.geom2d.domain.SmoothContour2D;
 import math.geom2d.polygon.Polyline2D;
 import math.geom2d.transform.CircleInversion2D;
 import math.utils.EqualUtils;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Implementation of a straight line. Such a line can be constructed using two
@@ -62,8 +63,8 @@ public class StraightLine2D extends AbstractLine2D implements
      */
     @Deprecated
     public static StraightLine2D create(Point2D point, double angle) {
-        return new StraightLine2D(point.x(), point.y(), Math.cos(angle),
-                Math.sin(angle));
+        return new StraightLine2D(point.x(), point.y(), FastMath.cos(angle),
+                FastMath.sin(angle));
     }
 
     /**
@@ -139,7 +140,7 @@ public class StraightLine2D extends AbstractLine2D implements
     public static StraightLine2D createParallel(LinearShape2D linear,
             double d) {
         StraightLine2D line = linear.supportingLine();
-        double d2 = d / Math.hypot(line.dx, line.dy);
+        double d2 = d / FastMath.hypot(line.dx, line.dy);
         return new StraightLine2D(
                 line.x0 + line.dy * d2, line.y0 - line.dx * d2,
                 line.dx, line.dy);
@@ -165,9 +166,9 @@ public class StraightLine2D extends AbstractLine2D implements
         double d = a * a + b * b;
         double x0 = -a * c / d;
         double y0 = -b * c / d;
-        double theta = Math.atan2(-a, b);
-        double dx = Math.cos(theta);
-        double dy = Math.sin(theta);
+        double theta = FastMath.atan2(-a, b);
+        double dx = FastMath.cos(theta);
+        double dy = FastMath.sin(theta);
 
         return new StraightLine2D(x0, y0, dx, dy);
     }
@@ -221,7 +222,7 @@ public class StraightLine2D extends AbstractLine2D implements
      * specified direction given by angle.
      */
     public StraightLine2D(Point2D point, double angle) {
-        this(point.x(), point.y(), Math.cos(angle), Math.sin(angle));
+        this(point.x(), point.y(), FastMath.cos(angle), FastMath.sin(angle));
     }
 
     /**
@@ -232,7 +233,7 @@ public class StraightLine2D extends AbstractLine2D implements
         super(xp, yp, dx, dy);
 
         // enforce condition on direction vector
-        if (Math.hypot(dx, dy) < Tolerance2D.get()) {
+        if (FastMath.hypot(dx, dy) < Tolerance2D.get()) {
             throw new DegeneratedLine2DException("Straight lines can not have direction vector with zero norm", this);
         }
     }
@@ -267,9 +268,9 @@ public class StraightLine2D extends AbstractLine2D implements
         double d = a * a + b * b;
         x0 = -a * c / d;
         y0 = -b * c / d;
-        double theta = Math.atan2(-a, b);
-        dx = Math.cos(theta);
-        dy = Math.sin(theta);
+        double theta = FastMath.atan2(-a, b);
+        dx = FastMath.cos(theta);
+        dy = FastMath.sin(theta);
     }
 
     // ===================================================================
@@ -292,7 +293,7 @@ public class StraightLine2D extends AbstractLine2D implements
      * @throws DegeneratedLine2DException if line direction vector is null
      */
     public StraightLine2D parallel(double d) {
-        double d2 = Math.hypot(this.dx, this.dy);
+        double d2 = FastMath.hypot(this.dx, this.dy);
         if (Math.abs(d2) < Tolerance2D.get()) {
             throw new DegeneratedLine2DException(
                     "Can not compute parallel of degenerated line", this);

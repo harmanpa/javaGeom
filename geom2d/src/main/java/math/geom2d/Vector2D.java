@@ -23,12 +23,11 @@
 // package
 package math.geom2d;
 
-import math.utils.EqualUtils;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import static java.lang.Math.*;
+import org.apache.commons.math3.util.FastMath;
 
 // Imports
 /**
@@ -46,7 +45,7 @@ public class Vector2D implements GeometricObject2D {
      * angle with the horizontal.
      */
     public static Vector2D createPolar(double rho, double theta) {
-        return new Vector2D(rho * cos(theta), rho * sin(theta));
+        return new Vector2D(rho * FastMath.cos(theta), rho * FastMath.sin(theta));
     }
 
     /**
@@ -83,7 +82,7 @@ public class Vector2D implements GeometricObject2D {
     public static boolean isColinear(Vector2D v1, Vector2D v2) {
         v1 = v1.normalize();
         v2 = v2.normalize();
-        return abs(v1.x * v2.y - v1.y * v2.x) < Tolerance2D.get();
+        return Math.abs(v1.x * v2.y - v1.y * v2.x) < Tolerance2D.get();
     }
 
     /**
@@ -94,7 +93,7 @@ public class Vector2D implements GeometricObject2D {
     public static boolean isOrthogonal(Vector2D v1, Vector2D v2) {
         v1 = v1.normalize();
         v2 = v2.normalize();
-        return abs(v1.x * v2.x + v1.y * v2.y) < Tolerance2D.get();
+        return Math.abs(v1.x * v2.x + v1.y * v2.y) < Tolerance2D.get();
     }
 
     public final static boolean isCodirected(Vector2D v1, Vector2D v2) {
@@ -198,7 +197,7 @@ public class Vector2D implements GeometricObject2D {
      * @return the euclidean norm of the vector
      */
     public double norm() {
-        return hypot(x, y);
+        return FastMath.hypot(x, y);
     }
 
     /**
@@ -215,7 +214,7 @@ public class Vector2D implements GeometricObject2D {
      * to 1.
      */
     public Vector2D normalize() {
-        double r = hypot(this.x, this.y);
+        double r = FastMath.hypot(this.x, this.y);
         return new Vector2D(this.x / r, this.y / r);
     }
 
@@ -305,8 +304,8 @@ public class Vector2D implements GeometricObject2D {
      * @param theta the angle of rotation, in radians counter-clockwise
      */
     public Vector2D rotate(double theta) {
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         double x2 = x * cot - y * sit;
         double y2 = x * sit + y * cot;
         return new Vector2D(x2, y2);

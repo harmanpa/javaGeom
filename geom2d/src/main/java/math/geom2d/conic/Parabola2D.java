@@ -26,7 +26,6 @@
 package math.geom2d.conic;
 
 import math.geom2d.exceptions.UnboundedShape2DException;
-import static java.lang.Math.*;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -41,6 +40,7 @@ import math.geom2d.exceptions.NonInvertibleTransform2DException;
 import math.geom2d.line.LinearShape2D;
 import math.geom2d.line.StraightLine2D;
 import math.utils.EqualUtils;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * A parabola, defined by its vertex, its orientation, and its pedal.
@@ -72,7 +72,7 @@ public class Parabola2D extends AbstractSmoothCurve2D
      */
     public final static Parabola2D create(Point2D vertex, Point2D focus) {
         double p = Point2D.distance(vertex, focus);
-        double theta = Angle2D.horizontalAngle(vertex, focus) - PI / 2;
+        double theta = Angle2D.horizontalAngle(vertex, focus) - Math.PI / 2;
         return new Parabola2D(vertex, 1 / (4 * p), theta);
     }
 
@@ -123,7 +123,7 @@ public class Parabola2D extends AbstractSmoothCurve2D
      */
     public Point2D getFocus() {
         double c = 1 / a / 4.0;
-        return new Point2D(xv - c * sin(theta), yv + c * cos(theta));
+        return new Point2D(xv - c * FastMath.sin(theta), yv + c * FastMath.cos(theta));
     }
 
     public double getParameter() {
@@ -151,7 +151,7 @@ public class Parabola2D extends AbstractSmoothCurve2D
      */
     public Vector2D getVector2() {
         Vector2D vect = new Vector2D(1, 0);
-        return vect.transform(AffineTransform2D.createRotation(theta + PI / 2));
+        return vect.transform(AffineTransform2D.createRotation(theta + Math.PI / 2));
     }
 
     /**
@@ -251,7 +251,7 @@ public class Parabola2D extends AbstractSmoothCurve2D
     public double windingAngle(Point2D point) {
         if (isDirect()) {
             if (isInside(point)) {
-                return PI * 2;
+                return Math.PI * 2;
             } else {
                 return 0.0;
             }
@@ -259,7 +259,7 @@ public class Parabola2D extends AbstractSmoothCurve2D
             if (isInside(point)) {
                 return 0.0;
             } else {
-                return -PI * 2;
+                return -Math.PI * 2;
             }
         }
     }
@@ -299,7 +299,7 @@ public class Parabola2D extends AbstractSmoothCurve2D
      * Returns the curvature of the parabola at the given position.
      */
     public double curvature(double t) {
-        return 2 * a / pow(hypot(1, 2 * a * t), 3);
+        return 2 * a / FastMath.pow(FastMath.hypot(1, 2 * a * t), 3);
     }
 
     // ==========================================================
@@ -407,14 +407,14 @@ public class Parabola2D extends AbstractSmoothCurve2D
         StraightLine2D support = line2.supportingLine();
 
         // test first intersection point
-        x = (k - Math.sqrt(delta)) * .5;
+        x = (k - FastMath.sqrt(delta)) * .5;
         point = new Point2D(x, x * x);
         if (line2.contains(support.projectedPoint(point))) {
             points.add(line.point(line2.position(point)));
         }
 
         // test second intersection point
-        x = (k + Math.sqrt(delta)) * .5;
+        x = (k + FastMath.sqrt(delta)) * .5;
         point = new Point2D(x, x * x);
         if (line2.contains(support.projectedPoint(point))) {
             points.add(line.point(line2.position(point)));
@@ -428,7 +428,7 @@ public class Parabola2D extends AbstractSmoothCurve2D
      * direction and opposite parameter <code>p</code>.
      */
     public Parabola2D reverse() {
-        return new Parabola2D(xv, yv, -a, Angle2D.formatAngle(theta + PI));
+        return new Parabola2D(xv, yv, -a, Angle2D.formatAngle(theta + Math.PI));
     }
 
     /**
@@ -524,7 +524,7 @@ public class Parabola2D extends AbstractSmoothCurve2D
         Point2D vertex = this.getVertex().transform(trans);
         Point2D focus = this.getFocus().transform(trans);
         double a = 1 / (4.0 * Point2D.distance(vertex, focus));
-        double theta = Angle2D.horizontalAngle(vertex, focus) - PI / 2;
+        double theta = Angle2D.horizontalAngle(vertex, focus) - Math.PI / 2;
 
         // check orientation of resulting parabola
         if (this.a < 0 ^ trans.isDirect()) // normal case
@@ -532,7 +532,7 @@ public class Parabola2D extends AbstractSmoothCurve2D
             return new Parabola2D(vertex, a, theta);
         } else // inverted case
         {
-            return new Parabola2D(vertex, -a, theta + PI);
+            return new Parabola2D(vertex, -a, theta + Math.PI);
         }
     }
 
@@ -547,7 +547,7 @@ public class Parabola2D extends AbstractSmoothCurve2D
         double yp = p2.y();
 
         // check condition of parabola
-        return abs(yp - xp * xp) < Tolerance2D.get();
+        return Math.abs(yp - xp * xp) < Tolerance2D.get();
     }
 
     public boolean contains(Point2D point) {

@@ -6,7 +6,6 @@ package math.geom2d.curve;
 import static java.lang.Double.POSITIVE_INFINITY;
 import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Math.PI;
-import static java.lang.Math.abs;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -22,6 +21,7 @@ import math.geom2d.Tolerance2D;
 import math.geom2d.Vector2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.line.LinearShape2D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Collects some useful methods for clipping curves.
@@ -51,15 +51,15 @@ public abstract class Curves2D {
         }
 
         if (t0 == NEGATIVE_INFINITY && t1 == POSITIVE_INFINITY) {
-            return Math.atan(t) / Math.PI + .5;
+            return FastMath.atan(t) / Math.PI + .5;
         }
 
         if (t0 == NEGATIVE_INFINITY) {
-            return Math.atan(t - t1) * 2 / Math.PI + 1;
+            return FastMath.atan(t - t1) * 2 / Math.PI + 1;
         }
 
         if (t1 == POSITIVE_INFINITY) {
-            return Math.atan(t - t0) * 2 / Math.PI;
+            return FastMath.atan(t - t0) * 2 / Math.PI;
         }
 
         // t0 and t1 are both finite
@@ -84,15 +84,15 @@ public abstract class Curves2D {
         }
 
         if (t0 == NEGATIVE_INFINITY && t1 == POSITIVE_INFINITY) {
-            return Math.tan((t - .5) * Math.PI);
+            return FastMath.tan((t - .5) * Math.PI);
         }
 
         if (t0 == NEGATIVE_INFINITY) {
-            return Math.tan((t - 1) * Math.PI / 2) + t1;
+            return FastMath.tan((t - 1) * Math.PI / 2) + t1;
         }
 
         if (t1 == POSITIVE_INFINITY) {
-            return Math.tan(t * Math.PI / 2) + t0;
+            return FastMath.tan(t * Math.PI / 2) + t0;
         }
 
         // t0 and t1 are both finite
@@ -668,10 +668,10 @@ public abstract class Curves2D {
         // curvatures have opposite signs: curves point in opposite directions.
         // We need to check curvature values
         if (sp == 1 && sn == -1) {
-            return abs(kappaPrev) < abs(kappaNext)
+            return Math.abs(kappaPrev) < Math.abs(kappaNext)
                     ? JunctionType.SALIENT : JunctionType.REENTRANT;
         } else if (sp == -1 && sn == 1) {
-            return abs(kappaPrev) > abs(kappaNext)
+            return Math.abs(kappaPrev) > Math.abs(kappaNext)
                     ? JunctionType.SALIENT : JunctionType.REENTRANT;
         }
 

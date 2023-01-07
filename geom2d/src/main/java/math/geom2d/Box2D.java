@@ -26,8 +26,9 @@
 package math.geom2d;
 
 // Imports
-import static java.lang.Double.*;
 import java.awt.Graphics2D;
+import static java.lang.Double.NEGATIVE_INFINITY;
+import static java.lang.Double.POSITIVE_INFINITY;
 import java.util.ArrayList;
 import java.util.Collection;
 
@@ -43,8 +44,6 @@ import math.geom2d.polygon.LinearRing2D;
 import math.geom2d.polygon.Polygon2D;
 import math.geom2d.polygon.Polygons2D;
 import math.utils.EqualUtils;
-
-import static java.lang.Math.*;
 
 /**
  * This class defines bounds of a shape. It stores limits in each direction:
@@ -138,16 +137,16 @@ public class Box2D implements GeometricObject2D {
      * Returns true if all bounds are finite.
      */
     public boolean isBounded() {
-        if (isInfinite(xmin)) {
+        if (Double.isInfinite(xmin)) {
             return false;
         }
-        if (isInfinite(ymin)) {
+        if (Double.isInfinite(ymin)) {
             return false;
         }
-        if (isInfinite(xmax)) {
+        if (Double.isInfinite(xmax)) {
             return false;
         }
-        if (isInfinite(ymax)) {
+        if (Double.isInfinite(ymax)) {
             return false;
         }
         return true;
@@ -257,40 +256,40 @@ public class Box2D implements GeometricObject2D {
             return edges;
         }
 
-        if (!isInfinite(ymin)) {
-            if (isInfinite(xmin) && isInfinite(xmax)) {
+        if (!Double.isInfinite(ymin)) {
+            if (Double.isInfinite(xmin) && Double.isInfinite(xmax)) {
                 edges.add(new StraightLine2D(0, ymin, 1, 0));
-            } else if (!isInfinite(xmin) && !isInfinite(xmax)) {
+            } else if (!Double.isInfinite(xmin) && !Double.isInfinite(xmax)) {
                 edges.add(new LineSegment2D(xmin, ymin, xmax, ymin));
             } else {
                 edges.add(new LineArc2D(0, ymin, 1, 0, xmin, xmax));
             }
         }
 
-        if (!isInfinite(xmax)) {
-            if (isInfinite(ymin) && isInfinite(ymax)) {
+        if (!Double.isInfinite(xmax)) {
+            if (Double.isInfinite(ymin) && Double.isInfinite(ymax)) {
                 edges.add(new StraightLine2D(xmax, 0, 0, 1));
-            } else if (!isInfinite(ymin) && !isInfinite(ymax)) {
+            } else if (!Double.isInfinite(ymin) && !Double.isInfinite(ymax)) {
                 edges.add(new LineSegment2D(xmax, ymin, xmax, ymax));
             } else {
                 edges.add(new LineArc2D(xmax, 0, 0, 1, ymin, ymax));
             }
         }
 
-        if (!isInfinite(ymax)) {
-            if (isInfinite(xmin) && isInfinite(xmax)) {
+        if (!Double.isInfinite(ymax)) {
+            if (Double.isInfinite(xmin) && Double.isInfinite(xmax)) {
                 edges.add(new StraightLine2D(0, ymax, 1, 0));
-            } else if (!isInfinite(xmin) && !isInfinite(xmax)) {
+            } else if (!Double.isInfinite(xmin) && !Double.isInfinite(xmax)) {
                 edges.add(new LineSegment2D(xmax, ymax, xmin, ymax));
             } else {
                 edges.add(new LineArc2D(0, ymin, 1, 0, xmin, xmax).reverse());
             }
         }
 
-        if (!isInfinite(xmin)) {
-            if (isInfinite(ymin) && isInfinite(ymax)) {
+        if (!Double.isInfinite(xmin)) {
+            if (Double.isInfinite(ymin) && Double.isInfinite(ymax)) {
                 edges.add(new StraightLine2D(xmin, 0, 0, -1));
-            } else if (!isInfinite(ymin) && !isInfinite(ymax)) {
+            } else if (!Double.isInfinite(ymin) && !Double.isInfinite(ymax)) {
                 edges.add(new LineSegment2D(xmin, ymax, xmin, ymin));
             } else {
                 edges.add(new LineArc2D(xmin, 0, 0, 1, ymin, ymax).reverse());
@@ -321,10 +320,10 @@ public class Box2D implements GeometricObject2D {
         }
 
         // extract boolean info on "boundedness" in each direction
-        boolean bx0 = !isInfinite(xmin);
-        boolean bx1 = !isInfinite(xmax);
-        boolean by0 = !isInfinite(ymin);
-        boolean by1 = !isInfinite(ymax);
+        boolean bx0 = !Double.isInfinite(xmin);
+        boolean bx1 = !Double.isInfinite(xmax);
+        boolean by0 = !Double.isInfinite(ymin);
+        boolean by1 = !Double.isInfinite(ymax);
 
         // case of boxes unbounded in both x directions
         if (!bx0 && !bx1) {
@@ -441,10 +440,10 @@ public class Box2D implements GeometricObject2D {
     }
 
     private final static boolean isFinite(double value) {
-        if (isInfinite(value)) {
+        if (Double.isInfinite(value)) {
             return false;
         }
-        if (isNaN(value)) {
+        if (Double.isNaN(value)) {
             return false;
         }
         return true;
@@ -553,10 +552,10 @@ public class Box2D implements GeometricObject2D {
      * @return an instance of java.awt.geom.Rectangle2D
      */
     public java.awt.Rectangle asAwtRectangle() {
-        int xr = (int) floor(this.xmin);
-        int yr = (int) floor(this.ymin);
-        int wr = (int) ceil(this.xmax - xr);
-        int hr = (int) ceil(this.ymax - yr);
+        int xr = (int) Math.floor(this.xmin);
+        int yr = (int) Math.floor(this.ymin);
+        int wr = (int) Math.ceil(this.xmax - xr);
+        int hr = (int) Math.ceil(this.ymax - yr);
         return new java.awt.Rectangle(xr, yr, wr, hr);
     }
 

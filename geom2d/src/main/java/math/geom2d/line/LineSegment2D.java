@@ -27,6 +27,7 @@ import math.geom2d.exceptions.DegeneratedLine2DException;
 import math.geom2d.*;
 import math.geom2d.circulinear.CirculinearElement2D;
 import math.utils.EqualUtils;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Line segment, defined as the set of points located between the two end
@@ -163,7 +164,7 @@ public class LineSegment2D extends AbstractLine2D
      */
     @Override
     public double length() {
-        return Math.hypot(dx, dy);
+        return FastMath.hypot(dx, dy);
     }
 
     /* (non-Javadoc)
@@ -171,7 +172,7 @@ public class LineSegment2D extends AbstractLine2D
      */
     public LineSegment2D parallel(double d) {
         // Checks line segment has a valid length
-        double d2 = Math.hypot(dx, dy);
+        double d2 = FastMath.hypot(dx, dy);
         if (Math.abs(d2) < Tolerance2D.get()) {
             return this;
 //            throw new DegeneratedLine2DException(

@@ -3,7 +3,6 @@
  */
 
 package math.geom2d.conic;
-import static java.lang.Math.*;
 
 
 import math.geom2d.AffineTransform2D;
@@ -13,6 +12,7 @@ import math.geom2d.Tolerance2D;
 import math.geom2d.domain.ContourArray2D;
 import math.geom2d.exceptions.NonInvertibleTransform2DException;
 import math.geom2d.line.StraightLine2D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Generic class providing utilities for manipulating conics. Provides in
@@ -50,7 +50,7 @@ public class Conics2D {
 
         double theta0 = 0;
         // Check if b is zero
-		if (abs(b) < eps) {
+		if (Math.abs(b) < eps) {
             // Simply keep the same coefficients
             a1 = a;
             b1 = b;
@@ -60,20 +60,20 @@ public class Conics2D {
             f1 = f;
             theta0 = 0;
         } else {
-            // determine rotation angle (between 0 and PI/2).
-			if (abs(a - c) < eps)
-				theta0 = PI / 4; // conic symmetric wrt diagonal
+            // determine rotation angle (between 0 and Math.PI/2).
+			if (Math.abs(a - c) < eps)
+				theta0 = Math.PI / 4; // conic symmetric wrt diagonal
 			else
-				theta0 = Angle2D.formatAngle(atan2(b, a - c) / 2);
+				theta0 = Angle2D.formatAngle(FastMath.atan2(b, a - c) / 2);
 
 			if (debug)
-				System.out.println("conic main angle: " + toDegrees(theta0));
+				System.out.println("conic main angle: " + Math.toDegrees(theta0));
 
 			// computation shortcuts
-			double cot = cos(theta0);
-			double sit = sin(theta0);
-			double co2t = cos(2 * theta0);
-			double si2t = sin(2 * theta0);
+			double cot = FastMath.cos(theta0);
+			double sit = FastMath.sin(theta0);
+			double co2t = FastMath.cos(2 * theta0);
+			double si2t = FastMath.sin(2 * theta0);
 			double cot2 = cot * cot;
 			double sit2 = sit * sit;
 
@@ -87,7 +87,7 @@ public class Conics2D {
         }
 
         // small control on the value of b1
-		if (abs(b1) > eps) {
+		if (Math.abs(b1) > eps) {
             System.err.println(
             		"Conic2DUtils.reduceConic: " + 
             		"conic was not correctly transformed");
@@ -95,26 +95,26 @@ public class Conics2D {
         }
 
 		// Test degenerate cases
-		if (abs(a) < eps && abs(c) < eps) {
-			if (abs(d) > eps || abs(e) > eps)
+		if (Math.abs(a) < eps && Math.abs(c) < eps) {
+			if (Math.abs(d) > eps || Math.abs(e) > eps)
 				return new ConicStraightLine2D(d, e, f);
 			else
 				return null; // TODO: throw exception ?
         }
 
         // Case of a parabola
-		if (abs(a1) < eps) {
+		if (Math.abs(a1) < eps) {
             // case of a1 close to 0 -> parabola parallel to horizontal axis
             if (debug)
                 System.out.println("horizontal parabola");
 
 			// Check degenerate case d=0
-			if (abs(d1) < eps) {
+			if (Math.abs(d1) < eps) {
 				double delta = e1 * e1 - 4 * c1 * f1;
 				if (delta >= 0) {
 					// find the 2 roots
 					double ys = -e1 / 2.0 / c1;
-					double dist = sqrt(delta) / 2.0 / c1;
+					double dist = FastMath.sqrt(delta) / 2.0 / c1;
 					Point2D center = new Point2D(0, ys)
 							.transform(AffineTransform2D.createRotation(theta0));
 					return new ConicTwoLines2D(center, dist, theta0);
@@ -132,20 +132,20 @@ public class Conics2D {
 			double ys = -e2 * .5 / c2;
             
             // create and return result
-			return new Parabola2D(xs, ys, c2, theta0 - PI / 2);
+			return new Parabola2D(xs, ys, c2, theta0 - Math.PI / 2);
 
-		} else if (abs(c1) < eps) {
+		} else if (Math.abs(c1) < eps) {
 			// Case of c1 close to 0 -> parabola parallel to vertical axis
 			if (debug)
 				System.out.println("vertical parabola");
 
             // Check degenerate case d=0
-			if (abs(e1) < eps) {
+			if (Math.abs(e1) < eps) {
 				double delta = d1 * d1 - 4 * a1 * f1;
 				if (delta >= 0) {
 					// find the 2 roots
 					double xs = -d1 / 2.0 / a1;
-					double dist = sqrt(delta) / 2.0 / a1;
+					double dist = FastMath.sqrt(delta) / 2.0 / a1;
 					Point2D center = new Point2D(0, xs)
 							.transform(AffineTransform2D.createRotation(theta0));
 					return new ConicTwoLines2D(center, dist, theta0);
@@ -188,10 +188,10 @@ public class Conics2D {
 			if (debug)
 				System.out.println("ellipse");
 			if (at > bt)
-				return new Ellipse2D(center, sqrt(at), sqrt(bt), theta0);
+				return new Ellipse2D(center, FastMath.sqrt(at), FastMath.sqrt(bt), theta0);
 			else
-				return new Ellipse2D(center, sqrt(bt), sqrt(at),
-						Angle2D.formatAngle(theta0 + PI / 2));
+				return new Ellipse2D(center, FastMath.sqrt(bt), FastMath.sqrt(at),
+						Angle2D.formatAngle(theta0 + Math.PI / 2));
         }
 
         // remaining case is the hyperbola
@@ -200,11 +200,11 @@ public class Conics2D {
 		if (at > 0) {
 			if (debug)
 				System.out.println("east-west hyperbola");
-			return new Hyperbola2D(center, sqrt(at), sqrt(-bt), theta0);
+			return new Hyperbola2D(center, FastMath.sqrt(at), FastMath.sqrt(-bt), theta0);
 		} else {
 			if (debug)
 				System.out.println("north-south hyperbola");
-			return new Hyperbola2D(center, sqrt(bt), sqrt(-at), theta0 + PI / 2);
+			return new Hyperbola2D(center, FastMath.sqrt(bt), FastMath.sqrt(-at), theta0 + Math.PI / 2);
         }
     }
 

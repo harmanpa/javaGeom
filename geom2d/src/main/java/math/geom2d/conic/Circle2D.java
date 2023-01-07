@@ -25,8 +25,6 @@
  */
 package math.geom2d.conic;
 
-import static java.lang.Math.*;
-
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.util.ArrayList;
@@ -45,6 +43,7 @@ import math.geom2d.line.StraightLine2D;
 import math.geom2d.polygon.LinearRing2D;
 import math.geom2d.transform.CircleInversion2D;
 import math.utils.EqualUtils;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * A circle in the plane, defined as the set of points located at an equal
@@ -119,14 +118,14 @@ public class Circle2D extends AbstractSmoothCurve2D
         double d = Point2D.distance(center1, center2);
 
         // case of no intersection
-        if (d < abs(r1 - r2) || d > (r1 + r2)) {
+        if (d < Math.abs(r1 - r2) || d > (r1 + r2)) {
             return new ArrayList<>(0);
         }
 
         // Angle of line from center1 to center2
         double angle = Angle2D.horizontalAngle(center1, center2);
 
-        if (d == abs(r1 - r2) || d == (r1 + r2)) {
+        if (d == Math.abs(r1 - r2) || d == (r1 + r2)) {
             Collection<Point2D> r = new ArrayList<>(1);
             r.add(Point2D.createPolar(center1, r1, angle));
             return r;
@@ -137,15 +136,15 @@ public class Circle2D extends AbstractSmoothCurve2D
         Point2D tmp = Point2D.createPolar(center1, d1, angle);
 
         // distance between intermediate point and each intersection
-        double h = sqrt(r1 * r1 - d1 * d1);
+        double h = FastMath.sqrt(r1 * r1 - d1 * d1);
 
         // create empty array
         ArrayList<Point2D> intersections = new ArrayList<>(2);
 
         // Add the 2 intersection points
-        Point2D p1 = Point2D.createPolar(tmp, h, angle + PI / 2);
+        Point2D p1 = Point2D.createPolar(tmp, h, angle + Math.PI / 2);
         intersections.add(p1);
-        Point2D p2 = Point2D.createPolar(tmp, h, angle - PI / 2);
+        Point2D p2 = Point2D.createPolar(tmp, h, angle - Math.PI / 2);
         intersections.add(p2);
 
         return intersections;
@@ -188,7 +187,7 @@ public class Circle2D extends AbstractSmoothCurve2D
 
         // if the distance is the radius of the circle, return the
         // intersection point
-        if (abs(dist - radius) < Tolerance2D.get()) {
+        if (Math.abs(dist - radius) < Tolerance2D.get()) {
             if (line.containsProjection(inter) && circle.containsProjection(inter)) {
                 intersections.add(inter);
             }
@@ -201,7 +200,7 @@ public class Circle2D extends AbstractSmoothCurve2D
         // compute angle of the line, and distance between 'inter' point and
         // each intersection point
         double angle = line.horizontalAngle();
-        double d2 = sqrt(radius * radius - dist * dist);
+        double d2 = FastMath.sqrt(radius * radius - dist * dist);
 
         // Compute position and angle of intersection points
         Point2D p1 = Point2D.createPolar(inter, d2, angle + Math.PI);
@@ -248,8 +247,8 @@ public class Circle2D extends AbstractSmoothCurve2D
         double d = (dist * dist + r1 * r1 - r2 * r2) * .5 / dist;
 
         // pre-compute trigonometric functions
-        double cot = Math.cos(angle);
-        double sit = Math.sin(angle);
+        double cot = FastMath.cos(angle);
+        double sit = FastMath.sin(angle);
 
         // compute parameters of the line
         double x0 = p1.x() + d * cot;
@@ -386,7 +385,7 @@ public class Circle2D extends AbstractSmoothCurve2D
      * major axis.
      */
     public Vector2D vector1() {
-        return new Vector2D(cos(theta), sin(theta));
+        return new Vector2D(FastMath.cos(theta), FastMath.sin(theta));
     }
 
     /**
@@ -395,9 +394,9 @@ public class Circle2D extends AbstractSmoothCurve2D
      */
     public Vector2D vector2() {
         if (direct) {
-            return new Vector2D(-sin(theta), cos(theta));
+            return new Vector2D(-FastMath.sin(theta), FastMath.cos(theta));
         } else {
-            return new Vector2D(sin(theta), -cos(theta));
+            return new Vector2D(FastMath.sin(theta), -FastMath.cos(theta));
         }
     }
 
@@ -481,7 +480,7 @@ public class Circle2D extends AbstractSmoothCurve2D
      */
     @Override
     public Circle2D parallel(double d) {
-        double rp = max(direct ? r + d : r - d, 0);
+        double rp = Math.max(direct ? r + d : r - d, 0);
         return new Circle2D(xc, yc, rp, direct, theta);
     }
 
@@ -490,11 +489,11 @@ public class Circle2D extends AbstractSmoothCurve2D
      */
     @Override
     public double length() {
-        return PI * 2 * r;
+        return Math.PI * 2 * r;
     }
 
     /**
-     * Returns the geodesic leangth until the given position.
+     * Returns the geodesic length until the given position.
      *
      * @see math.geom2d.circulinear.CirculinearCurve2D#length(double)
      */
@@ -595,7 +594,7 @@ public class Circle2D extends AbstractSmoothCurve2D
         if (this.signedDistance(point) > 0) {
             return 0;
         } else {
-            return direct ? PI * 2 : -PI * 2;
+            return direct ? Math.PI * 2 : -Math.PI * 2;
         }
     }
 
@@ -605,10 +604,10 @@ public class Circle2D extends AbstractSmoothCurve2D
         if (!direct) {
             t = -t;
         }
-        double cot = cos(theta);
-        double sit = sin(theta);
-        double cost = cos(t);
-        double sint = sin(t);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
+        double cost = FastMath.cos(t);
+        double sint = FastMath.sin(t);
 
         if (direct) {
             return new Vector2D(
@@ -713,7 +712,7 @@ public class Circle2D extends AbstractSmoothCurve2D
      */
     @Override
     public double t1() {
-        return 2 * PI;
+        return 2 * Math.PI;
     }
 
     /**
@@ -724,7 +723,7 @@ public class Circle2D extends AbstractSmoothCurve2D
     @Override
     public Point2D point(double t) {
         double angle = direct ? theta + t : theta - t;
-        return new Point2D(xc + r * cos(angle), yc + r * sin(angle));
+        return new Point2D(xc + r * FastMath.cos(angle), yc + r * FastMath.sin(angle));
     }
 
     /**
@@ -734,7 +733,7 @@ public class Circle2D extends AbstractSmoothCurve2D
      */
     @Override
     public Point2D firstPoint() {
-        return new Point2D(xc + r * cos(theta), yc + r * sin(theta));
+        return new Point2D(xc + r * FastMath.cos(theta), yc + r * FastMath.sin(theta));
     }
 
     /**
@@ -744,7 +743,7 @@ public class Circle2D extends AbstractSmoothCurve2D
      */
     @Override
     public Point2D lastPoint() {
-        return new Point2D(xc + r * cos(theta), yc + r * sin(theta));
+        return new Point2D(xc + r * FastMath.cos(theta), yc + r * FastMath.sin(theta));
     }
 
     @Override
@@ -803,12 +802,12 @@ public class Circle2D extends AbstractSmoothCurve2D
     // methods of Shape2D interface
     @Override
     public double distance(Point2D point) {
-        return abs(Point2D.distance(xc, yc, point.x(), point.y()) - r);
+        return Math.abs(Point2D.distance(xc, yc, point.x(), point.y()) - r);
     }
 
     @Override
     public double distance(double x, double y) {
-        return abs(Point2D.distance(xc, yc, x, y) - r);
+        return Math.abs(Point2D.distance(xc, yc, x, y) - r);
     }
 
     /**
@@ -873,29 +872,29 @@ public class Circle2D extends AbstractSmoothCurve2D
      */
     @Override
     public boolean contains(double x, double y) {
-        return abs(distance(x, y)) <= Tolerance2D.get();
+        return Math.abs(distance(x, y)) <= Tolerance2D.get();
     }
 
     @Override
     public java.awt.geom.GeneralPath appendPath(java.awt.geom.GeneralPath path) {
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         double cost, sint;
 
         if (direct) {
             // Counter-clockwise circle
-            for (double t = .1; t < PI * 2; t += .1) {
-                cost = cos(t);
-                sint = sin(t);
+            for (double t = .1; t < Math.PI * 2; t += .1) {
+                cost = FastMath.cos(t);
+                sint = FastMath.sin(t);
                 path.lineTo(
                         (float) (xc + r * cost * cot - r * sint * sit),
                         (float) (yc + r * cost * sit + r * sint * cot));
             }
         } else {
             // Clockwise circle
-            for (double t = .1; t < PI * 2; t += .1) {
-                cost = cos(t);
-                sint = sin(t);
+            for (double t = .1; t < Math.PI * 2; t += .1) {
+                cost = FastMath.cos(t);
+                sint = FastMath.sin(t);
                 path.lineTo(
                         (float) (xc + r * cost * cot + r * sint * sit),
                         (float) (yc + r * cost * sit - r * sint * cot));
@@ -929,13 +928,13 @@ public class Circle2D extends AbstractSmoothCurve2D
 
         Circle2D circle = (Circle2D) obj;
 
-        if (abs(circle.xc - xc) > eps) {
+        if (Math.abs(circle.xc - xc) > eps) {
             return false;
         }
-        if (abs(circle.yc - yc) > eps) {
+        if (Math.abs(circle.yc - yc) > eps) {
             return false;
         }
-        if (abs(circle.r - r) > eps) {
+        if (Math.abs(circle.r - r) > eps) {
             return false;
         }
         if (circle.direct != direct) {

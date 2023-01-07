@@ -41,7 +41,6 @@ import math.geom2d.curve.CurveSet2D;
 import math.geom2d.curve.PolyCurve2D;
 import math.geom2d.curve.SmoothCurve2D;
 import math.geom2d.line.StraightLine2D;
-import static java.lang.Math.*;
 
 /**
  * A PolyOrientedCurve2D is a set of piecewise smooth curve arcs, such that the
@@ -192,7 +191,7 @@ public class PolyOrientedCurve2D<T extends ContinuousOrientedCurve2D> extends
         }
 
         // Test case of point equal to last position
-        if (round(pos) == 2 * n - 1) {
+        if (Math.round(pos) == 2 * n - 1) {
             pos = 0;
             i = 0;
         }
@@ -218,12 +217,12 @@ public class PolyOrientedCurve2D<T extends ContinuousOrientedCurve2D> extends
         // check if angle between vectors is acute or obtuse
         double diff = Angle2D.angle(v1, v2);
         double eps = 1e-12;
-        if (diff < PI - eps) {
+        if (diff < Math.PI - eps) {
             // Acute angle
             return in1 && in2;
         }
 
-        if (diff > PI + eps) {
+        if (diff > Math.PI + eps) {
             // obtuse angle
             return in1 || in2;
         }

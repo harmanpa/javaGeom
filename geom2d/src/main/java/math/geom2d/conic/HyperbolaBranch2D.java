@@ -1,7 +1,6 @@
 package math.geom2d.conic;
 
 import math.geom2d.exceptions.UnboundedShape2DException;
-import static java.lang.Math.*;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -13,6 +12,7 @@ import math.geom2d.domain.Domain2D;
 import math.geom2d.domain.GenericDomain2D;
 import math.geom2d.domain.SmoothContour2D;
 import math.geom2d.line.LinearShape2D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Branch of an Hyperbola2D.
@@ -87,9 +87,9 @@ public class HyperbolaBranch2D extends AbstractSmoothCurve2D
     public double curvature(double t) {
         double a = hyperbola.a;
         double b = hyperbola.b;
-        double asih = a * sinh(t);
-        double bcoh = b * cosh(t);
-        return (a * b) / pow(hypot(bcoh, asih), 3);
+        double asih = a * FastMath.sinh(t);
+        double bcoh = b * FastMath.cosh(t);
+        return (a * b) / FastMath.pow(FastMath.hypot(bcoh, asih), 3);
     }
 
     public Vector2D tangent(double t) {
@@ -98,14 +98,14 @@ public class HyperbolaBranch2D extends AbstractSmoothCurve2D
         double theta = hyperbola.theta;
         double dx, dy;
         if (positive) {
-            dx = a * sinh(t);
-            dy = b * cosh(t);
+            dx = a * FastMath.sinh(t);
+            dy = b * FastMath.cosh(t);
         } else {
-            dx = -a * sinh(t);
-            dy = -b * cosh(t);
+            dx = -a * FastMath.sinh(t);
+            dy = -b * FastMath.cosh(t);
         }
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         return new Vector2D(dx * cot - dy * sit, dx * sit + dy * cot);
     }
 
@@ -185,20 +185,20 @@ public class HyperbolaBranch2D extends AbstractSmoothCurve2D
 
         double x, y;
         if (positive) {
-            x = cosh(t);
+            x = FastMath.cosh(t);
             if (Double.isInfinite(x)) {
-                x = abs(t);
+                x = Math.abs(t);
             }
-            y = sinh(t);
+            y = FastMath.sinh(t);
             if (Double.isInfinite(y)) {
                 y = t;
             }
         } else {
-            x = -cosh(t);
+            x = -FastMath.cosh(t);
             if (Double.isInfinite(x)) {
-                x = -abs(t);
+                x = -Math.abs(t);
             }
-            y = -sinh(t);
+            y = -FastMath.sinh(t);
             if (Double.isInfinite(y)) {
                 y = -t;
             }
@@ -209,13 +209,13 @@ public class HyperbolaBranch2D extends AbstractSmoothCurve2D
     public double position(Point2D point) {
         Point2D pt = hyperbola.toLocal(point);
         double y = this.positive ? pt.y() : -pt.y();
-        return log(y + hypot(y, 1));
+        return FastMath.log(y + FastMath.hypot(y, 1));
     }
 
     public double project(Point2D point) {
         Point2D pt = hyperbola.toLocal(point);
         double y = this.positive ? pt.y() : -pt.y();
-        return log(y + hypot(y, 1));
+        return FastMath.log(y + FastMath.hypot(y, 1));
     }
 
     public HyperbolaBranch2D reverse() {

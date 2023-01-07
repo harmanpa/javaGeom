@@ -25,8 +25,6 @@
  */
 package math.geom2d.conic;
 
-import static java.lang.Math.*;
-
 import java.awt.Graphics2D;
 import java.util.Collection;
 import java.util.Locale;
@@ -45,6 +43,7 @@ import math.geom2d.line.StraightLine2D;
 import math.geom2d.polygon.Polyline2D;
 import math.geom2d.transform.CircleInversion2D;
 import math.utils.EqualUtils;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * A circle arc, defined by the center and the radius of the containing circle,
@@ -77,8 +76,8 @@ public class CircleArc2D extends AbstractSmoothCurve2D
     /**
      * The signed angle extent, in radians between -2PI and +2PI.
      */
-    protected double angleExtent = PI;
-       
+    protected double angleExtent = Math.PI;
+
     // ====================================================================
     // constructors
     /**
@@ -86,7 +85,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
      * radius equal to 1. Start angle is 0, and angle extent is PI/2.
      */
     public CircleArc2D() {
-        this(0, 0, 1, 0, PI / 2);
+        this(0, 0, 1, 0, Math.PI / 2);
     }
 
     // Constructors based on Circles
@@ -136,9 +135,9 @@ public class CircleArc2D extends AbstractSmoothCurve2D
         this.angleExtent = endAngle;
         this.angleExtent = Angle2D.formatAngle(endAngle - startAngle);
         if (!direct) {
-            this.angleExtent = this.angleExtent - PI * 2;
+            this.angleExtent = this.angleExtent - Math.PI * 2;
         }
-        if(Double.isNaN(xc) || Double.isNaN(yc)) {
+        if (Double.isNaN(xc) || Double.isNaN(yc)) {
             System.out.println();
         }
     }
@@ -176,7 +175,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
      */
     public double getArea() {
         // Get the area of the underlying circle
-        double c_area = Math.PI * Math.pow(this.circle.radius(), 2.0);
+        double c_area = Math.PI * FastMath.pow(this.circle.radius(), 2.0);
         // What fraction of the underlying circle does this arc represent?
         double c_seg = Math.abs(4 * Math.PI / this.angleExtent);
 
@@ -193,7 +192,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
             return getArea();
         }
 
-        return (circle.r * circle.r * (angleExtent - sin(angleExtent))) / 2;
+        return (circle.r * circle.r * (angleExtent - FastMath.sin(angleExtent))) / 2;
     }
 
     public boolean containsAngle(double angle) {
@@ -208,8 +207,8 @@ public class CircleArc2D extends AbstractSmoothCurve2D
         if (position < 0) {
             position = 0;
         }
-        if (position > abs(angleExtent)) {
-            position = abs(angleExtent);
+        if (position > Math.abs(angleExtent)) {
+            position = Math.abs(angleExtent);
         }
         if (angleExtent < 0) {
             position = -position;
@@ -221,8 +220,8 @@ public class CircleArc2D extends AbstractSmoothCurve2D
      * Converts position on curve to angle with circle center.
      */
     private double positionToAngle(double t) {
-        if (t > abs(angleExtent)) {
-            t = abs(angleExtent);
+        if (t > Math.abs(angleExtent)) {
+            t = Math.abs(angleExtent);
         }
         if (t < 0) {
             t = 0;
@@ -285,13 +284,13 @@ public class CircleArc2D extends AbstractSmoothCurve2D
             return null;
         }
         // If radius is less than zero the center moves away
-        double dist2 = Math.signum(dist) * Math.sqrt(Math.pow(dist, 2) - Math.pow(firstPoint().distance(lastPoint()) / 2, 2));
+        double dist2 = Math.signum(dist) * FastMath.sqrt(Math.pow(dist, 2) - FastMath.pow(firstPoint().distance(lastPoint()) / 2, 2));
         Point2D point = StraightLine2D.createMedian(firstPoint(), lastPoint()).intersection(StraightLine2D.createParallel(new LineSegment2D(firstPoint(), lastPoint()), dist2));
         return new PointElement2D(point);
     }
 
     public double length() {
-        return circle.radius() * abs(angleExtent);
+        return circle.radius() * Math.abs(angleExtent);
     }
 
     /*
@@ -452,9 +451,9 @@ public class CircleArc2D extends AbstractSmoothCurve2D
 
         double r = circle.radius();
         if (angleExtent > 0) {
-            return new Vector2D(-r * sin(t), r * cos(t));
+            return new Vector2D(-r * FastMath.sin(t), r * FastMath.cos(t));
         } else {
-            return new Vector2D(r * sin(t), -r * cos(t));
+            return new Vector2D(r * FastMath.sin(t), -r * FastMath.cos(t));
         }
     }
 
@@ -517,7 +516,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
      * absolute angle of angle extent of this arc.
      */
     public double t1() {
-        return abs(this.angleExtent);
+        return Math.abs(this.angleExtent);
     }
 
     /**
@@ -543,7 +542,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
 
         // return either 0 or 1, depending on which extremity is closer.
         return firstPoint().distance(point)
-                < lastPoint().distance(point) ? 0 : abs(angleExtent);
+                < lastPoint().distance(point) ? 0 : Math.abs(angleExtent);
     }
 
     /**
@@ -574,7 +573,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
         if (p1.distance(point) < p2.distance(point)) {
             return 0;
         } else {
-            return abs(angleExtent);
+            return Math.abs(angleExtent);
         }
     }
 
@@ -610,7 +609,8 @@ public class CircleArc2D extends AbstractSmoothCurve2D
     /**
      * Returns the circle arc which refers to the same parent circle, but with
      * exchanged extremities.
-     * @return 
+     *
+     * @return
      */
     @Override
     public CircleArc2D reverse() {
@@ -635,9 +635,9 @@ public class CircleArc2D extends AbstractSmoothCurve2D
         double angle = Angle2D.horizontalAngle(circle.xc, circle.yc, x, y);
 
         if (containsAngle(angle)) {
-            return abs(Point2D.distance(circle.xc, circle.yc, x, y) - circle.r);
+            return Math.abs(Point2D.distance(circle.xc, circle.yc, x, y) - circle.r);
         } else {
-            return min(firstPoint().distance(x, y), lastPoint().distance(x, y));
+            return Math.min(firstPoint().distance(x, y), lastPoint().distance(x, y));
         }
     }
 
@@ -702,7 +702,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
 
         // compute factor of transform
         double[] coefs = trans.coefficients();
-        double factor = Math.hypot(coefs[0], coefs[3]);
+        double factor = FastMath.hypot(coefs[0], coefs[3]);
 
         // compute parameters of new circle arc
         double xc = center.x(), yc = center.y();
@@ -727,7 +727,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
     public boolean contains(double x, double y) {
         // Check if radius is correct
         double r = circle.radius();
-        if (abs(Point2D.distance(circle.xc, circle.yc, x, y) - r) > Tolerance2D.get()) {
+        if (Math.abs(Point2D.distance(circle.xc, circle.yc, x, y) - r) > Tolerance2D.get()) {
             return false;
         }
 
@@ -760,10 +760,10 @@ public class CircleArc2D extends AbstractSmoothCurve2D
         double y1 = p1.y();
 
         // intialize min and max coords
-        double xmin = min(x0, x1);
-        double xmax = max(x0, x1);
-        double ymin = min(y0, y1);
-        double ymax = max(y0, y1);
+        double xmin = Math.min(x0, x1);
+        double xmax = Math.max(x0, x1);
+        double ymin = Math.min(y0, y1);
+        double ymax = Math.max(y0, y1);
 
         // Pre-computations
         Point2D center = circle.center();
@@ -773,19 +773,19 @@ public class CircleArc2D extends AbstractSmoothCurve2D
         boolean direct = angleExtent >= 0;
 
         // check cases arc contains one maximum
-        if (Angle2D.containsAngle(startAngle, endAngle, PI / 2 + circle.theta, direct)) {
-            ymax = max(ymax, yc + circle.r);
+        if (Angle2D.containsAngle(startAngle, endAngle, Math.PI / 2 + circle.theta, direct)) {
+            ymax = Math.max(ymax, yc + circle.r);
         }
-        if (Angle2D.containsAngle(startAngle, endAngle, 3 * PI / 2
+        if (Angle2D.containsAngle(startAngle, endAngle, 3 * Math.PI / 2
                 + circle.theta, direct)) {
-            ymin = min(ymin, yc - circle.r);
+            ymin = Math.min(ymin, yc - circle.r);
         }
         if (Angle2D.containsAngle(startAngle, endAngle, circle.theta, direct)) {
-            xmax = max(xmax, xc + circle.r);
+            xmax = Math.max(xmax, xc + circle.r);
         }
-        if (Angle2D.containsAngle(startAngle, endAngle, PI + circle.theta,
+        if (Angle2D.containsAngle(startAngle, endAngle, Math.PI + circle.theta,
                 direct)) {
-            xmin = min(xmin, xc - circle.r);
+            xmin = Math.min(xmin, xc - circle.r);
         }
 
         // return a bounding with computed limits
@@ -794,19 +794,19 @@ public class CircleArc2D extends AbstractSmoothCurve2D
 
     public java.awt.geom.GeneralPath appendPath(java.awt.geom.GeneralPath path) {
         // number of curves to approximate the arc
-        int nSeg = (int) ceil(abs(angleExtent) / (PI / 2));
-        nSeg = min(nSeg, 4);
+        int nSeg = (int) Math.ceil(Math.abs(angleExtent) / (Math.PI / 2));
+        nSeg = Math.min(nSeg, 4);
 
         // angular extent of each curve
         double ext = angleExtent / nSeg;
 
         // compute coefficient 
-        double k = btan(abs(ext));
+        double k = btan(Math.abs(ext));
 
         for (int i = 0; i < nSeg; i++) {
             // position of the two extremities
-            double ti0 = abs(i * ext);
-            double ti1 = abs((i + 1) * ext);
+            double ti0 = Math.abs(i * ext);
+            double ti1 = Math.abs((i + 1) * ext);
 
             // extremity points
             Point2D p1 = this.point(ti0);
@@ -907,7 +907,7 @@ public class CircleArc2D extends AbstractSmoothCurve2D
      */
     private static double btan(double increment) {
         increment /= 2.0;
-        return 4.0 / 3.0 * sin(increment) / (1.0 + cos(increment));
+        return 4.0 / 3.0 * FastMath.sin(increment) / (1.0 + FastMath.cos(increment));
     }
 
     // ===================================================================
@@ -927,25 +927,25 @@ public class CircleArc2D extends AbstractSmoothCurve2D
 
         CircleArc2D arc = (CircleArc2D) obj;
         // test whether supporting ellipses have same support
-        if (abs(circle.xc - arc.circle.xc) > eps) {
+        if (Math.abs(circle.xc - arc.circle.xc) > eps) {
             return false;
         }
-        if (abs(circle.yc - arc.circle.yc) > eps) {
+        if (Math.abs(circle.yc - arc.circle.yc) > eps) {
             return false;
         }
-        if (abs(circle.r - arc.circle.r) > eps) {
+        if (Math.abs(circle.r - arc.circle.r) > eps) {
             return false;
         }
-        if (abs(circle.theta - arc.circle.theta) > eps) {
+        if (Math.abs(circle.theta - arc.circle.theta) > eps) {
             return false;
         }
 
         // test is angles are the same
-        if (abs(Angle2D.formatAngle(startAngle)
+        if (Math.abs(Angle2D.formatAngle(startAngle)
                 - Angle2D.formatAngle(arc.startAngle)) > eps) {
             return false;
         }
-        if (abs(Angle2D.formatAngle(angleExtent)
+        if (Math.abs(Angle2D.formatAngle(angleExtent)
                 - Angle2D.formatAngle(arc.angleExtent)) > eps) {
             return false;
         }

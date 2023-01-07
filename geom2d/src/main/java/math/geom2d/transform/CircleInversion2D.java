@@ -26,6 +26,7 @@ package math.geom2d.transform;
 import math.geom2d.Angle2D;
 import math.geom2d.Point2D;
 import math.geom2d.conic.Circle2D;
+import org.apache.commons.math3.util.FastMath;
 
 // Imports
 /**
@@ -135,8 +136,8 @@ public class CircleInversion2D implements Bijection2D {
         for (int i = 0; i < src.length; i++) {
             d = Point2D.distance(src[i].x(), src[i].y(), xc, yc);
             d = r * r / d;
-            theta = Math.atan2(src[i].y() - yc, src[i].x() - xc);
-            dst[i] = new Point2D(d * Math.cos(theta), d * Math.sin(theta));
+            theta = FastMath.atan2(src[i].y() - yc, src[i].x() - xc);
+            dst[i] = new Point2D(d * FastMath.cos(theta), d * FastMath.sin(theta));
         }
 
         return dst;

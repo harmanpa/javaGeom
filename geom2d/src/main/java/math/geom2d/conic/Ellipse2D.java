@@ -23,7 +23,6 @@
 // package
 package math.geom2d.conic;
 
-import static java.lang.Math.*;
 
 import java.awt.Graphics2D;
 import java.awt.Shape;
@@ -40,6 +39,7 @@ import math.geom2d.exceptions.NonInvertibleTransform2DException;
 import math.geom2d.line.LinearShape2D;
 import math.geom2d.polygon.LinearRing2D;
 import math.utils.EqualUtils;
+import org.apache.commons.math3.util.FastMath;
 
 // Imports
 /**
@@ -78,7 +78,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
 //            return new Circle2D(xc, yc, chord / 2);
 
         double r1 = chord / 2;
-        double r2 = sqrt(chord * chord - dist * dist) / 2;
+        double r2 = FastMath.sqrt(chord * chord - dist * dist) / 2;
 
         return new Ellipse2D(xc, yc, r1, r2, theta);
     }
@@ -109,12 +109,12 @@ public class Ellipse2D extends AbstractSmoothCurve2D
 
         // Compute orientation angle of the ellipse
         double theta;
-        if (abs(A - C) < Tolerance2D.get()) {
-            theta = PI / 4;
+        if (Math.abs(A - C) < Tolerance2D.get()) {
+            theta = Math.PI / 4;
         } else {
-            theta = atan2(B, (A - C)) / 2.0;
+            theta = FastMath.atan2(B, (A - C)) / 2.0;
             if (B < 0) {
-                theta -= PI;
+                theta -= Math.PI;
             }
             theta = Angle2D.formatAngle(theta);
         }
@@ -126,26 +126,26 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         // extract coefficients f if present
         double f = 1;
         if (coefs2.length > 5) {
-            f = abs(coefs[5]);
+            f = Math.abs(coefs[5]);
         }
 
-        assert abs(coefs2[1] / f) < Tolerance2D.get() :
+        assert Math.abs(coefs2[1] / f) < Tolerance2D.get() :
                 "Second conic coefficient should be zero";
 
         // extract major and minor axis lengths, ensuring r1 is greater
         double r1, r2;
         if (coefs2[0] < coefs2[2]) {
-            r1 = sqrt(f / coefs2[0]);
-            r2 = sqrt(f / coefs2[2]);
+            r1 = FastMath.sqrt(f / coefs2[0]);
+            r2 = FastMath.sqrt(f / coefs2[2]);
         } else {
-            r1 = sqrt(f / coefs2[2]);
-            r2 = sqrt(f / coefs2[0]);
-            theta = Angle2D.formatAngle(theta + PI / 2);
-            theta = Math.min(theta, Angle2D.formatAngle(theta + PI));
+            r1 = FastMath.sqrt(f / coefs2[2]);
+            r2 = FastMath.sqrt(f / coefs2[0]);
+            theta = Angle2D.formatAngle(theta + Math.PI / 2);
+            theta = Math.min(theta, Angle2D.formatAngle(theta + Math.PI));
         }
 
 //		// If both semi-axes are equal, return a circle
-//		if (abs(r1 - r2) < Tolerance2D.get())
+//		if (Math.abs(r1 - r2) < Tolerance2D.get())
 //			return new Circle2D(0, 0, r1);
         // return the reduced ellipse
         return new Ellipse2D(0, 0, r1, r2, theta);
@@ -169,8 +169,8 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         // precompute some parts
         double r1Sq = r1 * r1;
         double r2Sq = r2 * r2;
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         double cotSq = cot * cot;
         double sitSq = sit * sit;
 
@@ -220,12 +220,12 @@ public class Ellipse2D extends AbstractSmoothCurve2D
 
         // Compute ellipse semi-axis length
         double diff = Ixx - Iyy;
-        double common = sqrt(diff * diff + 4 * Ixy * Ixy);
-        double r1 = sqrt(2) * sqrt(Ixx + Iyy + common);
-        double r2 = sqrt(2) * sqrt(Ixx + Iyy - common);
+        double common = FastMath.sqrt(diff * diff + 4 * Ixy * Ixy);
+        double r1 = FastMath.sqrt(2) * FastMath.sqrt(Ixx + Iyy + common);
+        double r2 = FastMath.sqrt(2) * FastMath.sqrt(Ixx + Iyy - common);
 
         // ellipse orientation
-        double theta = atan2(2 * Ixy, Ixx - Iyy) / 2;
+        double theta = FastMath.atan2(2 * Ixy, Ixx - Iyy) / 2;
 
         // create ellipse object
         return new Ellipse2D(xc, yc, r1, r2, theta);
@@ -250,7 +250,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
     protected double r2;
 
     /**
-     * Orientation of major semi-axis, in radians, between 0 and 2*PI.
+     * Orientation of major semi-axis, in radians, between 0 and 2*Math.PI.
      */
     protected double theta = 0;
 
@@ -333,9 +333,9 @@ public class Ellipse2D extends AbstractSmoothCurve2D
      * @return distance of ellipse from ellipse center in direction theta
      */
     public double getRho(double angle) {
-        double cot = cos(angle - theta);
-        double sit = cos(angle - theta);
-        return r1 * r2 / hypot(r2 * cot, r1 * sit);
+        double cot = FastMath.cos(angle - theta);
+        double sit = FastMath.cos(angle - theta);
+        return r1 * r2 / FastMath.hypot(r2 * cot, r1 * sit);
     }
 
     public Point2D projectedPoint(Point2D point) {
@@ -373,14 +373,14 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         } else {
             la = r2;
             lb = r1;
-            theta = this.theta + PI / 2;
+            theta = this.theta + Math.PI / 2;
             double tmp = x;
             x = -y;
             y = tmp;
         }
 
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         double tmpx = x, tmpy = y;
         x = tmpx * cot - tmpy * sit;
         y = tmpx * sit + tmpy * cot;
@@ -399,7 +399,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         double r2 = x * x;
         double g2r2ma2 = g2 * (r2 - ae2);
         double g2r2ma2pz2 = g2r2ma2 + z2;
-        double dist = sqrt(r2 + z2);
+        double dist = FastMath.sqrt(r2 + z2);
         boolean inside = g2r2ma2pz2 <= 0;
 
         // point at the center
@@ -420,12 +420,12 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         double c = g2r2ma2pz2;
         double b2 = b * b;
         double ac = a * c;
-        double k = c / (b + sqrt(b2 - ac));
-        // double lambda =atan2(cart.y, cart.x);
-        double phi = atan2(z - k * sz, g2 * (r - k * cz));
+        double k = c / (b + FastMath.sqrt(b2 - ac));
+        // double lambda =FastMath.atan2(cart.y, cart.x);
+        double phi = FastMath.atan2(z - k * sz, g2 * (r - k * cz));
 
         // point on the ellipse
-        if (abs(k) < (1.0e-10 * dist)) {
+        if (Math.abs(k) < (1.0e-10 * dist)) {
             // return new Ellipsoidic(lambda, phi, k);
             return Vector2D.createPolar(k, phi);
         }
@@ -455,47 +455,47 @@ public class Ellipse2D extends AbstractSmoothCurve2D
             double D = Q * Q * Q + R * R;
             double tildeT, tildePhi;
             if (D >= 0) {
-                double rootD = sqrt(D);
+                double rootD = FastMath.sqrt(D);
                 double rMr = R - rootD;
                 double rPr = R + rootD;
-                tildeT = ((rPr > 0) ? pow(rPr, ot) : -pow(-rPr, ot))
-                        + ((rMr > 0) ? pow(rMr, ot) : -pow(-rMr, ot))
+                tildeT = ((rPr > 0) ? FastMath.pow(rPr, ot) : -FastMath.pow(-rPr, ot))
+                        + ((rMr > 0) ? FastMath.pow(rMr, ot) : -FastMath.pow(-rMr, ot))
                         - b * ot;
                 double tildeT2 = tildeT * tildeT;
                 double tildeT2P1 = 1.0 + tildeT2;
-                tildePhi = atan2(z * tildeT2P1 - 2 * k * tildeT,
+                tildePhi = FastMath.atan2(z * tildeT2P1 - 2 * k * tildeT,
                         g2 * (r * tildeT2P1 - k * (1.0 - tildeT2)));
             } else {
                 Q = -Q;
-                double qRoot = sqrt(Q);
-                double alpha = acos(R / (Q * qRoot));
-                tildeT = 2 * qRoot * cos(alpha * ot) - b * ot;
+                double qRoot = FastMath.sqrt(Q);
+                double alpha = FastMath.acos(R / (Q * qRoot));
+                tildeT = 2 * qRoot * FastMath.cos(alpha * ot) - b * ot;
                 double tildeT2 = tildeT * tildeT;
                 double tildeT2P1 = 1.0 + tildeT2;
-                tildePhi = atan2(z * tildeT2P1 - 2 * k * tildeT,
+                tildePhi = FastMath.atan2(z * tildeT2P1 - 2 * k * tildeT,
                         g2 * (r * tildeT2P1 - k * (1.0 - tildeT2)));
                 if ((tildePhi * phi) < 0) {
-                    tildeT = 2 * qRoot * cos((alpha + 2 * PI) * ot) - b * ot;
+                    tildeT = 2 * qRoot * FastMath.cos((alpha + 2 * Math.PI) * ot) - b * ot;
                     tildeT2 = tildeT * tildeT;
                     tildeT2P1 = 1.0 + tildeT2;
-                    tildePhi = atan2(z * tildeT2P1 - 2 * k * tildeT, g2
+                    tildePhi = FastMath.atan2(z * tildeT2P1 - 2 * k * tildeT, g2
                             * (r * tildeT2P1 - k * (1.0 - tildeT2)));
                     if (tildePhi * phi < 0) {
-                        tildeT = 2 * qRoot * cos((alpha + 4 * PI) * ot) - b * ot;
+                        tildeT = 2 * qRoot * FastMath.cos((alpha + 4 * Math.PI) * ot) - b * ot;
                         tildeT2 = tildeT * tildeT;
                         tildeT2P1 = 1.0 + tildeT2;
-                        tildePhi = atan2(z * tildeT2P1 - 2 * k * tildeT, g2
+                        tildePhi = FastMath.atan2(z * tildeT2P1 - 2 * k * tildeT, g2
                                 * (r * tildeT2P1 - k * (1.0 - tildeT2)));
                     }
                 }
             }
 
             // midpoint on the ellipse
-            double dPhi = abs(0.5 * (tildePhi - phi));
+            double dPhi = Math.abs(0.5 * (tildePhi - phi));
             phi = 0.5 * (phi + tildePhi);
-            double cPhi = cos(phi);
-            double sPhi = sin(phi);
-            double coeff = sqrt(1.0 - e2 * sPhi * sPhi);
+            double cPhi = FastMath.cos(phi);
+            double sPhi = FastMath.sin(phi);
+            double coeff = FastMath.sqrt(1.0 - e2 * sPhi * sPhi);
 
 //            // Eventually display result of iterations
 //            System.out.println(iterations+": phi = "+Math.toDegrees(phi)
@@ -503,7 +503,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
             b = ae / coeff;
             double dR = r - cPhi * b;
             double dZ = z - sPhi * b * g2;
-            k = hypot(dR, dZ);
+            k = FastMath.hypot(dR, dZ);
             if (inside) {
                 k = -k;
             }
@@ -513,7 +513,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
                 if (this.r1 >= this.r2) {
                     return Vector2D.createPolar(-k, phi + theta);
                 } else {
-                    return Vector2D.createPolar(-k, phi + theta - PI / 2);
+                    return Vector2D.createPolar(-k, phi + theta - Math.PI / 2);
                 }
             }
         }
@@ -545,7 +545,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
      * for both r1 and r2.
      */
     public boolean isCircle() {
-        return abs(r1 - r2) < Tolerance2D.get();
+        return Math.abs(r1 - r2) < Tolerance2D.get();
     }
 
     /**
@@ -582,9 +582,9 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         } else {
             a = r2;
             b = r1;
-            theta = this.theta + PI / 2;
+            theta = this.theta + Math.PI / 2;
         }
-        return Point2D.createPolar(xc, yc, sqrt(a * a - b * b), theta + PI);
+        return Point2D.createPolar(xc, yc, FastMath.sqrt(a * a - b * b), theta + Math.PI);
     }
 
     /**
@@ -600,9 +600,9 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         } else {
             a = r2;
             b = r1;
-            theta = this.theta + PI / 2;
+            theta = this.theta + Math.PI / 2;
         }
-        return Point2D.createPolar(xc, yc, sqrt(a * a - b * b), theta);
+        return Point2D.createPolar(xc, yc, FastMath.sqrt(a * a - b * b), theta);
     }
 
     /**
@@ -610,7 +610,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
      * the major axis.
      */
     public Vector2D vector1() {
-        return new Vector2D(cos(theta), sin(theta));
+        return new Vector2D(FastMath.cos(theta), FastMath.sin(theta));
     }
 
     /**
@@ -619,9 +619,9 @@ public class Ellipse2D extends AbstractSmoothCurve2D
      */
     public Vector2D vector2() {
         if (direct) {
-            return new Vector2D(-sin(theta), cos(theta));
+            return new Vector2D(-FastMath.sin(theta), FastMath.cos(theta));
         } else {
-            return new Vector2D(sin(theta), -cos(theta));
+            return new Vector2D(FastMath.sin(theta), -FastMath.cos(theta));
         }
     }
 
@@ -652,8 +652,8 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         double r2Sq = this.r2 * this.r2;
 
         // angle of ellipse, and trigonometric formulas
-        double sint = sin(this.theta);
-        double cost = cos(this.theta);
+        double sint = FastMath.sin(this.theta);
+        double cost = FastMath.cos(this.theta);
         double sin2t = 2.0 * sint * cost;
         double sintSq = sint * sint;
         double costSq = cost * cost;
@@ -687,10 +687,10 @@ public class Ellipse2D extends AbstractSmoothCurve2D
      * ellipse elongates.
      */
     public double eccentricity() {
-        double a = max(r1, r2);
-        double b = min(r1, r2);
+        double a = Math.max(r1, r2);
+        double b = Math.min(r1, r2);
         double r = b / a;
-        return sqrt(1 - r * r);
+        return FastMath.sqrt(1 - r * r);
     }
 
     // ===================================================================
@@ -716,14 +716,14 @@ public class Ellipse2D extends AbstractSmoothCurve2D
     // ===================================================================
     // methods implementing OrientedCurve2D interface
     /**
-     * Return either 0, 2*PI or -2*PI, depending whether the point is located
+     * Return either 0, 2*Math.PI or -2*Math.PI, depending whether the point is located
      * inside the interior of the ellipse or not.
      */
     public double windingAngle(Point2D point) {
         if (this.signedDistance(point) > 0) {
             return 0;
         } else {
-            return direct ? PI * 2 : -PI * 2;
+            return direct ? Math.PI * 2 : -Math.PI * 2;
         }
     }
 
@@ -761,17 +761,17 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         if (!direct) {
             t = -t;
         }
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
 
         if (direct) {
             return new Vector2D(
-                    -r1 * sin(t) * cot - r2 * cos(t) * sit,
-                    -r1 * sin(t) * sit + r2 * cos(t) * cot);
+                    -r1 * FastMath.sin(t) * cot - r2 * FastMath.cos(t) * sit,
+                    -r1 * FastMath.sin(t) * sit + r2 * FastMath.cos(t) * cot);
         } else {
             return new Vector2D(
-                    r1 * sin(t) * cot + r2 * cos(t) * sit,
-                    r1 * sin(t) * sit - r2 * cos(t) * cot);
+                    r1 * FastMath.sin(t) * cot + r2 * FastMath.cos(t) * sit,
+                    r1 * FastMath.sin(t) * sit - r2 * FastMath.cos(t) * cot);
         }
     }
 
@@ -782,9 +782,9 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         if (!direct) {
             t = -t;
         }
-        double cot = cos(t);
-        double sit = sin(t);
-        double k = r1 * r2 / pow(hypot(r2 * cot, r1 * sit), 3);
+        double cot = FastMath.cos(t);
+        double sit = FastMath.sin(t);
+        double k = r1 * r2 / FastMath.pow(FastMath.hypot(r2 * cot, r1 * sit), 3);
         return direct ? k : -k;
     }
 
@@ -834,10 +834,10 @@ public class Ellipse2D extends AbstractSmoothCurve2D
     }
 
     /**
-     * Returns the parameter of the last point of the ellipse, set to 2*PI.
+     * Returns the parameter of the last point of the ellipse, set to 2*Math.PI.
      */
     public double t1() {
-        return 2 * PI;
+        return 2 * Math.PI;
     }
 
     /**
@@ -851,17 +851,17 @@ public class Ellipse2D extends AbstractSmoothCurve2D
     /**
      * get the position of the curve from internal parametric representation,
      * depending on the parameter t. This parameter is between the two limits 0
-     * and 2*PI.
+     * and 2*Math.PI.
      */
     public Point2D point(double t) {
         if (!direct) {
             t = -t;
         }
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         return new Point2D(
-                xc + r1 * cos(t) * cot - r2 * sin(t) * sit,
-                yc + r1 * cos(t) * sit + r2 * sin(t) * cot);
+                xc + r1 * FastMath.cos(t) * cot - r2 * FastMath.sin(t) * sit,
+                yc + r1 * FastMath.cos(t) * sit + r2 * FastMath.sin(t) * cot);
     }
 
     /**
@@ -872,7 +872,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
      */
     @Override
     public Point2D firstPoint() {
-        return new Point2D(xc + r1 * cos(theta), yc + r1 * sin(theta));
+        return new Point2D(xc + r1 * FastMath.cos(theta), yc + r1 * FastMath.sin(theta));
     }
 
     /**
@@ -883,7 +883,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
      */
     @Override
     public Point2D lastPoint() {
-        return new Point2D(xc + r1 * cos(theta), yc + r1 * sin(theta));
+        return new Point2D(xc + r1 * FastMath.cos(theta), yc + r1 * FastMath.sin(theta));
     }
 
     /**
@@ -903,8 +903,8 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         yp = yp - this.yc;
 
         // rotate
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         double xp1 = xp * cot + yp * sit;
         double yp1 = -xp * sit + yp * cot;
         xp = xp1;
@@ -930,7 +930,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         // compute angle
         double angle = Angle2D.horizontalAngle(xp, yp);
 
-        if (abs(hypot(xp, yp) - 1) < Tolerance2D.get()) {
+        if (Math.abs(FastMath.hypot(xp, yp) - 1) < Tolerance2D.get()) {
             return angle;
         } else {
             return Double.NaN;
@@ -988,7 +988,7 @@ public class Ellipse2D extends AbstractSmoothCurve2D
      */
     public double distance(Point2D point) {
         // PolarVector2D vector = this.getProjectedVector(point, 1e-10);
-        // return abs(vector.getRho());
+        // return Math.abs(vector.getRho());
         return this.asPolyline(180).distance(point);
     }
 
@@ -1028,15 +1028,15 @@ public class Ellipse2D extends AbstractSmoothCurve2D
     public Box2D boundingBox() {
         // we consider the two parametric equations x(t) and y(t). From the
         // ellipse
-        // definition, x(t)=r1*cos(t), y(t)=r2*sin(t), and the result is moved
+        // definition, x(t)=r1*FastMath.cos(t), y(t)=r2*FastMath.sin(t), and the result is moved
         // (rotated with angle theta, and translated with (xc,yc) ).
         // Each equation can then be written in the form : x(t) =
-        // Xm*cos(t+theta_X).
+        // Xm*FastMath.cos(t+theta_X).
         // We compute Xm and Ym, and use it to calculate bounds.
-        double cot = cos(theta);
-        double sit = sin(theta);
-        double xm = hypot(r1 * cot, r2 * sit);
-        double ym = hypot(r1 * sit, r2 * cot);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
+        double xm = FastMath.hypot(r1 * cot, r2 * sit);
+        double ym = FastMath.hypot(r1 * sit, r2 * cot);
         return new Box2D(xc - xm, xc + xm, yc - ym, yc + ym);
     }
 
@@ -1119,8 +1119,8 @@ public class Ellipse2D extends AbstractSmoothCurve2D
 
     public java.awt.geom.GeneralPath getGeneralPath() {
         // precompute cosine and sine of angle
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
 
         // create new path
         java.awt.geom.GeneralPath path = new java.awt.geom.GeneralPath();
@@ -1139,21 +1139,21 @@ public class Ellipse2D extends AbstractSmoothCurve2D
      * @return the completed path
      */
     public java.awt.geom.GeneralPath appendPath(java.awt.geom.GeneralPath path) {
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
 
         // draw each line of the boundary
         if (direct) {
-            for (double t = .1; t <= 2 * PI; t += .1) {
+            for (double t = .1; t <= 2 * Math.PI; t += .1) {
                 path.lineTo(
-                        (float) (xc + r1 * cos(t) * cot - r2 * sin(t) * sit),
-                        (float) (yc + r2 * sin(t) * cot + r1 * cos(t) * sit));
+                        (float) (xc + r1 * FastMath.cos(t) * cot - r2 * FastMath.sin(t) * sit),
+                        (float) (yc + r2 * FastMath.sin(t) * cot + r1 * FastMath.cos(t) * sit));
             }
         } else {
-            for (double t = .1; t <= 2 * PI; t += .1) {
+            for (double t = .1; t <= 2 * Math.PI; t += .1) {
                 path.lineTo(
-                        (float) (xc + r1 * cos(t) * cot + r2 * sin(t) * sit),
-                        (float) (yc - r2 * sin(t) * cot + r1 * cos(t) * sit));
+                        (float) (xc + r1 * FastMath.cos(t) * cot + r2 * FastMath.sin(t) * sit),
+                        (float) (yc - r2 * FastMath.sin(t) * cot + r1 * FastMath.cos(t) * sit));
             }
         }
 
@@ -1192,10 +1192,10 @@ public class Ellipse2D extends AbstractSmoothCurve2D
         if (!ell.center().almostEquals(this.center(), eps)) {
             return false;
         }
-        if (abs(ell.r1 - this.r1) > eps) {
+        if (Math.abs(ell.r1 - this.r1) > eps) {
             return false;
         }
-        if (abs(ell.r2 - this.r2) > eps) {
+        if (Math.abs(ell.r2 - this.r2) > eps) {
             return false;
         }
         if (!Angle2D.almostEquals(ell.angle(), this.angle(), eps)) {

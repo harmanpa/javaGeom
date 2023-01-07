@@ -32,6 +32,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * A 3-dimensional point.
@@ -135,7 +136,7 @@ public final class Point3D implements Shape3D {
         double dy = point.y - y;
         double dz = point.z - z;
 
-        return Math.hypot(Math.hypot(dx, dy), dz);
+        return FastMath.hypot(FastMath.hypot(dx, dy), dz);
     }
 
     public double distanceSq(Point3D point) {

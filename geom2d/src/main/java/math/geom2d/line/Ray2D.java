@@ -28,6 +28,7 @@ import java.awt.geom.GeneralPath;
 
 import math.geom2d.*;
 import math.utils.EqualUtils;
+import org.apache.commons.math3.util.FastMath;
 
 // Imports
 /**
@@ -79,7 +80,7 @@ public class Ray2D extends AbstractLine2D {
      * in the direction specified by <code>angle<\code> (in radians).
      */
     public Ray2D(Point2D point, double angle) {
-        this(point.x(), point.y(), Math.cos(angle), Math.sin(angle));
+        this(point.x(), point.y(), FastMath.cos(angle), FastMath.sin(angle));
     }
 
     /**
@@ -87,7 +88,7 @@ public class Ray2D extends AbstractLine2D {
      * going in the direction specified by <code>angle<\code> (in radians).
      */
     public Ray2D(double x, double y, double angle) {
-        this(x, y, Math.cos(angle), Math.sin(angle));
+        this(x, y, FastMath.cos(angle), FastMath.sin(angle));
     }
 
     /**
@@ -98,7 +99,7 @@ public class Ray2D extends AbstractLine2D {
         super(x1, y1, dx, dy);
 
         // enforce condition on direction vector
-        if (Math.hypot(dx, dy) < Tolerance2D.get()) {
+        if (FastMath.hypot(dx, dy) < Tolerance2D.get()) {
             throw new IllegalArgumentException("Rays can not have direction vector with zero norm");
         }
     }
@@ -110,7 +111,7 @@ public class Ray2D extends AbstractLine2D {
         super(line.origin(), line.direction());
 
         // enforce condition on direction vector
-        if (Math.hypot(dx, dy) < Tolerance2D.get()) {
+        if (FastMath.hypot(dx, dy) < Tolerance2D.get()) {
             throw new IllegalArgumentException("Rays can not have direction vector with zero norm");
         }
     }
@@ -123,7 +124,7 @@ public class Ray2D extends AbstractLine2D {
      * @see math.geom2d.circulinear.CirculinearCurve2D#parallel(double)
      */
     public Ray2D parallel(double d) {
-        double dd = Math.hypot(dx, dy);
+        double dd = FastMath.hypot(dx, dy);
         return new Ray2D(x0 + dy * d / dd, y0 - dx * d / dd, dx, dy);
     }
 

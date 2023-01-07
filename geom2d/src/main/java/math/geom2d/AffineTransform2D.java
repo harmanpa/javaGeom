@@ -28,10 +28,7 @@ import math.geom2d.exceptions.NonInvertibleTransform2DException;
 import math.geom2d.line.LinearShape2D;
 import math.geom2d.transform.Bijection2D;
 import math.utils.EqualUtils;
-
-import static java.lang.Math.*;
-import java.util.List;
-import math.geom2d.exceptions.Geom2DException;
+import org.apache.commons.math3.util.FastMath;
 
 
 /**
@@ -185,9 +182,9 @@ public class AffineTransform2D implements Bijection2D, GeometricObject2D {
      *
      * @param numQuadrant
      * @return
-     * 
+     *
      */
-    public static AffineTransform2D createQuadrantRotation(int numQuadrant)  {
+    public static AffineTransform2D createQuadrantRotation(int numQuadrant) {
         int n = ((numQuadrant % 4) + 4) % 4;
         switch (n) {
             case 0:
@@ -208,10 +205,10 @@ public class AffineTransform2D implements Bijection2D, GeometricObject2D {
      * @param center
      * @param numQuadrant
      * @return
-     * 
+     *
      */
     public static AffineTransform2D createQuadrantRotation(Point2D center,
-            int numQuadrant)  {
+            int numQuadrant) {
         AffineTransform2D trans = createQuadrantRotation(numQuadrant);
         trans.recenter(center.x(), center.y());
         return trans;
@@ -225,10 +222,10 @@ public class AffineTransform2D implements Bijection2D, GeometricObject2D {
      * @param y0
      * @param numQuadrant
      * @return
-     * 
+     *
      */
     public static AffineTransform2D createQuadrantRotation(
-            double x0, double y0, int numQuadrant)  {
+            double x0, double y0, int numQuadrant) {
         AffineTransform2D trans = createQuadrantRotation(numQuadrant);
         trans.recenter(x0, y0);
         return trans;
@@ -237,14 +234,14 @@ public class AffineTransform2D implements Bijection2D, GeometricObject2D {
     /**
      * Creates a rotation around the origin, with angle in radians.
      */
-    public static AffineTransform2D createRotation(double angle)  {
+    public static AffineTransform2D createRotation(double angle) {
         return AffineTransform2D.createRotation(0, 0, angle);
     }
 
     /**
      * Creates a rotation around the specified point, with angle in radians.
      */
-    public static AffineTransform2D createRotation(Point2D center, double angle)  {
+    public static AffineTransform2D createRotation(Point2D center, double angle) {
         return AffineTransform2D.createRotation(center.x(), center.y(), angle);
     }
 
@@ -254,18 +251,18 @@ public class AffineTransform2D implements Bijection2D, GeometricObject2D {
      * the threshold Tolerance2D.get(), the method assumes equality.
      */
     public static AffineTransform2D createRotation(double cx, double cy,
-            double angle)  {
+            double angle) {
         angle = Angle2D.formatAngle(angle);
 
         // special processing to detect angle close to multiple of PI/2.
-        int k = (int) round(angle * 2 / PI);
-        if (abs(k * PI / 2 - angle) < Tolerance2D.get()) {
+        int k = (int) Math.round(angle * 2 / Math.PI);
+        if (Math.abs(k * Math.PI / 2 - angle) < Tolerance2D.get()) {
             return createQuadrantRotation(cx, cy, k);
         }
 
         // pre-compute trigonometric functions 
-        double cot = cos(angle);
-        double sit = sin(angle);
+        double cot = FastMath.cos(angle);
+        double sit = FastMath.sin(angle);
 
         // init coef of the new AffineTransform.
         return new AffineTransform2D(
@@ -329,22 +326,22 @@ public class AffineTransform2D implements Bijection2D, GeometricObject2D {
      * Checks if the given transform is the identity transform.
      */
     public static boolean isIdentity(AffineTransform2D trans) {
-        if (abs(trans.m00 - 1) > Tolerance2D.get()) {
+        if (Math.abs(trans.m00 - 1) > Tolerance2D.get()) {
             return false;
         }
-        if (abs(trans.m01) > Tolerance2D.get()) {
+        if (Math.abs(trans.m01) > Tolerance2D.get()) {
             return false;
         }
-        if (abs(trans.m02) > Tolerance2D.get()) {
+        if (Math.abs(trans.m02) > Tolerance2D.get()) {
             return false;
         }
-        if (abs(trans.m10) > Tolerance2D.get()) {
+        if (Math.abs(trans.m10) > Tolerance2D.get()) {
             return false;
         }
-        if (abs(trans.m11 - 1) > Tolerance2D.get()) {
+        if (Math.abs(trans.m11 - 1) > Tolerance2D.get()) {
             return false;
         }
-        if (abs(trans.m12) > Tolerance2D.get()) {
+        if (Math.abs(trans.m12) > Tolerance2D.get()) {
             return false;
         }
         return true;
@@ -375,15 +372,15 @@ public class AffineTransform2D implements Bijection2D, GeometricObject2D {
         double d = trans.m11;
 
         // transform vectors should be normalized
-        if (abs(a * a + b * b - 1) > Tolerance2D.get()) {
+        if (Math.abs(a * a + b * b - 1) > Tolerance2D.get()) {
             return false;
         }
-        if (abs(c * c + d * d - 1) > Tolerance2D.get()) {
+        if (Math.abs(c * c + d * d - 1) > Tolerance2D.get()) {
             return false;
         }
 
         // determinant must be -1 or +1
-        if (abs(a * b + c * d) > Tolerance2D.get()) {
+        if (Math.abs(a * b + c * d) > Tolerance2D.get()) {
             return false;
         }
 
@@ -417,19 +414,19 @@ public class AffineTransform2D implements Bijection2D, GeometricObject2D {
         double d = trans.m11;
 
         // determinant
-        double k2 = abs(a * d - b * c);
+        double k2 = Math.abs(a * d - b * c);
 
         // test each condition
-        if (abs(a * a + b * b - k2) > Tolerance2D.get()) {
+        if (Math.abs(a * a + b * b - k2) > Tolerance2D.get()) {
             return false;
         }
-        if (abs(c * c + d * d - k2) > Tolerance2D.get()) {
+        if (Math.abs(c * c + d * d - k2) > Tolerance2D.get()) {
             return false;
         }
-        if (abs(a * a + c * c - k2) > Tolerance2D.get()) {
+        if (Math.abs(a * a + c * c - k2) > Tolerance2D.get()) {
             return false;
         }
-        if (abs(b * b + d * d - k2) > Tolerance2D.get()) {
+        if (Math.abs(b * b + d * d - k2) > Tolerance2D.get()) {
             return false;
         }
 
@@ -721,7 +718,7 @@ public class AffineTransform2D implements Bijection2D, GeometricObject2D {
 
         return true;
     }
-    
+
     // ===================================================================
     // Override the Object methods
     /**

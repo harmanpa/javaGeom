@@ -16,6 +16,7 @@ import math.geom3d.circulinear.CirculinearElement3D;
 import math.geom3d.fitting.CurveIntersector;
 import math.geom3d.polygon.LinearCurve3D;
 import math.geom3d.transform.AffineTransform3D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * @author dlegland
@@ -134,21 +135,21 @@ public class StraightLine3D implements LinearShape3D, CirculinearContinuousCurve
         Vector3D v = this.direction();
 
         // line parallel to (Ox) axis
-        if (Math.hypot(v.getY(), v.getZ()) < Tolerance2D.get()) {
+        if (FastMath.hypot(v.getY(), v.getZ()) < Tolerance2D.get()) {
             return new Box3D(x0, x0, Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY);
         }
 
         // line parallel to (Oy) axis
-        if (Math.hypot(v.getX(), v.getZ()) < Tolerance2D.get()) {
+        if (FastMath.hypot(v.getX(), v.getZ()) < Tolerance2D.get()) {
             return new Box3D(Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY, y0, y0, Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY);
         }
 
         // line parallel to (Oz) axis
-        if (Math.hypot(v.getX(), v.getY()) < Tolerance2D.get()) {
+        if (FastMath.hypot(v.getX(), v.getY()) < Tolerance2D.get()) {
             return new Box3D(Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY, Double.NEGATIVE_INFINITY,
                     Double.POSITIVE_INFINITY, z0, z0);

@@ -37,6 +37,7 @@ import math.geom2d.conic.CircleArc2D;
 import math.geom2d.curve.*;
 import math.geom2d.domain.SmoothOrientedCurve2D;
 import math.geom2d.transform.CircleInversion2D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * <p>
@@ -101,7 +102,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
         // method for details on tests)
         return (Math.abs((line2.y0 - line1.y0) * line2.dx
                 - (line2.x0 - line1.x0) * line2.dy)
-                / Math.hypot(line2.dx, line2.dy) < Tolerance2D.get());
+                / FastMath.hypot(line2.dx, line2.dy) < Tolerance2D.get());
     }
 
     /**
@@ -186,7 +187,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      * @return
      */
     protected boolean supportContains(double x, double y) {
-        double denom = Math.hypot(dx, dy);
+        double denom = FastMath.hypot(dx, dy);
         if (denom < Tolerance2D.get()) {
             return new Point2D(x0, y0).distance(x, y) < Tolerance2D.get();
         }
@@ -280,7 +281,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     public double positionOnLine(double x, double y) {
         double denom = dx * dx + dy * dy;
-        if (Math.abs(denom) < Math.pow(Tolerance2D.get(), 2)) {
+        if (Math.abs(denom) < FastMath.pow(Tolerance2D.get(), 2)) {
             throw new DegeneratedLine2DException(this);
         }
         return ((y - y0) * dy + (x - x0) * dx) / denom;
@@ -398,7 +399,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     @Override
     public double horizontalAngle() {
-        return (Math.atan2(dy, dx) + 2 * Math.PI) % (2 * Math.PI);
+        return (FastMath.atan2(dy, dx) + 2 * Math.PI) % (2 * Math.PI);
     }
 
     /**
@@ -466,7 +467,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
         if (!this.isBounded()) {
             return Double.POSITIVE_INFINITY;
         }
-        return (t1() - t0()) * Math.hypot(dx, dy);
+        return (t1() - t0()) * FastMath.hypot(dx, dy);
     }
 
     /* (non-Javadoc)
@@ -474,7 +475,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     @Override
     public double length(double pos) {
-        return pos * Math.hypot(dx, dy);
+        return pos * FastMath.hypot(dx, dy);
     }
 
     /*
@@ -484,7 +485,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     @Override
     public double position(double distance) {
-        double delta = Math.hypot(dx, dy);
+        double delta = FastMath.hypot(dx, dy);
         if (delta < Tolerance2D.get()) {
             return t0();
         }
@@ -640,7 +641,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     @Override
     public double signedDistance(double x, double y) {
-        double delta = Math.hypot(dx, dy);
+        double delta = FastMath.hypot(dx, dy);
         if (delta < Tolerance2D.get()) {
             return 0.0;
         }
@@ -737,7 +738,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
             double pos = this.positionOnLine(point);
 
             // compute a threshold depending on line slope
-            double eps = Math.hypot(dx, dy) * Tolerance2D.get();
+            double eps = FastMath.hypot(dx, dy) * Tolerance2D.get();
 
             // return either pos or NaN
             if (pos < this.t0() - eps) {
@@ -874,7 +875,7 @@ public abstract class AbstractLine2D extends AbstractSmoothCurve2D
      */
     @Override
     public boolean isEmpty() {
-        return Math.hypot(dx, dy) < Tolerance2D.get();
+        return FastMath.hypot(dx, dy) < Tolerance2D.get();
     }
 
     /* (non-Javadoc)

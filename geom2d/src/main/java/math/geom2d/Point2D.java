@@ -41,7 +41,7 @@ import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import static java.lang.Math.*;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * <p>
@@ -87,7 +87,7 @@ public class Point2D
      * <code>theta</code>.
      */
     public static Point2D createPolar(double rho, double theta) {
-        return new Point2D(rho * cos(theta), rho * sin(theta));
+        return new Point2D(rho * FastMath.cos(theta), rho * FastMath.sin(theta));
     }
 
     /**
@@ -95,7 +95,7 @@ public class Point2D
      * <code>theta</code>, from the given point.
      */
     public static Point2D createPolar(Point2D point, double rho, double theta) {
-        return new Point2D(point.x + rho * cos(theta), point.y + rho * sin(theta));
+        return new Point2D(point.x + rho * FastMath.cos(theta), point.y + rho * FastMath.sin(theta));
     }
 
     /**
@@ -104,29 +104,29 @@ public class Point2D
      */
     public static Point2D createPolar(double x0, double y0, double rho,
             double theta) {
-        return new Point2D(x0 + rho * cos(theta), y0 + rho * sin(theta));
+        return new Point2D(x0 + rho * FastMath.cos(theta), y0 + rho * FastMath.sin(theta));
     }
 
     /**
      * Computes the Euclidean distance between two points, given by their
-     * coordinates. Uses robust computation (via Math.hypot() method).
+     * coordinates. Uses robust computation (via FastMath.hypot() method).
      *
      * @return the Euclidean distance between p1 and p2.
      */
     public static double distance(double x1, double y1, double x2, double y2) {
-        return hypot(x2 - x1, y2 - y1);
+        return FastMath.hypot(x2 - x1, y2 - y1);
     }
 
     /**
      * Computes the Euclidean distance between two points. Uses robust
-     * computation (via Math.hypot() method).
+     * computation (via FastMath.hypot() method).
      *
      * @param p1 the first point
      * @param p2 the second point
      * @return the Euclidean distance between p1 and p2.
      */
     public static double distance(Point2D p1, Point2D p2) {
-        return hypot(p1.x - p2.x, p1.y - p2.y);
+        return FastMath.hypot(p1.x - p2.x, p1.y - p2.y);
     }
 
     /**
@@ -173,7 +173,7 @@ public class Point2D
         if ((dx1 * dx2 < 0) || (dy1 * dy2 < 0)) {
             return -1;
         }
-        if (hypot(dx1, dy1) < hypot(dx2, dy2)) {
+        if (FastMath.hypot(dx1, dy1) < FastMath.hypot(dx2, dy2)) {
             return +1;
         }
         return 0;
@@ -353,8 +353,8 @@ public class Point2D
      * @return the rotated point.
      */
     public Point2D rotate(double theta) {
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         return new Point2D(x * cot - y * sit, x * sit + y * cot);
     }
 
@@ -368,8 +368,8 @@ public class Point2D
     public Point2D rotate(Point2D center, double theta) {
         double cx = center.x;
         double cy = center.y;
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         return new Point2D(
                 x * cot - y * sit + (1 - cot) * cx + sit * cy,
                 x * sit + y * cot + (1 - cot) * cy - sit * cx);
@@ -498,11 +498,11 @@ public class Point2D
 
     /**
      * Computes the distance between current point and point with coordinate
-     * <code>(x,y)</code>. Uses the <code>Math.hypot()</code> function for
+     * <code>(x,y)</code>. Uses the <code>FastMath.hypot()</code> function for
      * better robustness than simple square root.
      */
     public double distance(double x, double y) {
-        return hypot(this.x - x, this.y - y);
+        return FastMath.hypot(this.x - x, this.y - y);
     }
 
     /**

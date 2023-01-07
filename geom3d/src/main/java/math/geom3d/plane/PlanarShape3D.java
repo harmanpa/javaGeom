@@ -16,6 +16,7 @@ import math.geom3d.Point3D;
 import math.geom3d.Shape3D;
 import math.geom3d.line.StraightLine3D;
 import math.geom3d.transform.AffineTransform3D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  *
@@ -75,7 +76,7 @@ public class PlanarShape3D<T extends Shape2D> implements Shape3D {
     public double distance(Point3D p) {
         Point3D pointOnPlane = plane.projectPoint(p);
         double planarDistance = shape.distance(plane.pointPosition(pointOnPlane));
-        return Math.hypot(planarDistance, pointOnPlane.distance(p));
+        return FastMath.hypot(planarDistance, pointOnPlane.distance(p));
     }
 
     @Override

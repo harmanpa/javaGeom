@@ -25,8 +25,6 @@
  */
 package math.geom2d.conic;
 
-import static java.lang.Math.*;
-
 import java.awt.Graphics2D;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -40,6 +38,7 @@ import math.geom2d.line.Ray2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.polygon.Polyline2D;
 import math.utils.EqualUtils;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * An arc of ellipse. It is defined by a supporting ellipse, a starting angle,
@@ -96,31 +95,31 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
     protected Ellipse2D ellipse;
 
     /**
-     * The starting position on ellipse, in radians between 0 and +2PI
+     * The starting position on ellipse, in radians between 0 and +2Math.PI
      */
     protected double startAngle = 0;
 
     /**
-     * The signed angle extent, in radians between -2PI and +2PI.
+     * The signed angle extent, in radians between -2Math.PI and +2Math.PI.
      */
-    protected double angleExtent = PI;
+    protected double angleExtent = Math.PI;
 
     // ====================================================================
     // Constructors
     /**
      * Construct a default Ellipse arc, centered on (0,0), with radii equal to 1
      * and 1, orientation equal to 0, start angle equal to 0, and angle extent
-     * equal to PI/2.
+     * equal to Math.PI/2.
      */
     public EllipseArc2D() {
-        this(0, 0, 1, 1, 0, 0, PI / 2);
+        this(0, 0, 1, 1, 0, 0, Math.PI / 2);
     }
 
     /**
      * Specify supporting ellipse, start angle and angle extent.
      *
      * @param ell the supporting ellipse
-     * @param start the starting angle (angle between 0 and 2*PI)
+     * @param start the starting angle (angle between 0 and 2*Math.PI)
      * @param extent the angle extent (signed angle)
      */
     public EllipseArc2D(Ellipse2D ell, double start, double extent) {
@@ -160,7 +159,7 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
         this.startAngle = start;
         this.angleExtent = Angle2D.formatAngle(end - start);
         if (!direct) {
-            this.angleExtent = this.angleExtent - PI * 2;
+            this.angleExtent = this.angleExtent - Math.PI * 2;
         }
     }
 
@@ -198,8 +197,8 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
         if (position < 0) {
             position = 0;
         }
-        if (position > abs(angleExtent)) {
-            position = abs(angleExtent);
+        if (position > Math.abs(angleExtent)) {
+            position = Math.abs(angleExtent);
         }
         if (angleExtent < 0) {
             position = -position;
@@ -217,7 +216,7 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
      */
     public double windingAngle(Point2D point) {
         Point2D p1 = point(0);
-        Point2D p2 = point(abs(angleExtent));
+        Point2D p2 = point(Math.abs(angleExtent));
 
         // compute angle of point with extreme points
         double angle1 = Angle2D.horizontalAngle(point, p1);
@@ -232,11 +231,11 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
                 if (angle2 > angle1) {
                     return angle2 - angle1;
                 } else {
-                    return 2 * PI - angle1 + angle2;
+                    return 2 * Math.PI - angle1 + angle2;
                 }
             } else { // outside of ellipse arc
                 if (angle2 > angle1) {
-                    return angle2 - angle1 - 2 * PI;
+                    return angle2 - angle1 - 2 * Math.PI;
                 } else {
                     return angle2 - angle1;
                 }
@@ -246,11 +245,11 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
                 if (angle1 > angle2) {
                     return angle2 - angle1;
                 } else {
-                    return angle2 - angle1 - 2 * PI;
+                    return angle2 - angle1 - 2 * Math.PI;
                 }
             } else {
                 if (angle1 > angle2) {
-                    return angle2 - angle1 + 2 * PI;
+                    return angle2 - angle1 + 2 * Math.PI;
                 } else {
                     return angle2 - angle1;
                 }
@@ -294,7 +293,7 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
             return -dist;
         }
 
-        Ray2D ray = new Ray2D(p1, -sin(startAngle), cos(startAngle));
+        Ray2D ray = new Ray2D(p1, -FastMath.sin(startAngle), FastMath.cos(startAngle));
         boolean left1 = ray.isInside(point);
         if (direct && !left1) {
             return dist;
@@ -303,7 +302,7 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
             return -dist;
         }
 
-        ray = new Ray2D(p2, -sin(endAngle), cos(endAngle));
+        ray = new Ray2D(p2, -FastMath.sin(endAngle), FastMath.cos(endAngle));
         boolean left2 = ray.isInside(point);
         if (direct && !left2) {
             return dist;
@@ -323,7 +322,7 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
     // methods from interface SmoothCurve2D
     public Vector2D tangent(double t) {
         // format between min and max admissible values
-        t = min(max(0, t), abs(angleExtent));
+        t = Math.min(Math.max(0, t), Math.abs(angleExtent));
 
         // compute tangent vector depending on position
         if (angleExtent < 0) {
@@ -404,7 +403,7 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
      * Always returns the absolute value of the angle extent
      */
     public double t1() {
-        return abs(angleExtent);
+        return Math.abs(angleExtent);
     }
 
     /**
@@ -422,8 +421,8 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
      */
     public Point2D point(double t) {
         // check bounds
-        t = max(t, 0);
-        t = min(t, abs(angleExtent));
+        t = Math.max(t, 0);
+        t = Math.min(t, Math.abs(angleExtent));
 
         // convert position to angle
         if (angleExtent < 0) {
@@ -470,7 +469,7 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
         // return either 0 or T1, depending on which extremity is closer.
         double d1 = this.firstPoint().distance(point);
         double d2 = this.lastPoint().distance(point);
-        return d1 < d2 ? 0 : abs(angleExtent);
+        return d1 < d2 ? 0 : Math.abs(angleExtent);
     }
 
     /*
@@ -598,10 +597,10 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
         double y1 = p1.y();
 
         // initialize min and max coords
-        double xmin = min(x0, x1);
-        double xmax = max(x0, x1);
-        double ymin = min(y0, y1);
-        double ymax = max(y0, y1);
+        double xmin = Math.min(x0, x1);
+        double xmax = Math.max(x0, x1);
+        double ymin = Math.min(y0, y1);
+        double ymax = Math.max(y0, y1);
 
         // precomputes some values
         Point2D center = ellipse.center();
@@ -611,20 +610,20 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
         boolean direct = angleExtent >= 0;
 
         // check cases arc contains one maximum
-        if (Angle2D.containsAngle(startAngle, endAngle, PI / 2 + ellipse.theta, direct)) {
-            ymax = max(ymax, yc + ellipse.r1);
+        if (Angle2D.containsAngle(startAngle, endAngle, Math.PI / 2 + ellipse.theta, direct)) {
+            ymax = Math.max(ymax, yc + ellipse.r1);
         }
-        if (Angle2D.containsAngle(startAngle, endAngle, 3 * PI / 2
+        if (Angle2D.containsAngle(startAngle, endAngle, 3 * Math.PI / 2
                 + ellipse.theta, direct)) {
-            ymin = min(ymin, yc - ellipse.r1);
+            ymin = Math.min(ymin, yc - ellipse.r1);
         }
         if (Angle2D.containsAngle(startAngle, endAngle, ellipse.theta,
                 direct)) {
-            xmax = max(xmax, xc + ellipse.r2);
+            xmax = Math.max(xmax, xc + ellipse.r2);
         }
-        if (Angle2D.containsAngle(startAngle, endAngle, PI + ellipse.theta,
+        if (Angle2D.containsAngle(startAngle, endAngle, Math.PI + ellipse.theta,
                 direct)) {
-            xmin = min(xmin, xc - ellipse.r2);
+            xmin = Math.min(xmin, xc - ellipse.r2);
         }
 
         // return a bounding with computed limits
@@ -674,19 +673,19 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
 
     public java.awt.geom.GeneralPath appendPath(java.awt.geom.GeneralPath path) {
         // number of curves to approximate the arc
-        int nSeg = (int) ceil(abs(angleExtent) / (PI / 2));
-        nSeg = min(nSeg, 4);
+        int nSeg = (int) Math.ceil(Math.abs(angleExtent) / (Math.PI / 2));
+        nSeg = Math.min(nSeg, 4);
 
         // angular extent of each curve
         double ext = angleExtent / nSeg;
 
         // compute coefficient 
-        double k = btan(abs(ext));
+        double k = btan(Math.abs(ext));
 
         for (int i = 0; i < nSeg; i++) {
             // position of the two extremities
-            double ti0 = abs(i * ext);
-            double ti1 = abs((i + 1) * ext);
+            double ti0 = Math.abs(i * ext);
+            double ti1 = Math.abs((i + 1) * ext);
 
             // extremity points
             Point2D p1 = this.point(ti0);
@@ -737,14 +736,14 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
      * control segments should have equal length
      *
      * Initial data: start angle: ang1 end angle: ang2 = ang1 + extent start
-     * point: P1 = (x1, y1) = (cos(ang1), sin(ang1)) end point: P4 = (x4, y4) =
-     * (cos(ang2), sin(ang2))
+     * point: P1 = (x1, y1) = (FastMath.cos(ang1), FastMath.sin(ang1)) end point: P4 = (x4, y4) =
+     * (FastMath.cos(ang2), FastMath.sin(ang2))
      *
-     * Control points: P2 = (x2, y2) | x2 = x1 - k * sin(ang1) = cos(ang1) - k *
-     * sin(ang1) | y2 = y1 + k * cos(ang1) = sin(ang1) + k * cos(ang1)
+     * Control points: P2 = (x2, y2) | x2 = x1 - k * FastMath.sin(ang1) = FastMath.cos(ang1) - k *
+     * FastMath.sin(ang1) | y2 = y1 + k * FastMath.cos(ang1) = FastMath.sin(ang1) + k * FastMath.cos(ang1)
      *
-     * P3 = (x3, y3) | x3 = x4 + k * sin(ang2) = cos(ang2) + k * sin(ang2) | y3
-     * = y4 - k * cos(ang2) = sin(ang2) - k * cos(ang2)
+     * P3 = (x3, y3) | x3 = x4 + k * FastMath.sin(ang2) = FastMath.cos(ang2) + k * FastMath.sin(ang2) | y3
+     * = y4 - k * FastMath.cos(ang2) = FastMath.sin(ang2) - k * FastMath.cos(ang2)
      *
      * The formula for this length (k) can be found using the following
      * derivations:
@@ -752,42 +751,42 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
      * Midpoints: a) Bezier (t = 1/2) bPm = P1 * (1-t)^3 + 3 * P2 * t * (1-t)^2
      * + 3 * P3 * t^2 * (1-t) + P4 * t^3 = = (P1 + 3P2 + 3P3 + P4)/8
      *
-     * b) arc aPm = (cos((ang1 + ang2)/2), sin((ang1 + ang2)/2))
+     * b) arc aPm = (FastMath.cos((ang1 + ang2)/2), FastMath.sin((ang1 + ang2)/2))
      *
      * Let angb = (ang2 - ang1)/2; angb is half of the angle between ang1 and
      * ang2.
      *
      * Solve the equation bPm == aPm
      *
-     * a) For xm coord: x1 + 3*x2 + 3*x3 + x4 = 8*cos((ang1 + ang2)/2)
+     * a) For xm coord: x1 + 3*x2 + 3*x3 + x4 = 8*FastMath.cos((ang1 + ang2)/2)
      *
-     * cos(ang1) + 3*cos(ang1) - 3*k*sin(ang1) + 3*cos(ang2) + 3*k*sin(ang2) +
-     * cos(ang2) = = 8*cos((ang1 + ang2)/2)
+     * FastMath.cos(ang1) + 3*FastMath.cos(ang1) - 3*k*FastMath.sin(ang1) + 3*FastMath.cos(ang2) + 3*k*FastMath.sin(ang2) +
+     * FastMath.cos(ang2) = = 8*FastMath.cos((ang1 + ang2)/2)
      *
-     * 4*cos(ang1) + 4*cos(ang2) + 3*k*(sin(ang2) - sin(ang1)) = = 8*cos((ang1 +
+     * 4*FastMath.cos(ang1) + 4*FastMath.cos(ang2) + 3*k*(FastMath.sin(ang2) - FastMath.sin(ang1)) = = 8*FastMath.cos((ang1 +
      * ang2)/2)
      *
-     * 8*cos((ang1 + ang2)/2)*cos((ang2 - ang1)/2) + 6*k*sin((ang2 -
-     * ang1)/2)*cos((ang1 + ang2)/2) = = 8*cos((ang1 + ang2)/2)
+     * 8*FastMath.cos((ang1 + ang2)/2)*FastMath.cos((ang2 - ang1)/2) + 6*k*FastMath.sin((ang2 -
+     * ang1)/2)*FastMath.cos((ang1 + ang2)/2) = = 8*FastMath.cos((ang1 + ang2)/2)
      *
-     * 4*cos(angb) + 3*k*sin(angb) = 4
+     * 4*FastMath.cos(angb) + 3*k*FastMath.sin(angb) = 4
      *
-     * k = 4 / 3 * (1 - cos(angb)) / sin(angb)
+     * k = 4 / 3 * (1 - FastMath.cos(angb)) / FastMath.sin(angb)
      *
      * b) For ym coord we derive the same formula.
      *
      * Since this formula can generate "NaN" values for small angles, we will
      * derive a safer form that does not involve dividing by very small values:
-     * (1 - cos(angb)) / sin(angb) = = (1 - cos(angb))*(1 + cos(angb)) /
-     * sin(angb)*(1 + cos(angb)) = = (1 - cos(angb)^2) / sin(angb)*(1 +
-     * cos(angb)) = = sin(angb)^2 / sin(angb)*(1 + cos(angb)) = = sin(angb) / (1
-     * + cos(angb))
+     * (1 - FastMath.cos(angb)) / FastMath.sin(angb) = = (1 - FastMath.cos(angb))*(1 + FastMath.cos(angb)) /
+     * FastMath.sin(angb)*(1 + FastMath.cos(angb)) = = (1 - FastMath.cos(angb)^2) / FastMath.sin(angb)*(1 +
+     * FastMath.cos(angb)) = = FastMath.sin(angb)^2 / FastMath.sin(angb)*(1 + FastMath.cos(angb)) = = FastMath.sin(angb) / (1
+     * + FastMath.cos(angb))
      *
      * Function taken from java.awt.geom.ArcIterator.
      */
     private static double btan(double increment) {
         increment /= 2.0;
-        return 4.0 / 3.0 * sin(increment) / (1.0 + cos(increment));
+        return 4.0 / 3.0 * FastMath.sin(increment) / (1.0 + FastMath.cos(increment));
     }
 
     // ===================================================================
@@ -807,19 +806,19 @@ public class EllipseArc2D extends AbstractSmoothCurve2D
         EllipseArc2D arc = (EllipseArc2D) obj;
 
         // test whether supporting ellipses have same support
-        if (abs(ellipse.xc - arc.ellipse.xc) > eps) {
+        if (Math.abs(ellipse.xc - arc.ellipse.xc) > eps) {
             return false;
         }
-        if (abs(ellipse.yc - arc.ellipse.yc) > eps) {
+        if (Math.abs(ellipse.yc - arc.ellipse.yc) > eps) {
             return false;
         }
-        if (abs(ellipse.r1 - arc.ellipse.r1) > eps) {
+        if (Math.abs(ellipse.r1 - arc.ellipse.r1) > eps) {
             return false;
         }
-        if (abs(ellipse.r2 - arc.ellipse.r2) > eps) {
+        if (Math.abs(ellipse.r2 - arc.ellipse.r2) > eps) {
             return false;
         }
-        if (abs(ellipse.theta - arc.ellipse.theta) > eps) {
+        if (Math.abs(ellipse.theta - arc.ellipse.theta) > eps) {
             return false;
         }
 

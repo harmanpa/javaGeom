@@ -5,18 +5,15 @@ package math.geom2d.polygon;
 
 import de.lighti.clipper.Clipper;
 import de.lighti.clipper.Clipper.PolyType;
-import de.lighti.clipper.ClipperOffset;
 import de.lighti.clipper.DefaultClipper;
 import de.lighti.clipper.Path;
 import de.lighti.clipper.Paths;
 import de.lighti.clipper.Point;
-import static java.lang.Math.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
@@ -29,6 +26,7 @@ import math.geom2d.domain.ContourArray2D;
 import math.geom2d.line.LineSegment2D;
 import math.geom2d.point.PointSets2D;
 import math.geom2d.polygon.convhull.JarvisMarch2D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Several utility functions for working on polygons, including polygon
@@ -63,10 +61,10 @@ public final class Polygons2D {
     public final static SimplePolygon2D createRectangle(double x1, double y1,
             double x2, double y2) {
         // extremes coordinates
-        double xmin = min(x1, x2);
-        double xmax = max(x1, x2);
-        double ymin = min(y1, y2);
-        double ymax = max(y1, y2);
+        double xmin = Math.min(x1, x2);
+        double xmax = Math.max(x1, x2);
+        double ymin = Math.min(y1, y2);
+        double ymax = Math.max(y1, y2);
 
         // create result polygon
         return new SimplePolygon2D(
@@ -120,8 +118,8 @@ public final class Polygons2D {
         double wid = width / 2;
 
         // Pre-compute angle quantities
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
 
         // Create resulting rotated rectangle
         return new SimplePolygon2D(new Point2D[]{
@@ -551,7 +549,7 @@ public final class Polygons2D {
     }
 
     private static Path convertToClipperPath(Polygon2D polygon, int decimalPlaces) {
-        double scaling = Math.pow(10, decimalPlaces);
+        double scaling = FastMath.pow(10, decimalPlaces);
         Path path = new Path(polygon.vertexNumber());
         polygon.vertices().forEach(v -> path.add(new Point.LongPoint((long) Math.round(v.getX() * scaling), (long) Math.round(v.getY() * scaling))));
         return path;
@@ -577,7 +575,7 @@ public final class Polygons2D {
     }
 
     private static Point2D[] extractPathVertices(Path path, int decimalPlaces) {
-        double scaling = Math.pow(10, decimalPlaces);
+        double scaling = FastMath.pow(10, decimalPlaces);
         int n = path.size();
         Point2D[] points = new Point2D[n];
         for (int i = 0; i < n; i++) {

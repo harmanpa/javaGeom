@@ -32,6 +32,7 @@ import math.geom2d.circulinear.buffer.BufferCalculator;
 import math.geom2d.conic.CircleArc2D;
 import math.geom2d.curve.*;
 import math.geom2d.transform.CircleInversion2D;
+import org.apache.commons.math3.util.FastMath;
 
 // Imports
 /**
@@ -234,7 +235,7 @@ public class Line2D extends AbstractSmoothCurve2D
         double y0 = getY1();
         double dx = getX2() - x0;
         double dy = getY2() - y0;
-        double d2 = d / Math.hypot(dx, dy);
+        double d2 = d / FastMath.hypot(dx, dy);
         return new Line2D(
                 x0 + dy * d2, y0 - dx * d2,
                 x0 + dx + dy * d2, y0 + dy - dx * d2);
@@ -253,7 +254,7 @@ public class Line2D extends AbstractSmoothCurve2D
     public double length(double pos) {
         double dx = p2.x() - p1.x();
         double dy = p2.y() - p1.y();
-        return pos * Math.hypot(dx, dy);
+        return pos * FastMath.hypot(dx, dy);
     }
 
     /* (non-Javadoc)
@@ -262,7 +263,7 @@ public class Line2D extends AbstractSmoothCurve2D
     public double position(double length) {
         double dx = p2.x() - p1.x();
         double dy = p2.y() - p1.y();
-        return length / Math.hypot(dx, dy);
+        return length / FastMath.hypot(dx, dy);
     }
 
     /* (non-Javadoc)
@@ -410,8 +411,8 @@ public class Line2D extends AbstractSmoothCurve2D
         }
 
         // return distance to closest extremity
-        double d1 = Math.hypot(p1.x() - x, p1.y() - y);
-        double d2 = Math.hypot(p2.x() - x, p2.y() - y);
+        double d1 = FastMath.hypot(p1.x() - x, p1.y() - y);
+        double d2 = FastMath.hypot(p2.x() - x, p2.y() - y);
         return Math.min(d1, d2);
     }
 

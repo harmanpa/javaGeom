@@ -17,6 +17,7 @@ import math.geom2d.circulinear.CirculinearCurve2D;
 import math.geom2d.circulinear.GenericCirculinearRing2D;
 import math.geom2d.line.LineSegment2D;
 import math.geom2d.polygon.LinearRing2D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  *
@@ -39,7 +40,7 @@ public class CircleSector2D implements ClosedShape2D {
 
     protected LinearRing2D getOuterTriangle() {
         Vector2D centreLine = getCentreLine();
-        double halfLength = arc.supportingCircle().radius() * Math.tan(Math.abs(arc.getAngleExtent()) / 2);
+        double halfLength = arc.supportingCircle().radius() * FastMath.tan(Math.abs(arc.getAngleExtent()) / 2);
         Vector2D halfVector = centreLine.rotate(Math.PI / 2).normalize().times(halfLength);
         return new LinearRing2D(
                 arc.supportingCircle().center().plus(centreLine),

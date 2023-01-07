@@ -24,7 +24,6 @@
 package math.geom2d.conic;
 
 import math.geom2d.exceptions.UnboundedShape2DException;
-import static java.lang.Math.*;
 
 import java.awt.Graphics2D;
 import java.util.ArrayList;
@@ -35,6 +34,7 @@ import math.geom2d.domain.ContourArray2D;
 import math.geom2d.line.LinearShape2D;
 import math.geom2d.line.StraightLine2D;
 import math.utils.EqualUtils;
+import org.apache.commons.math3.util.FastMath;
 
 // Imports
 /**
@@ -74,12 +74,12 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
 
         // Compute orientation angle of the hyperbola
         double theta;
-        if (abs(A - C) < Tolerance2D.get()) {
-            theta = PI / 4;
+        if (Math.abs(A - C) < Tolerance2D.get()) {
+            theta = Math.PI / 4;
         } else {
-            theta = atan2(B, (A - C)) / 2.0;
+            theta = FastMath.atan2(B, (A - C)) / 2.0;
             if (B < 0) {
-                theta -= PI;
+                theta -= Math.PI;
             }
             theta = Angle2D.formatAngle(theta);
         }
@@ -91,10 +91,10 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
         // extract coefficient f if present
         double f = 1;
         if (coefs2.length > 5) {
-            f = abs(coefs[5]);
+            f = Math.abs(coefs[5]);
         }
 
-        assert abs(coefs2[1] / f) < Tolerance2D.get() :
+        assert Math.abs(coefs2[1] / f) < Tolerance2D.get() :
                 "Second conic coefficient should be zero";
 
         assert coefs2[0] * coefs2[2] < 0 :
@@ -104,14 +104,14 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
         double r1, r2;
         if (coefs2[0] > 0) {
             // East-West hyperbola
-            r1 = sqrt(f / coefs2[0]);
-            r2 = sqrt(-f / coefs2[2]);
+            r1 = FastMath.sqrt(f / coefs2[0]);
+            r2 = FastMath.sqrt(-f / coefs2[2]);
         } else {
             // North-South hyperbola
-            r1 = sqrt(f / coefs2[2]);
-            r2 = sqrt(-f / coefs2[0]);
-            theta = Angle2D.formatAngle(theta + PI / 2);
-            theta = Math.min(theta, Angle2D.formatAngle(theta + PI));
+            r1 = FastMath.sqrt(f / coefs2[2]);
+            r2 = FastMath.sqrt(-f / coefs2[0]);
+            theta = Angle2D.formatAngle(theta + Math.PI / 2);
+            theta = Math.min(theta, Angle2D.formatAngle(theta + Math.PI));
         }
 
         // Return the new Hyperbola
@@ -136,8 +136,8 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
         // precompute some parts
         double aSq = a * a;
         double bSq = b * b;
-        double cot = cos(theta);
-        double sit = sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         double cotSq = cot * cot;
         double sitSq = sit * sit;
 
@@ -313,11 +313,11 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
     }
 
     public Vector2D getVector1() {
-        return new Vector2D(cos(theta), sin(theta));
+        return new Vector2D(FastMath.cos(theta), FastMath.sin(theta));
     }
 
     public Vector2D getVector2() {
-        return new Vector2D(-sin(theta), cos(theta));
+        return new Vector2D(-FastMath.sin(theta), FastMath.cos(theta));
     }
 
     /**
@@ -325,8 +325,8 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
      * axis.
      */
     public Point2D getFocus1() {
-        double c = hypot(a, b);
-        return new Point2D(xc + c * cos(theta), yc + c * sin(theta));
+        double c = FastMath.hypot(a, b);
+        return new Point2D(xc + c * FastMath.cos(theta), yc + c * FastMath.sin(theta));
     }
 
     /**
@@ -334,8 +334,8 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
      * axis.
      */
     public Point2D getFocus2() {
-        double c = hypot(a, b);
-        return new Point2D(xc - c * cos(theta), yc - c * sin(theta));
+        double c = FastMath.hypot(a, b);
+        return new Point2D(xc - c * FastMath.cos(theta), yc - c * FastMath.sin(theta));
     }
 
     public HyperbolaBranch2D positiveBranch() {
@@ -389,8 +389,8 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
         double bSqInv = 1.0 / bSq;
 
         // angle of hyperbola with horizontal, and trigonometric formulas
-        double sint = sin(this.theta);
-        double cost = cos(this.theta);
+        double sint = FastMath.sin(this.theta);
+        double cost = FastMath.cos(this.theta);
         double sin2t = 2.0 * sint * cost;
         double sintSq = sint * sint;
         double costSq = cost * cost;
@@ -424,7 +424,7 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
     }
 
     public double eccentricity() {
-        return hypot(1, b * b / a / a);
+        return FastMath.hypot(1, b * b / a / a);
     }
 
     // ===================================================================
@@ -451,7 +451,7 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
         // extract line parameters
         // different strategy depending if line is more horizontal or more
         // vertical
-        if (abs(dx) > abs(dy)) {
+        if (Math.abs(dx) > Math.abs(dy)) {
             // Line is mainly horizontal
 
             // slope and intercept of the line: y(x) = k*x + yi
@@ -470,8 +470,8 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
             }
 
             // x coordinate of intersection points
-            double x1 = (-b - sqrt(delta)) / (2 * a);
-            double x2 = (-b + sqrt(delta)) / (2 * a);
+            double x1 = (-b - FastMath.sqrt(delta)) / (2 * a);
+            double x2 = (-b + FastMath.sqrt(delta)) / (2 * a);
 
             // support line of formatted line
             StraightLine2D support = line2.supportingLine();
@@ -507,8 +507,8 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
             }
 
             // x coordinate of intersection points
-            double y1 = (-b - sqrt(delta)) / (2 * a);
-            double y2 = (-b + sqrt(delta)) / (2 * a);
+            double y1 = (-b - FastMath.sqrt(delta)) / (2 * a);
+            double y2 = (-b + FastMath.sqrt(delta)) / (2 * a);
 
             // support line of formatted line
             StraightLine2D support = line2.supportingLine();
@@ -542,7 +542,7 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
         double xa = point.x() / a;
         double yb = point.y() / b;
         double res = xa * xa - yb * yb - 1;
-        return abs(res) < 1e-6;
+        return Math.abs(res) < 1e-6;
     }
 
     /**
@@ -594,19 +594,19 @@ public class Hyperbola2D extends ContourArray2D<HyperbolaBranch2D>
         Hyperbola2D that = (Hyperbola2D) obj;
 
         // check if each parameter is the same
-        if (abs(that.xc - this.xc) > eps) {
+        if (Math.abs(that.xc - this.xc) > eps) {
             return false;
         }
-        if (abs(that.yc - this.yc) > eps) {
+        if (Math.abs(that.yc - this.yc) > eps) {
             return false;
         }
-        if (abs(that.a - this.a) > eps) {
+        if (Math.abs(that.a - this.a) > eps) {
             return false;
         }
-        if (abs(that.b - this.b) > eps) {
+        if (Math.abs(that.b - this.b) > eps) {
             return false;
         }
-        if (abs(that.theta - this.theta) > eps) {
+        if (Math.abs(that.theta - this.theta) > eps) {
             return false;
         }
         if (this.direct != that.direct) {

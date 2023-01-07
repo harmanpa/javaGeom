@@ -33,6 +33,7 @@ import java.util.Collection;
 import math.geom2d.*;
 import math.geom2d.domain.SmoothOrientedCurve2D;
 import math.utils.EqualUtils;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * LineArc2D is a generic class to represent edges, straight lines, and rays.
@@ -169,7 +170,7 @@ implements SmoothOrientedCurve2D {
 	 * @see math.geom2d.circulinear.CirculinearCurve2D#parallel(double)
 	 */
 	public LineArc2D parallel(double d) {
-		double d2 = d / Math.hypot(dx, dy);
+		double d2 = d / FastMath.hypot(dx, dy);
 		return new LineArc2D(x0 + dy * d2, y0 - dx * d2, dx, dy, t0, t1);
 	}
 

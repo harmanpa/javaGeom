@@ -17,6 +17,7 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import com.fasterxml.jackson.annotation.JsonClassDescription;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Define a vector in 3 dimensions. Provides methods to compute cross product
@@ -223,7 +224,7 @@ public final class Vector3D implements GeometricObject3D {
      * @return the euclidean norm of the vector
      */
     public double norm() {
-        return Math.hypot(Math.hypot(x, y), z);
+        return FastMath.hypot(FastMath.hypot(x, y), z);
     }
 
     /**

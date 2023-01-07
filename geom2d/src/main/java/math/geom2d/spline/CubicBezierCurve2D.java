@@ -29,6 +29,7 @@ import math.geom2d.curve.*;
 import math.geom2d.domain.ContinuousOrientedCurve2D;
 import math.geom2d.line.LinearShape2D;
 import math.geom2d.polygon.Polyline2D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * A cubic bezier curve, defined by 4 control points. The curve passes through
@@ -232,7 +233,7 @@ public class CubicBezierCurve2D extends AbstractSmoothCurve2D
         double xs = 2 * c[0][2] + 6 * c[0][3] * t;
         double ys = 2 * c[1][2] + 6 * c[1][3] * t;
 
-        return (xp * ys - yp * xs) / Math.pow(Math.hypot(xp, yp), 3);
+        return (xp * ys - yp * xs) / FastMath.pow(FastMath.hypot(xp, yp), 3);
     }
 
     // ===================================================================

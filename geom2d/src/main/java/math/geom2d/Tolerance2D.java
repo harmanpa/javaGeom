@@ -7,6 +7,7 @@ package math.geom2d;
 
 import java.math.BigDecimal;
 import math.geom2d.circulinear.CirculinearCurve2D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  *
@@ -32,13 +33,13 @@ public class Tolerance2D {
 
     public static void setGlobal(Double accuracy) {
         ACCURACY = accuracy;
-        TENPOWSCALE = Math.pow(10, new BigDecimal(accuracy.toString()).scale());
+        TENPOWSCALE = FastMath.pow(10, new BigDecimal(accuracy.toString()).scale());
         reset();
     }
 
     public static void set(Double accuracy) {
         THREAD_ACCURACY.set(accuracy);
-        THREAD_TENPOWSCALE.set(Math.pow(10, new BigDecimal(accuracy.toString()).scale()));
+        THREAD_TENPOWSCALE.set(FastMath.pow(10, new BigDecimal(accuracy.toString()).scale()));
     }
 
     public static Double get() {

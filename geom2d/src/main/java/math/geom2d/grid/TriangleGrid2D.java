@@ -14,6 +14,7 @@ import math.geom2d.point.PointSet2D;
 import math.geom2d.line.LineSegment2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.line.LinearShape2D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * Defines a triangle grid, with various size and orientation. The grid contains
@@ -150,12 +151,12 @@ public class TriangleGrid2D implements Grid2D {
      */
     public Point2D getClosestVertex(Point2D point) {
         // create the base line
-        double cot = Math.cos(theta);
-        double sit = Math.sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         StraightLine2D baseLine = new StraightLine2D(x0, y0, cot, sit);
 
         // compute distance to line, and deduces indices of surrounding lines
-        double s2 = s*Math.sqrt(3)/2;
+        double s2 = s*FastMath.sqrt(3)/2;
         double d = baseLine.signedDistance(point);
         int n1 = (int) Math.floor(d/s2);
         int n2 = (int) Math.ceil(d/s2);
@@ -205,14 +206,14 @@ public class TriangleGrid2D implements Grid2D {
         // init the array of line segments
         ArrayList<LineSegment2D> array = new ArrayList<LineSegment2D>();
 
-        double d = s*Math.sqrt(3)/2;
+        double d = s*FastMath.sqrt(3)/2;
         double dmin, dmax;
 
         for (int k = 0; k<3; k++) {
             // consider a line through origin with one of the 2 orientations
             double theta2 = this.theta+Math.PI*(k)/3.0;
-            double cot = Math.cos(theta2);
-            double sit = Math.sin(theta2);
+            double cot = FastMath.cos(theta2);
+            double sit = FastMath.sin(theta2);
             StraightLine2D baseLine = new StraightLine2D(x0, y0, cot, sit);
 
             // get extreme distances of box corners to the base line
@@ -225,7 +226,7 @@ public class TriangleGrid2D implements Grid2D {
             }
 
             // compute the number of lines in each direction
-            double s2 = s*Math.sqrt(3)/2;
+            double s2 = s*FastMath.sqrt(3)/2;
             int i0 = (int) Math.ceil(dmin/s2);
             int i1 = (int) Math.floor(dmax/s2);
 
@@ -251,12 +252,12 @@ public class TriangleGrid2D implements Grid2D {
         // init the array of line segments
         ArrayList<Point2D> array = new ArrayList<Point2D>();
 
-        double d = s*Math.sqrt(3)/2;
+        double d = s*FastMath.sqrt(3)/2;
         double dmin, dmax;
 
         // consider a line through origin with one of the 2 orientations
-        double cot = Math.cos(theta);
-        double sit = Math.sin(theta);
+        double cot = FastMath.cos(theta);
+        double sit = FastMath.sin(theta);
         StraightLine2D baseLine = new StraightLine2D(x0, y0, cot, sit);
 
         // get extreme distances of box corners to the base line

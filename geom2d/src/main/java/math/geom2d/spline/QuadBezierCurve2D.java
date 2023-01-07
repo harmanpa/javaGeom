@@ -31,6 +31,7 @@ import math.geom2d.domain.ContinuousOrientedCurve2D;
 import math.geom2d.line.LinearShape2D;
 import math.geom2d.line.StraightLine2D;
 import math.geom2d.polygon.Polyline2D;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * A quadratic Bezier curve, defined by 3 control points. The curve starts at
@@ -221,7 +222,7 @@ public class QuadBezierCurve2D extends AbstractSmoothCurve2D
         double xs = 2 * c[0][2];
         double ys = 2 * c[1][2];
 
-        return (xp * ys - yp * xs) / Math.pow(Math.hypot(xp, yp), 3);
+        return (xp * ys - yp * xs) / FastMath.pow(FastMath.hypot(xp, yp), 3);
     }
 
     // ===================================================================
