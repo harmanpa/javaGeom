@@ -10,12 +10,16 @@ jobs:
     steps:
     - uses: actions/checkout@v2
     - run: git fetch --depth=1 origin +refs/tags/*:refs/tags/* && git fetch --prune --unshallow
-    - name: Set up JDK 1.8
+    - name: Set up JDK
       uses: actions/setup-java@v1
       with:
-        java-version: 1.8
+        java-version: 11
+    - name: Set up Maven
+      uses: stCarolas/setup-maven@v4.5
+      with:
+        maven-version: 3.8.7
     - name: Deploy
-      run: mvn  -B -e -Dmaven.wagon.http.pool=false --settings settings.xml deploy
+      run: mvn  -B -e --settings settings.xml deploy
       env:
           GITHUB_USERNAME: harmanpa
           GITHUB_PASSWORD: ${{ secrets.GH }}
