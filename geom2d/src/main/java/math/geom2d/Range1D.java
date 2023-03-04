@@ -28,6 +28,10 @@ public class Range1D implements Comparable<Range1D> {
         return min;
     }
 
+    public double getMid() {
+        return (getMin() + getMax()) / 2.0;
+    }
+
     public double getMax() {
         return max;
     }

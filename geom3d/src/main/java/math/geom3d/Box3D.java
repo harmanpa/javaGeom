@@ -11,7 +11,7 @@ import java.util.stream.Stream;
 import math.geom2d.Range1D;
 import math.geom3s.Vector3S;
 import org.apache.commons.math3.util.FastMath;
-
+import math.geom3d.transform.AffineTransform3D;
 
 /**
  * A 3-dimensional box, defined by its extent in each direction.
@@ -271,6 +271,13 @@ public class Box3D implements GeometricObject3D {
         return Stream.of(true, false).flatMap(x -> 
             Stream.of(true, false).flatMap(y -> 
                 Stream.of(true, false).map(z -> new Point3D(x ? getMaxX() : getMinX(), y ? getMaxY() : getMinY(), z ? getMaxZ() : getMinZ()))));
+    }
+
+    public Range1D getRange(Vector3D vector) {
+        AffineTransform3D transform = Vector3S.fromCartesian(vector.normalize())
+                .transformTo(Vector3S.fromCartesian(new Vector3D(0, 0, 1)));
+        DoubleSummaryStatistics ss = streamVertices().mapToDouble(v -> v.getZ()).summaryStatistics();
+        return new Range1D(ss.getMin(), ss.getMax());
     }
 
     public double diagonal() {
