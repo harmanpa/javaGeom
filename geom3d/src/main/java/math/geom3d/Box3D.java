@@ -14,7 +14,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import math.geom2d.Range1D;
 import math.geom3s.Vector3S;
-import org.apache.commons.math3.util.FastMath;
 import math.geom3d.transform.AffineTransform3D;
 
 /**
