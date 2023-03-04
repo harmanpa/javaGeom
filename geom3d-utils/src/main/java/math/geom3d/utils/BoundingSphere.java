@@ -56,8 +56,19 @@ public class BoundingSphere {
     }
     
     public static Sphere3D boundingSphere(PointSet3D points) {
-        Miniball ball = new Miniball(new MiniballPointSet3D(points));
-        return new Sphere3D(new Point3D(ball.center()[0], ball.center()[1], ball.center()[2]), ball.radius());
+        switch(points.pointNumber()) {
+            case 0:
+                return null;
+            case 1:
+                return new Sphere3D(points.getPoint(0), 0);
+            case 2:
+                return new Sphere3D(
+                    Point3D.midpoint(points.getPoint(0), points.getPoint(1)),
+                    points.getPoint(0).distance(points.getPoint(1))/2);
+            default:
+                Miniball ball = new Miniball(new MiniballPointSet3D(points));
+                return new Sphere3D(new Point3D(ball.center()[0], ball.center()[1], ball.center()[2]), ball.radius());
+        }
     }
 
     public static Sphere3D innerSphere(Point3D centre, PointSet3D points) {
