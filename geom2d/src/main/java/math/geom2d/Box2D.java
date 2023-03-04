@@ -31,6 +31,7 @@ import static java.lang.Double.NEGATIVE_INFINITY;
 import static java.lang.Double.POSITIVE_INFINITY;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.stream.Stream;
 
 import math.geom2d.domain.Boundary2D;
 import math.geom2d.domain.BoundaryPolyCurve2D;
@@ -689,4 +690,30 @@ public class Box2D implements GeometricObject2D {
         return hash;
     }
 
+    public Range1D[] getRanges() {
+        return new Range1D[]{new Range1D(getMinX(), getMaxX()), new Range1D(getMinY(), getMaxY())};
+    }
+
+    public Stream<Point2D> streamVertices() {
+        return Stream.of(true, false).flatMap(x -> 
+            Stream.of(true, false).map(y -> new Point2D(x ? getMaxX() : getMinX(), y ? getMaxY() : getMinY())));
+    }
+
+    public double distance(Box2D other) {
+        int[] overlaps = new int[2];
+        Range1D[] ranges = getRanges();
+        Range1D[] otherRanges = other.getRanges();
+        for(int i=0; i<2; i++) {
+            overlaps[i] = ranges[i].compareTo(otherRanges[i]);
+        }
+        if(overlaps[0]==0 && overlaps[1]!=0) {
+            return ranges[1].distance(otherRanges[1]);
+        } else if(overlaps[0]!=0 && overlaps[1]==0) {
+            return ranges[0].distance(otherRanges[0]);
+        } else if(overlaps[0]==0 && overlaps[1]==0) {
+            return Math.max(ranges[0].distance(otherRanges[0]), ranges[1].distance(otherRanges[1]));
+        } else {
+            return streamVertices().mapToDouble(v -> other.streamVertices().mapToDouble(v2 -> v.distance(v2)).min().getAsDouble()).min().getAsDouble();
+        }
+    }
 }

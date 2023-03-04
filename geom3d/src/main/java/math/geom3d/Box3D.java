@@ -14,6 +14,8 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import math.geom2d.Range1D;
 import math.geom3s.Vector3S;
+import org.apache.commons.math3.util.FastMath;
+import math.geom3d.transform.AffineTransform3D;
 
 /**
  * A 3-dimensional box, defined by its extent in each direction.
@@ -277,5 +279,58 @@ public class Box3D implements GeometricObject3D {
                         .transformTo(Vector3S.fromCartesian(new Vector3D(0, 0, 1))))
                 .boundingBox();
         return box;
+    }
+
+    public Range1D[] getRanges() {
+        return new Range1D[]{new Range1D(getMinX(), getMaxX()), new Range1D(getMinY(), getMaxY()), new Range1D(getMinZ(), getMaxZ())};
+    }
+
+    public Stream<Point3D> streamVertices() {
+        return Stream.of(true, false).flatMap(x -> 
+            Stream.of(true, false).flatMap(y -> 
+                Stream.of(true, false).map(z -> new Point3D(x ? getMaxX() : getMinX(), y ? getMaxY() : getMinY(), z ? getMaxZ() : getMinZ()))));
+    }
+
+    public Range1D getRange(Vector3D vector) {
+        AffineTransform3D transform = Vector3S.fromCartesian(vector.normalize())
+                .transformTo(Vector3S.fromCartesian(new Vector3D(0, 0, 1)));
+        DoubleSummaryStatistics ss = streamVertices().mapToDouble(v -> v.getZ()).summaryStatistics();
+        return new Range1D(ss.getMin(), ss.getMax());
+    }
+
+    public double diagonal() {
+        Point3D[] corners = getExtremes();
+        return corners[0].distance(corners[1]);
+    }
+
+    /**
+     * Returns an approximate distance unless the approximate distance is below a given value
+     */
+    public double fastDistance(Box3D other, double accurateBelow) {
+        double fDistance = getCenter().distance(other.getCenter()) - (diagonal()/2 + other.diagonal()/2);
+        if(fDistance<accurateBelow) {
+            return distance(other);
+        }
+        return fDistance;
+    }
+
+    public double distance(Box3D other) {
+        int[] overlaps = new int[3];
+        Range1D[] ranges = getRanges();
+        Range1D[] otherRanges = other.getRanges();
+        for(int i=0; i<3; i++) {
+            overlaps[i] = ranges[i].compareTo(otherRanges[i]);
+        }
+        if(overlaps[0]==0 && overlaps[1]==0 && overlaps[2]!=0) {
+            return ranges[2].distance(otherRanges[2]);
+        } else if(overlaps[0]==0 && overlaps[1]!=0 && overlaps[2]==0) {
+            return ranges[1].distance(otherRanges[1]);
+        } else if(overlaps[0]!=0 && overlaps[1]==0 && overlaps[2]==0) {
+            return ranges[0].distance(otherRanges[0]);
+        } else if(overlaps[0]==0 && overlaps[1]==0 && overlaps[2]==0) {
+            return Math.max(Math.max(ranges[0].distance(otherRanges[0]), ranges[1].distance(otherRanges[1])), ranges[2].distance(otherRanges[2]));
+        } else {
+            return streamVertices().mapToDouble(v -> other.streamVertices().mapToDouble(v2 -> v.distance(v2)).min().getAsDouble()).min().getAsDouble();
+        }
     }
 }
