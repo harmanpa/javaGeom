@@ -3,6 +3,10 @@
  */
 package math.geom3d;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.DoubleSummaryStatistics;
@@ -16,16 +20,30 @@ import math.geom3s.Vector3S;
  *
  * @author dlegland
  */
+@JsonClassDescription("")
+@JsonIgnoreProperties(ignoreUnknown = true, allowGetters = false, allowSetters = false)
 public class Box3D implements GeometricObject3D {
 
     // ===================================================================
     // class variables
-    private final double xmin;
-    private final double xmax;
-    private final double ymin;
-    private final double ymax;
-    private final double zmin;
-    private final double zmax;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double xmin;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double xmax;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double ymin;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double ymax;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double zmin;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double zmax;
 
     /**
      * Empty constructor (size and position zero)
