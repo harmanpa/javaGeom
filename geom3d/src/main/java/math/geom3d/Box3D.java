@@ -10,6 +10,8 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import math.geom2d.Range1D;
 import math.geom3s.Vector3S;
+import org.apache.commons.math3.util.FastMath;
+
 
 /**
  * A 3-dimensional box, defined by its extent in each direction.
@@ -269,6 +271,22 @@ public class Box3D implements GeometricObject3D {
         return Stream.of(true, false).flatMap(x -> 
             Stream.of(true, false).flatMap(y -> 
                 Stream.of(true, false).map(z -> new Point3D(x ? getMaxX() : getMinX(), y ? getMaxY() : getMinY(), z ? getMaxZ() : getMinZ()))));
+    }
+
+    public double diagonal() {
+        Point3D[] corners = getExtremes();
+        return corners[0].distance(corners[1]);
+    }
+
+    /**
+     * Returns an approximate distance unless the approximate distance is below a given value
+     */
+    public double fastDistance(Box3D other, double accurateBelow) {
+        double fDistance = getCenter().distance(other.getCenter()) - (diagonal()/2 + other.diagonal()/2);
+        if(fDistance<accurateBelow) {
+            return distance(other);
+        }
+        return fDistance;
     }
 
     public double distance(Box3D other) {
