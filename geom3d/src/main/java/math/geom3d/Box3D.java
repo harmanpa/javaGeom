@@ -260,4 +260,34 @@ public class Box3D implements GeometricObject3D {
                 .boundingBox();
         return box;
     }
+
+    public Range1D[] getRanges() {
+        return new Range1D[]{new Range1D(getMinX(), getMaxX()), new Range1D(getMinY(), getMaxY()), new Range1D(getMinZ(), getMaxZ())};
+    }
+
+    public Stream<Point3D> streamVertices() {
+        return Stream.of(true, false).flatMap(x -> 
+            Stream.of(true, false).flatMap(y -> 
+                Stream.of(true, false).map(z -> new Point3D(x ? getMaxX() : getMinX(), y ? getMaxY() : getMinY(), z ? getMaxZ() : getMinZ()))));
+    }
+
+    public double distance(Box3D other) {
+        int[] overlaps = new int[3];
+        Range1D[] ranges = getRanges();
+        Range1D[] otherRanges = other.getRanges();
+        for(int i=0; i<3; i++) {
+            overlaps[i] = ranges[i].compareTo(otherRanges[i]);
+        }
+        if(overlaps[0]==0 && overlaps[1]==0 && overlaps[2]!=0) {
+            return ranges[2].distance(otherRanges[2]);
+        } else if(overlaps[0]==0 && overlaps[1]!=0 && overlaps[2]==0) {
+            return ranges[1].distance(otherRanges[1]);
+        } else if(overlaps[0]!=0 && overlaps[1]==0 && overlaps[2]==0) {
+            return ranges[0].distance(otherRanges[0]);
+        } else if(overlaps[0]==0 && overlaps[1]==0 && overlaps[2]==0) {
+            return Math.max(Math.max(ranges[0].distance(otherRanges[0]), ranges[1].distance(otherRanges[1])), ranges[2].distance(otherRanges[2]));
+        } else {
+            return streamVertices().mapToDouble(v -> other.streamVertices().mapToDouble(v2 -> v.distance(v2)).min().getAsDouble()).min().getAsDouble();
+        }
+    }
 }
