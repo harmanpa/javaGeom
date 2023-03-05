@@ -6,6 +6,7 @@
 package math.geom3d;
 
 import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -46,16 +47,19 @@ public class Sphere3D implements Shape3D {
     }
 
     @Override
+    @JsonIgnore
     public boolean isEmpty() {
         return radius <= Tolerance2D.get();
     }
 
     @Override
+    @JsonIgnore
     public boolean isBounded() {
         return radius < Double.POSITIVE_INFINITY;
     }
 
     @Override
+    @JsonIgnore
     public Box3D boundingBox() {
         return new Box3D(center.getX() - radius, center.getX() + radius,
                 center.getY() - radius, center.getY() + radius,

@@ -4,6 +4,7 @@
 package math.geom3d;
 
 import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.JsonPropertyDescription;
@@ -132,26 +133,32 @@ public class Box3D implements GeometricObject3D {
 
     // ===================================================================
     // accessors to Box2D fields
+    @JsonIgnore
     public double getMinX() {
         return xmin;
     }
 
+    @JsonIgnore
     public double getMaxX() {
         return xmax;
     }
 
+    @JsonIgnore
     public double getMinY() {
         return ymin;
     }
 
+    @JsonIgnore
     public double getMaxY() {
         return ymax;
     }
 
+    @JsonIgnore
     public double getMinZ() {
         return zmin;
     }
 
+    @JsonIgnore
     public double getMaxZ() {
         return zmax;
     }
@@ -161,6 +168,7 @@ public class Box3D implements GeometricObject3D {
      *
      * @return
      */
+    @JsonIgnore
     public double getWidth() {
         return xmax - xmin;
     }
@@ -170,6 +178,7 @@ public class Box3D implements GeometricObject3D {
      *
      * @return
      */
+    @JsonIgnore
     public double getHeight() {
         return ymax - ymin;
     }
@@ -179,18 +188,22 @@ public class Box3D implements GeometricObject3D {
      *
      * @return
      */
+    @JsonIgnore
     public double getDepth() {
         return zmax - zmin;
     }
 
+    @JsonIgnore
     public Point3D getCenter() {
         return new Point3D((xmax + xmin) / 2, (ymax + ymin) / 2, (zmax + zmin) / 2);
     }
 
+    @JsonIgnore
     public Vector3D getDimensions() {
         return new Vector3D(xmax - xmin, ymax - ymin, zmax - zmin);
     }
 
+    @JsonIgnore
     public Point3D[] getExtremes() {
         return new Point3D[]{new Point3D(xmin, ymin, zmin), new Point3D(xmax, ymax, zmax)};
     }
@@ -280,10 +293,12 @@ public class Box3D implements GeometricObject3D {
         return box;
     }
 
+    @JsonIgnore
     public Range1D[] getRanges() {
         return new Range1D[]{new Range1D(getMinX(), getMaxX()), new Range1D(getMinY(), getMaxY()), new Range1D(getMinZ(), getMaxZ())};
     }
 
+    @JsonIgnore
     public Stream<Point3D> streamVertices() {
         return Stream.of(true, false).flatMap(x -> 
             Stream.of(true, false).flatMap(y -> 
@@ -297,6 +312,7 @@ public class Box3D implements GeometricObject3D {
         return new Range1D(ss.getMin(), ss.getMax());
     }
 
+    @JsonIgnore
     public double diagonal() {
         Point3D[] corners = getExtremes();
         return corners[0].distance(corners[1]);
