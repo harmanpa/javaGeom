@@ -5,6 +5,11 @@
  */
 package math.geom3d;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import java.util.Objects;
 import math.geom2d.Tolerance2D;
 import math.geom3d.transform.AffineTransform3D;
@@ -13,27 +18,48 @@ import math.geom3d.transform.AffineTransform3D;
  *
  * @author peter
  */
+@JsonClassDescription("")
+@JsonIgnoreProperties(ignoreUnknown = true, allowGetters = false, allowSetters = false)
 public class Sphere3D implements Shape3D {
 
-    private final Point3D center;
-    private final double radius;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private Point3D center;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double radius;
+
+    public Sphere3D() {
+
+    }
 
     public Sphere3D(Point3D center, double radius) {
         this.center = center;
         this.radius = radius;
     }
 
+    public Point3D getCenter() {
+        return center;
+    }
+
+    public double getRadius() {
+        return radius;
+    }
+
     @Override
+    @JsonIgnore
     public boolean isEmpty() {
         return radius <= Tolerance2D.get();
     }
 
     @Override
+    @JsonIgnore
     public boolean isBounded() {
         return radius < Double.POSITIVE_INFINITY;
     }
 
     @Override
+    @JsonIgnore
     public Box3D boundingBox() {
         return new Box3D(center.getX() - radius, center.getX() + radius,
                 center.getY() - radius, center.getY() + radius,

@@ -3,6 +3,11 @@
  */
 package math.geom3d;
 
+import com.fasterxml.jackson.annotation.JsonClassDescription;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.JsonPropertyDescription;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.DoubleSummaryStatistics;
@@ -10,7 +15,6 @@ import java.util.function.Supplier;
 import java.util.stream.Stream;
 import math.geom2d.Range1D;
 import math.geom3s.Vector3S;
-import org.apache.commons.math3.util.FastMath;
 import math.geom3d.transform.AffineTransform3D;
 
 /**
@@ -18,16 +22,30 @@ import math.geom3d.transform.AffineTransform3D;
  *
  * @author dlegland
  */
+@JsonClassDescription("")
+@JsonIgnoreProperties(ignoreUnknown = true, allowGetters = false, allowSetters = false)
 public class Box3D implements GeometricObject3D {
 
     // ===================================================================
     // class variables
-    private final double xmin;
-    private final double xmax;
-    private final double ymin;
-    private final double ymax;
-    private final double zmin;
-    private final double zmax;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double xmin;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double xmax;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double ymin;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double ymax;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double zmin;
+    @JsonProperty
+    @JsonPropertyDescription("")
+    private double zmax;
 
     /**
      * Empty constructor (size and position zero)
@@ -115,26 +133,32 @@ public class Box3D implements GeometricObject3D {
 
     // ===================================================================
     // accessors to Box2D fields
+    @JsonIgnore
     public double getMinX() {
         return xmin;
     }
 
+    @JsonIgnore
     public double getMaxX() {
         return xmax;
     }
 
+    @JsonIgnore
     public double getMinY() {
         return ymin;
     }
 
+    @JsonIgnore
     public double getMaxY() {
         return ymax;
     }
 
+    @JsonIgnore
     public double getMinZ() {
         return zmin;
     }
 
+    @JsonIgnore
     public double getMaxZ() {
         return zmax;
     }
@@ -144,6 +168,7 @@ public class Box3D implements GeometricObject3D {
      *
      * @return
      */
+    @JsonIgnore
     public double getWidth() {
         return xmax - xmin;
     }
@@ -153,6 +178,7 @@ public class Box3D implements GeometricObject3D {
      *
      * @return
      */
+    @JsonIgnore
     public double getHeight() {
         return ymax - ymin;
     }
@@ -162,18 +188,22 @@ public class Box3D implements GeometricObject3D {
      *
      * @return
      */
+    @JsonIgnore
     public double getDepth() {
         return zmax - zmin;
     }
 
+    @JsonIgnore
     public Point3D getCenter() {
         return new Point3D((xmax + xmin) / 2, (ymax + ymin) / 2, (zmax + zmin) / 2);
     }
 
+    @JsonIgnore
     public Vector3D getDimensions() {
         return new Vector3D(xmax - xmin, ymax - ymin, zmax - zmin);
     }
 
+    @JsonIgnore
     public Point3D[] getExtremes() {
         return new Point3D[]{new Point3D(xmin, ymin, zmin), new Point3D(xmax, ymax, zmax)};
     }
@@ -263,10 +293,12 @@ public class Box3D implements GeometricObject3D {
         return box;
     }
 
+    @JsonIgnore
     public Range1D[] getRanges() {
         return new Range1D[]{new Range1D(getMinX(), getMaxX()), new Range1D(getMinY(), getMaxY()), new Range1D(getMinZ(), getMaxZ())};
     }
 
+    @JsonIgnore
     public Stream<Point3D> streamVertices() {
         return Stream.of(true, false).flatMap(x -> 
             Stream.of(true, false).flatMap(y -> 
@@ -280,6 +312,7 @@ public class Box3D implements GeometricObject3D {
         return new Range1D(ss.getMin(), ss.getMax());
     }
 
+    @JsonIgnore
     public double diagonal() {
         Point3D[] corners = getExtremes();
         return corners[0].distance(corners[1]);
