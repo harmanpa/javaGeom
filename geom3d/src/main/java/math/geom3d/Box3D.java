@@ -70,8 +70,8 @@ public class Box3D implements GeometricObject3D {
      */
     public static Box3D fromPoints(Collection<Point3D> points) {
         DoubleSummaryStatistics xStats = points.stream().mapToDouble(point -> point.getX()).summaryStatistics();
-        DoubleSummaryStatistics yStats = points.stream().mapToDouble(point -> point.getX()).summaryStatistics();
-        DoubleSummaryStatistics zStats = points.stream().mapToDouble(point -> point.getX()).summaryStatistics();
+        DoubleSummaryStatistics yStats = points.stream().mapToDouble(point -> point.getY()).summaryStatistics();
+        DoubleSummaryStatistics zStats = points.stream().mapToDouble(point -> point.getZ()).summaryStatistics();
         return new Box3D(xStats.getMin(), xStats.getMax(), yStats.getMin(), yStats.getMax(), zStats.getMin(), zStats.getMax());
     }
 
