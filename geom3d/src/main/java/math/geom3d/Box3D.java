@@ -308,7 +308,9 @@ public class Box3D implements GeometricObject3D {
     public Range1D getRange(Vector3D vector) {
         AffineTransform3D transform = Vector3S.fromCartesian(vector.normalize())
                 .transformTo(Vector3S.fromCartesian(new Vector3D(0, 0, 1)));
-        DoubleSummaryStatistics ss = streamVertices().mapToDouble(v -> v.getZ()).summaryStatistics();
+        DoubleSummaryStatistics ss = streamVertices()
+                .map(v -> v.transform(transform))
+                .mapToDouble(v -> v.getZ()).summaryStatistics();
         return new Range1D(ss.getMin(), ss.getMax());
     }
 
