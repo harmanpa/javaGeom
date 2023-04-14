@@ -127,20 +127,7 @@ public class Edge {
      * @return the polygon
      */
     public static Polygon toPolygon(List<Point3D> points, Plane plane) {
-
-//        List<Vector3d> points = edges.stream().().map(e -> e.p1.pos).
-//                collect(Collectors.toList());
-        Polygon p = Polygon.fromPoints(points);
-
-        p.vertices.stream().forEachOrdered((vertex) -> {
-            vertex.normal = plane.normal;
-        });
-
-//        // we try to detect wrong orientation by comparing normals
-//        if (p.plane.normal.angle(plane.normal) > 0.1) {
-//            p.flip();
-//        }
-        return p;
+        return new Polygon(points.stream().map(point -> new Vertex(point, plane.getNormal())).collect(Collectors.toList()), plane);
     }
 
     /**
@@ -349,9 +336,7 @@ public class Edge {
      */
     public static List<Polygon> boundaryPathsWithHoles(List<Polygon> boundaryPaths) {
         List<Polygon> holes = new ArrayList<>();
-        List<Polygon> result = boundaryPaths.stream().
-                map(p -> p.clone()).collect(Collectors.toList());
-
+        List<Polygon> result = new ArrayList<>(boundaryPaths);
         List<List<Integer>> parents = new ArrayList<>();
         boolean[] isHole = new boolean[result.size()];
 

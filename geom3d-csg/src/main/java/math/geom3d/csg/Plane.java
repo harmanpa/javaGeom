@@ -69,11 +69,11 @@ public class Plane implements Cloneable {
     /**
      * Normal vector.
      */
-    public Vector3D normal;
+    public final Vector3D normal;
     /**
      * Distance to origin.
      */
-    public double dist;
+    public final double dist;
 
     /**
      * Constructor. Creates a new plane defined by its normal vector and the
@@ -108,21 +108,21 @@ public class Plane implements Cloneable {
         return new Plane(n, n.dot(new Vector3D(a)));
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
-    @Override
-    @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDeclaresCloneNotSupported"})
-    public Plane clone() {
-        return new Plane(normal, dist);
-    }
 
     /**
      * Flips this plane.
      */
-    public void flip() {
-        normal = normal.opposite();
-        dist = -dist;
+    public Plane flip() {
+        return new Plane(normal.opposite(), -dist);
+    }
+    
+    public void splitPolygons(
+            List<Polygon> polygons,
+            List<Polygon> coplanarFront,
+            List<Polygon> coplanarBack,
+            List<Polygon> front,
+            List<Polygon> back) {
+        polygons.stream().parallel().forEach(polygon -> splitPolygon(polygon, coplanarFront, coplanarBack, front, back));
     }
 
     /**
@@ -190,13 +190,13 @@ public class Plane implements Cloneable {
                         f.add(vi);
                     }
                     if (ti != FRONT) {
-                        b.add(ti != BACK ? vi.clone() : vi);
+                        b.add(vi);
                     }
                     if ((ti | tj) == SPANNING) {
                         double t = (this.dist - this.normal.dot(new Vector3D(vi.pos))) / this.normal.dot(new Vector3D(vi.pos, vj.pos));
                         Vertex v = vi.interpolate(vj, t);
                         f.add(v);
-                        b.add(v.clone());
+                        b.add(v);
                     }
                 }
                 if (f.size() >= 3) {

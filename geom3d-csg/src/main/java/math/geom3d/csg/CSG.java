@@ -104,7 +104,7 @@ public class CSG implements Shape3D {
     /**
      * The polygons.
      */
-    private List<Polygon> polygons;
+    private final List<Polygon> polygons;
 
     /**
      * The default opt type.
@@ -114,8 +114,9 @@ public class CSG implements Shape3D {
     /**
      * The opt type.
      */
-    private OptType optType = null;
+    private final OptType optType;
 
+    private Node node;
     private Box3D bounds;
     private String name = "";
 
@@ -123,6 +124,28 @@ public class CSG implements Shape3D {
      * Instantiates a new csg.
      */
     public CSG() {
+        this(new ArrayList<>());
+    }
+    
+    public CSG(List<Polygon> polygons) {
+        this(polygons, defaultOptType);
+    }
+    
+    public CSG(List<Polygon> polygons, OptType optType) {
+        this.polygons = polygons;
+        this.optType = optType;
+    }
+    
+    private CSG(Node node, OptType optType) {
+        this(node.allPolygons(), optType);
+        this.node = node;
+    }
+    
+    public Node getNode() {
+        if(this.node==null) {
+            this.node = new Node(this.getPolygons());
+        }
+        return this.node;
     }
 
     @Override
@@ -324,7 +347,7 @@ public class CSG implements Shape3D {
     public List<CSG> move(List<Transform> p) {
         List<CSG> bits = new ArrayList<>(p.size());
         p.forEach((_item) -> {
-            bits.add(this.clone());
+            bits.add(this);
         });
         return move(bits, p);
     }
@@ -454,11 +477,7 @@ public class CSG implements Shape3D {
      * @return a CSG instance
      */
     public static CSG fromPolygons(List<Polygon> polygons) {
-
-        CSG csg = new CSG();
-        csg.setPolygons(polygons);
-
-        return csg;
+        return new CSG(polygons);
     }
 
     /**
@@ -469,30 +488,6 @@ public class CSG implements Shape3D {
      */
     public static CSG fromPolygons(Polygon... polygons) {
         return fromPolygons(Arrays.asList(polygons));
-    }
-
-    /*
-	 * (non-Javadoc)
-	 * 
-	 * @see java.lang.Object#clone()
-     */
-    @Override
-    @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDeclaresCloneNotSupported"})
-    public CSG clone() {
-        CSG csg = new CSG();
-
-        csg.setOptType(this.getOptType());
-        csg.setPolygons(clonePolygons());
-
-        return csg;
-    }
-    
-    List<Polygon> clonePolygons() {
-        List<Polygon> out = new ArrayList<>(getPolygons().size());
-        for(Polygon polygon : getPolygons()) {
-            out.add(polygon.clone());
-        }
-        return out;
     }
 
     /**
@@ -506,17 +501,6 @@ public class CSG implements Shape3D {
     
     public Stream<Polygon> streamPolygons() {
         return polygons.size() > 200 ? polygons.parallelStream() : polygons.stream();
-    }
-
-    /**
-     * Defines the CSg optimization type.
-     *
-     * @param type optimization type
-     * @return this CSG
-     */
-    public CSG optimization(OptType type) {
-        this.setOptType(type);
-        return this;
     }
 
     /**
@@ -572,9 +556,9 @@ public class CSG implements Shape3D {
     public CSG dumbUnion(List<CSG> csgs) {
         int n = getPolygons().size() + csgs.stream().mapToInt(csg -> csg.getPolygons().size()).sum();
         List<Polygon> polygons = new ArrayList<>(n);
-        polygons.addAll(clonePolygons());
+        polygons.addAll(getPolygons());
         for(CSG csg : csgs) {
-            polygons.addAll(csg.clonePolygons());
+            polygons.addAll(csg.getPolygons());
         }
         return fromPolygons(polygons);
     }
@@ -667,25 +651,7 @@ public class CSG implements Shape3D {
      * @throws math.geom3d.quickhull.QuickHullException
      */
     public CSG hull(List<CSG> csgs) throws QuickHullException {
-
-        CSG csgsUnion = new CSG();
-        csgsUnion.optType = optType;
-        csgsUnion.setPolygons(this.clone().getPolygons());
-
-        csgs.stream().forEach((csg) -> {
-            csgsUnion.getPolygons().addAll(csg.clone().getPolygons());
-        });
-
-        bounds = null;
-        return csgsUnion.hull();
-
-        // CSG csgsUnion = this;
-        //
-        // for (CSG csg : csgs) {
-        // csgsUnion = csgsUnion.union(csg);
-        // }
-        //
-        // return csgsUnion.hull();
+        return dumbUnion(csgs).hull();
     }
 
     /**
@@ -742,8 +708,7 @@ public class CSG implements Shape3D {
             allPolygons.addAll(this.getPolygons());
             allPolygons.addAll(csg.getPolygons());
         }
-        bounds = null;
-        return CSG.fromPolygons(allPolygons).optimization(getOptType());
+        return new CSG(allPolygons, getOptType());
     }
 
     /**
@@ -768,7 +733,7 @@ public class CSG implements Shape3D {
             allPolygons.addAll(csg.getPolygons());
         }
 
-        return CSG.fromPolygons(allPolygons).optimization(getOptType());
+        return new CSG(allPolygons, getOptType());
     }
 
     /**
@@ -778,15 +743,17 @@ public class CSG implements Shape3D {
      * @return the csg
      */
     private CSG _unionNoOpt(CSG csg) {
-        Node a = new Node(this.clone().getPolygons());
-        Node b = new Node(csg.clone().getPolygons());
-        a.clipTo(b);
-        b.clipTo(a);
-        b.invert();
-        b.clipTo(a);
-        b.invert();
-        a.build(b.allPolygons());
-        return CSG.fromPolygons(a.allPolygons()).optimization(getOptType());
+        Node a = getNode();
+        Node b = csg.getNode();
+        Node c = a.clipTo(b);
+        return new CSG(c.union(b.clipTo(c).invert().clipTo(c).invert()), getOptType());
+//        a.clipTo(b);
+//        b.clipTo(a);
+//        b.invert();
+//        b.clipTo(a);
+//        b.invert();
+//        a.build(b.allPolygons());
+//        return new CSG(a.allPolygons(), getOptType());
     }
 
     /**
@@ -808,7 +775,7 @@ public class CSG implements Shape3D {
     public CSG difference(List<CSG> csgs) {
 
         if (csgs.isEmpty()) {
-            return this.clone();
+            return this;
         }
 
         CSG csgsUnion = csgs.get(0);
@@ -911,8 +878,7 @@ public class CSG implements Shape3D {
         CSG bb = new Cube(csg.getBounds()).toCSG();
         CSG a1 = this._differenceNoOpt(bb);
         CSG a2 = this.intersect(bb);
-
-        return a2._differenceNoOpt(b)._unionIntersectOpt(a1).optimization(getOptType());
+        return a2._differenceNoOpt(b)._unionIntersectOpt(a1);
     }
 
     /**
@@ -941,7 +907,7 @@ public class CSG implements Shape3D {
         allPolygons.addAll(outer);
         allPolygons.addAll(innerCSG._differenceNoOpt(csg).getPolygons());
 
-        return CSG.fromPolygons(allPolygons).optimization(getOptType());
+        return new CSG(allPolygons, getOptType());
     }
 
     /**
@@ -951,21 +917,22 @@ public class CSG implements Shape3D {
      * @return the csg
      */
     private CSG _differenceNoOpt(CSG csg) {
-
-        Node a = new Node(this.clone().getPolygons());
-        Node b = new Node(csg.clone().getPolygons());
-
-        a.invert();
-        a.clipTo(b);
-        b.clipTo(a);
-        b.invert();
-        b.clipTo(a);
-        b.invert();
-        a.build(b.allPolygons());
-        a.invert();
-
-        CSG csgA = CSG.fromPolygons(a.allPolygons()).optimization(getOptType());
-        return csgA;
+        Node a = getNode();
+        Node b = csg.getNode();
+        Node c = a.invert().clipTo(b);        
+        Node d = b.clipTo(c).invert().clipTo(c).invert();
+        return new CSG(c.union(d).invert(), getOptType());
+//        a.invert();
+//        a.clipTo(b);
+//        b.clipTo(a);
+//        b.invert();
+//        b.clipTo(a);
+//        b.invert();
+//        a.build(b.allPolygons());
+//        a.invert();
+//
+//        CSG csgA = CSG.fromPolygons(a.allPolygons()).optimization(getOptType());
+//        return csgA;
     }
 
     /**
@@ -985,17 +952,33 @@ public class CSG implements Shape3D {
      * @return intersection of this csg and the specified csg
      */
     public CSG intersect(CSG csg) {
+        Node a = getNode();
+        Node b = csg.getNode();
+//        Node aInv = a.invert();
+//        Node c = b.clipTo(aInv).invert();
+//        Node d = aInv.clipTo(c);
+//        return new CSG(d.union(c.clipTo(d)).invert(), getOptType());
 
-        Node a = new Node(this.clone().getPolygons());
-        Node b = new Node(csg.clone().getPolygons());
-        a.invert();
-        b.clipTo(a);
-        b.invert();
-        a.clipTo(b);
-        b.clipTo(a);
-        a.build(b.allPolygons());
-        a.invert();
-        return CSG.fromPolygons(a.allPolygons()).optimization(getOptType());
+        Node a2 = a.invert();
+        Node b2 = b.clipTo(a2);
+        Node b3 = b2.invert();
+        Node a3 = a2.clipTo(b3);
+        Node b4 = b3.clipTo(a3);
+        Node a4 = a3.union(b4);
+        Node a5 = a4.invert();
+        return new CSG(a5, getOptType());
+
+
+
+
+//        a.invert();
+//        b.clipTo(a);
+//        b.invert();
+//        a.clipTo(b);
+//        b.clipTo(a);
+//        a.build(b.allPolygons());
+//        a.invert();
+//        return CSG.fromPolygons(a.allPolygons()).optimization(getOptType());
     }
 
     /**
@@ -1017,7 +1000,7 @@ public class CSG implements Shape3D {
     public CSG intersect(List<CSG> csgs) {
 
         if (csgs.isEmpty()) {
-            return this.clone();
+            return this;
         }
 
         CSG csgsUnion = csgs.get(0);
@@ -1058,13 +1041,12 @@ public class CSG implements Shape3D {
      */
     public CSG transformed(Transform transform) {
         if (getPolygons().isEmpty()) {
-            return clone();
+            return this;
         }
         List<Polygon> newpolygons = this.streamPolygons()
-                .map(p -> p.transformed(transform))
+                .map(p -> p.transform(transform))
                 .collect(Collectors.toList());
-        CSG result = CSG.fromPolygons(newpolygons).optimization(getOptType());
-        return result;
+        return new CSG(newpolygons, getOptType());
     }
 
     /**
@@ -1222,25 +1204,6 @@ public class CSG implements Shape3D {
     }
 
     /**
-     * Sets the opt type.
-     *
-     * @param optType the optType to set
-     */
-    public void setOptType(OptType optType) {
-        this.optType = optType;
-    }
-
-    /**
-     * Sets the polygons.
-     *
-     * @param polygons the new polygons
-     */
-    public void setPolygons(List<Polygon> polygons) {
-        bounds = null;
-        this.polygons = polygons;
-    }
-
-    /**
      * The Enum OptType.
      */
     public static enum OptType {
@@ -1322,7 +1285,7 @@ public class CSG implements Shape3D {
         return minkowskiDifference(itemToDifference, new Cube(shellThickness).toCSG());
     }
 
-    public CSG toolOffset(Number sn) throws QuickHullException {
+    public CSG toolOffset(Number sn, int nFaces) throws QuickHullException {
         double shellThickness = sn.doubleValue();
         boolean cut = shellThickness < 0;
         shellThickness = Math.abs(shellThickness);
@@ -1333,7 +1296,7 @@ public class CSG implements Shape3D {
         if (z > this.getTotalZ() / 2) {
             z = this.getTotalZ() / 2;
         }
-        CSG printNozzel = new Sphere(z / 2.0, getNumFacesForOffsets() / 2, 4).toCSG();
+        CSG printNozzel = new Sphere(z / 2.0, nFaces / 2, 4).toCSG();
 
         if (cut) {
             ArrayList<CSG> mikObjs = minkowski(printNozzel);
@@ -1346,9 +1309,9 @@ public class CSG implements Shape3D {
         return union(minkowski(printNozzel));
     }
 
-    private int getNumFacesForOffsets() {
-        return getNumFacesInOffset();
-    }
+//    private int getNumFacesForOffsets() {
+//        return getNumFacesInOffset();
+//    }
 
     public CSG makeKeepaway(Number sn) {
         double shellThickness = sn.doubleValue();
@@ -1418,22 +1381,22 @@ public class CSG implements Shape3D {
                 .movez(this.getMaxZ());
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public CSG setName(String name) {
-        this.name = name;
-        return this;
-    }
-
-    public static int getNumFacesInOffset() {
-        return numFacesInOffset;
-    }
-
-    public static void setNumFacesInOffset(int numFacesInOffset) {
-        CSG.numFacesInOffset = numFacesInOffset;
-    }
+//    public String getName() {
+//        return name;
+//    }
+//
+//    public CSG setName(String name) {
+//        this.name = name;
+//        return this;
+//    }
+//
+//    public static int getNumFacesInOffset() {
+//        return numFacesInOffset;
+//    }
+//
+//    public static void setNumFacesInOffset(int numFacesInOffset) {
+//        CSG.numFacesInOffset = numFacesInOffset;
+//    }
 
     /**
      * Computes and returns the volume of this CSG based on a triangulated

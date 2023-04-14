@@ -82,9 +82,17 @@ public class Sphere3D implements Shape3D {
         return center.distance(p) - radius;
     }
 
+    public double distance(Sphere3D sphere) {
+        return center.distance(sphere.center) - (radius + sphere.radius);
+    }
+
     @Override
     public boolean contains(Point3D point) {
         return distance(point) < 0;
+    }
+
+    public boolean contains(Sphere3D sphere) {
+        return (center.distance(sphere.center) + sphere.radius) < radius;
     }
 
     @Override

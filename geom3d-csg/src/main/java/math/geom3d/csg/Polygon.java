@@ -100,11 +100,15 @@ public final class Polygon {
      * @param vertices polygon vertices
      */
     public Polygon(List<Vertex> vertices) {
-        this.vertices = vertices;
-        this.plane = Plane.createFromPoints(
+        this(vertices, Plane.createFromPoints(
                 vertices.get(0).pos,
                 vertices.get(1).pos,
-                vertices.get(2).pos);
+                vertices.get(2).pos));
+    }
+    
+    public Polygon(List<Vertex> vertices, Plane plane) {
+        this.vertices = vertices;
+        this.plane = plane;
     }
 
     /**
@@ -121,44 +125,15 @@ public final class Polygon {
         this(Arrays.asList(vertices));
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
-    @Override
-    @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDeclaresCloneNotSupported"})
-    public Polygon clone() {
-        List<Vertex> newVertices = new ArrayList<>(vertices.size());
-        this.vertices.forEach((vertex) -> {
-            newVertices.add(vertex.clone());
-        });
-        return new Polygon(newVertices);
-    }
-
     /**
-     * Flips this polygon.
+     * Flips polygon.
      *
-     * @return this polygon
+     * @return new flipped polygon
      */
     public Polygon flip() {
-        vertices.forEach((vertex) -> {
-            vertex.flip();
-        });
-        Collections.reverse(vertices);
-
-        plane.flip();
-
-        return this;
-    }
-
-    /**
-     * Returns a flipped copy of this polygon.Note: this polygon is not
-     * modified.
-     *
-     *
-     * @return a flipped copy of this polygon
-     */
-    public Polygon flipped() {
-        return clone().flip();
+        List<Vertex> newVertices = vertices.stream().map(vertex -> vertex.flip()).collect(Collectors.toList());
+        Collections.reverse(newVertices);
+        return new Polygon(newVertices, plane.flip());
     }
 
     public Plane getPlane() {
@@ -173,33 +148,15 @@ public final class Polygon {
      * Translates this polygon.
      *
      * @param v the vector that defines the translation
-     * @return this polygon
+     * @return new polygon
      */
-    public Polygon translate(Vector3D v) {
-        vertices.forEach((vertex) -> {
-            vertex.pos = vertex.pos.plus(v);
-        });
-
-        Point3D a = this.vertices.get(0).pos;
-        Point3D b = this.vertices.get(1).pos;
-        Point3D c = this.vertices.get(2).pos;
-
-        this.plane.normal = new Vector3D(a, b).cross(new Vector3D(a, c)).normalize();
-
-        return this;
-    }
-
-    /**
-     * Returns a translated copy of this polygon.
-     *
-     * Note: this polygon is not modified
-     *
-     * @param v the vector that defines the translation
-     *
-     * @return a translated copy of this polygon
-     */
-    public Polygon translated(Vector3D v) {
-        return clone().translate(v);
+    public Polygon translate(Vector3D vector) {
+        List<Vertex> newVertices = this.vertices.stream().map(v -> v.translate(vector)).collect(Collectors.toList());
+        Point3D a = newVertices.get(0).pos;
+        Point3D b = newVertices.get(1).pos;
+        Point3D c = newVertices.get(2).pos;
+        Plane newPlane = new Plane(this.plane.getNormal(), this.plane.normal.dot(new Vector3D(a)));
+        return new Polygon(newVertices, newPlane);
     }
 
     /**
@@ -210,44 +167,19 @@ public final class Polygon {
      *
      * @param transform the transformation to apply
      *
-     * @return this polygon
+     * @return new polygon
      */
     public Polygon transform(Transform transform) {
-
-        this.vertices.stream().forEach(
-                (v) -> {
-                    v.transform(transform);
-                }
-        );
-
-        Point3D a = this.vertices.get(0).pos;
-        Point3D b = this.vertices.get(1).pos;
-        Point3D c = this.vertices.get(2).pos;
-
-        this.plane.normal = new Vector3D(a, b).cross(new Vector3D(a, c)).normalize();
-        this.plane.dist = this.plane.normal.dot(new Vector3D(a));
-
+        List<Vertex> newVertices = this.vertices.stream().map(v -> v.transform(transform)).collect(Collectors.toList());
+        Point3D a = newVertices.get(0).pos;
+        Point3D b = newVertices.get(1).pos;
+        Point3D c = newVertices.get(2).pos;
+        Plane newPlane = new Plane(new Vector3D(a, b).cross(new Vector3D(a, c)).normalize(), this.plane.normal.dot(new Vector3D(a)));
         if (transform.isMirror()) {
             // the transformation includes mirroring. flip polygon
-            flip();
-
+            return new Polygon(newVertices, newPlane).flip();
         }
-        return this;
-    }
-
-    /**
-     * Returns a transformed copy of this polygon.
-     *
-     * Note: if the applied transformation performs a mirror operation the
-     * vertex order of this polygon is reversed.
-     *
-     * Note: this polygon is not modified
-     *
-     * @param transform the transformation to apply
-     * @return a transformed copy of this polygon
-     */
-    public Polygon transformed(Transform transform) {
-        return clone().transform(transform);
+        return new Polygon(newVertices, newPlane);
     }
 
     /**

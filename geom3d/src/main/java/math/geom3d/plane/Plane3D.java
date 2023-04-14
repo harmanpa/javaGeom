@@ -338,6 +338,12 @@ public final class Plane3D implements Shape3D {
         return point.distance(this.projectPoint(point));
     }
 
+    public double signedDistance(Point3D point) {
+        Point3D projected = this.projectPoint(point);
+        double distance = point.distance(point);
+        return distance * (Vector3D.isCodirected(normal(), new Vector3D(point, projected)) ? 1 : -1);
+    }
+
     public double distance(Plane3D plane) {
         return isParallelOrOpposing(plane) ? distance(plane.origin()) : 0.0;
     }

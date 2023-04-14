@@ -49,10 +49,18 @@ public class BoundingSphere {
     static void getExtremes(Sphere3D a, Sphere3D b, PointSet3D points) {
         // Determine vector between spheres
         Vector3D direction = new Vector3D(a.getCenter(), b.getCenter()).normalize();
-        // Use vector to get extremes along that line, because the resulting
-        // sphere will contain both
-        points.addPoint(a.getCenter().minus(direction.times(a.getRadius())));
-        points.addPoint(b.getCenter().plus(direction.times(b.getRadius())));
+        if(a.contains(b)) {
+            points.addPoint(a.getCenter().minus(direction.times(a.getRadius())));
+            points.addPoint(a.getCenter().plus(direction.times(a.getRadius())));            
+        } else if(b.contains(a)) {
+            points.addPoint(b.getCenter().minus(direction.times(b.getRadius())));
+            points.addPoint(b.getCenter().plus(direction.times(b.getRadius())));
+        } else {
+            // Use vector to get extremes along that line, because the resulting
+            // sphere will contain both
+            points.addPoint(a.getCenter().minus(direction.times(a.getRadius())));
+            points.addPoint(b.getCenter().plus(direction.times(b.getRadius())));
+        }
     }
     
     public static Sphere3D boundingSphere(PointSet3D points) {

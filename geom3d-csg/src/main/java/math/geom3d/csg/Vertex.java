@@ -49,12 +49,12 @@ public class Vertex {
     /**
      * Vertex position.
      */
-    public Point3D pos;
+    public final Point3D pos;
 
     /**
      * Normal.
      */
-    public Vector3D normal;
+    public final Vector3D normal;
 
     /**
      * Constructor. Creates a vertex.
@@ -67,20 +67,11 @@ public class Vertex {
         this.normal = normal;
     }
 
-    /* (non-Javadoc)
-     * @see java.lang.Object#clone()
-     */
-    @Override
-    @SuppressWarnings({"CloneDoesntCallSuperClone", "CloneDeclaresCloneNotSupported"})
-    public Vertex clone() {
-        return new Vertex(pos, normal);
-    }
-
     /**
      * Inverts all orientation-specific data. (e.g. vertex normal).
      */
-    public void flip() {
-        normal = normal.opposite();
+    public Vertex flip() {
+        return new Vertex(pos, normal.opposite());
     }
 
     /**
@@ -100,21 +91,14 @@ public class Vertex {
      * Applies the specified transform to this vertex.
      *
      * @param transform the transform to apply
-     * @return this vertex
+     * @return new vertex
      */
     public Vertex transform(Transform transform) {
-        pos = transform.transform(pos);
-        return this;
+        return new Vertex(transform.transform(pos), normal);
     }
-
-    /**
-     * Applies the specified transform to a copy of this vertex.
-     *
-     * @param transform the transform to apply
-     * @return a copy of this transform
-     */
-    public Vertex transformed(Transform transform) {
-        return clone().transform(transform);
+    
+    public Vertex translate(Vector3D vector) {
+        return new Vertex(pos.plus(vector), normal);
     }
 
     /* (non-Javadoc)

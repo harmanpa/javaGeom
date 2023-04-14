@@ -87,7 +87,7 @@ public class Extrude {
         CSG extrude;
 
         newPolygons.addAll(PolygonUtil.concaveToConvex(polygon1));
-        Polygon polygon2 = polygon1.translated(dir);
+        Polygon polygon2 = polygon1.translate(dir);
 
         int numvertices = polygon1.vertices.size();
         for (int i = 0; i < numvertices; i++) {
@@ -105,7 +105,7 @@ public class Extrude {
 
         }
 
-        polygon2 = polygon2.flipped();
+        polygon2 = polygon2.flip();
         List<Polygon> topPolygons = PolygonUtil.concaveToConvex(polygon2);
 
         newPolygons.addAll(topPolygons);
@@ -156,7 +156,7 @@ public class Extrude {
 
         }
 
-        polygon2 = polygon2.flipped();
+        polygon2 = polygon2.flip();
         List<Polygon> topPolygons = PolygonUtil.concaveToConvex(polygon2);
 
         newPolygons.addAll(topPolygons);
@@ -175,8 +175,8 @@ public class Extrude {
         Transform transform = new Transform();
         //transform.rotY(90);
         for (int i = 0; i < transforms.size() - 1; i++) {
-            CSG tmp = polygons(polygon1.transformed(transform).transformed(transforms.get(i)),
-                    polygon1.transformed(transform).transformed(transforms.get(i + 1)));
+            CSG tmp = polygons(polygon1.transform(transform).transform(transforms.get(i)),
+                    polygon1.transform(transform).transform(transforms.get(i + 1)));
             parts.add(tmp);
         }
         return parts;
@@ -534,7 +534,7 @@ public class Extrude {
             List<Double> endPoint, int numSlices) throws QuickHullException {
         List<CSG> parts = new ArrayList<>();
         for (int i = 0; i < numSlices; i++) {
-            parts.add(0, slice.clone());
+            parts.add(0, slice);
         }
         return bezier(parts, controlA, controlB, endPoint);
     }
