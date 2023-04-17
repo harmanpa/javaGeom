@@ -12,6 +12,7 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import math.geom2d.Tolerance2D;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
 import math.geom3d.csg.util.PolygonUtil;
@@ -547,7 +548,7 @@ public class Edge {
      * segment; <code>false</code> otherwise
      */
     public boolean contains(Point3D p) {
-        return contains(p, Plane.EPSILON);
+        return contains(p, Tolerance2D.get());
     }
 
     /* (non-Javadoc)
@@ -615,7 +616,7 @@ public class Edge {
         double cos = ourDir.dot(e.getDirection());
         double n = 1 - cos * cos;
 
-        if (n < Plane.EPSILON) {
+        if (n < Tolerance2D.get()) {
             // the lines are parallel
             return Optional.empty();
         }

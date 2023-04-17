@@ -33,12 +33,16 @@
  */
 package math.geom3d.csg.util;
 
+import java.lang.ref.WeakReference;
+import java.util.ArrayDeque;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Deque;
 import java.util.List;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
 import math.geom3d.csg.Extrude;
+import math.geom3d.csg.Polygon;
 import math.geom3d.csg.Vertex;
 import math.geom3d.poly2tri.DelaunayTriangle;
 import math.geom3d.poly2tri.PolygonPoint;
@@ -52,11 +56,31 @@ import math.geom3d.poly2tri.TriangulationPoint;
  */
 public class PolygonUtil {
 
+    private static final ThreadLocal<Deque<WeakReference<List<Polygon>>>> LISTCACHE = ThreadLocal.withInitial(() -> new ArrayDeque<>());
+
     /**
      * Instantiates a new polygon util.
      */
     private PolygonUtil() {
         throw new AssertionError("Don't instantiate me!", null);
+    }
+
+    public static List<Polygon> getList(int minSize) {
+        WeakReference<List<Polygon>> ref = LISTCACHE.get().poll();
+        while (ref != null && ref.get() == null) {
+            ref = LISTCACHE.get().poll();
+        }
+        if (ref == null) {
+            return new ArrayList<>(minSize);
+        }
+        List<Polygon> list = ref.get();
+        ((ArrayList) list).ensureCapacity(minSize);
+        return list;
+    }
+
+    public static void releaseList(List<Polygon> polygonList) {
+        polygonList.clear();
+        LISTCACHE.get().push(new WeakReference<>(polygonList));
     }
 
     /**

@@ -99,8 +99,6 @@ import math.geom3d.transform.AffineTransform3D;
  */
 public class CSG implements Shape3D {
 
-    private static int numFacesInOffset = 15;
-
     /**
      * The polygons.
      */
@@ -118,7 +116,6 @@ public class CSG implements Shape3D {
 
     private Node node;
     private Box3D bounds;
-    private String name = "";
 
     /**
      * Instantiates a new csg.
@@ -141,7 +138,7 @@ public class CSG implements Shape3D {
         this.node = node;
     }
     
-    public Node getNode() {
+    public synchronized Node getNode() {
         if(this.node==null) {
             this.node = new Node(this.getPolygons());
         }

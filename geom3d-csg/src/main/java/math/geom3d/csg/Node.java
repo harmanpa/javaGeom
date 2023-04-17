@@ -36,6 +36,7 @@ package math.geom3d.csg;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
+import math.geom3d.csg.util.PolygonUtil;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -139,6 +140,25 @@ final class Node {
         return frontP;
     }
 
+    private void clipPolygons(List<Polygon> polygons, List<Polygon> result) {
+        build();
+        if (this.plane == null) {
+            result.addAll(polygons);
+            return;
+        }
+        List<Polygon> frontP = PolygonUtil.getList(polygons.size());
+        List<Polygon> backP = PolygonUtil.getList(polygons.size());
+        this.plane.splitPolygons(polygons, frontP, backP, frontP, backP);
+        if (this.front != null) {
+            this.front.clipPolygons(frontP, result);
+        }
+        if (this.back != null) {
+            this.back.clipPolygons(backP, result);
+        }
+        PolygonUtil.releaseList(frontP);
+        PolygonUtil.releaseList(backP);
+    }
+
     // Remove all polygons in this BSP tree that are inside the other BSP tree
     // `bsp`.
     /**
@@ -163,15 +183,20 @@ final class Node {
      * @return a list of all polygons in this BSP tree
      */
     public List<Polygon> allPolygons() {
-        List<Polygon> localPolygons = new ArrayList<>(this.polygons);
+        List<Polygon> localPolygons = new ArrayList<>(1000);
+        this.allPolygons(localPolygons);
+        return localPolygons;
+    }
+
+    public void allPolygons(List<Polygon> result) {
+        result.addAll(this.polygons);
         if (this.front != null) {
-            localPolygons.addAll(this.front.allPolygons());
+            this.front.allPolygons(result);
         }
         if (this.back != null) {
-            localPolygons.addAll(this.back.allPolygons());
+            this.back.allPolygons(result);
         }
-        localPolygons.addAll(this.polygonQueue);
-        return localPolygons;
+        result.addAll(this.polygonQueue);
     }
 
     private Node duplicate() {
@@ -187,7 +212,7 @@ final class Node {
 
     public Node union(Node other) {
         Node out = duplicate();
-        out.add(other.allPolygons());
+        other.allPolygons(out.polygonQueue);
         return out;
     }
 
@@ -207,21 +232,38 @@ final class Node {
         if (polygonQueue.isEmpty()) {
             return;
         }
-
         if (this.plane == null) {
-            this.plane = polygonQueue.get(0).plane;
-            // This forces a tree even for poor data
-            this.polygons.add(polygonQueue.remove(0));
+            // Remove the first polygon, we will use this as our plane
+            Polygon polygon = polygonQueue.remove(0);
+            if (polygon.vertices.size() > 3) {
+                // Sometimes non-triangular polygons don't have a valid plane
+                int planeCat = polygon.plane.categorise(polygon, new ArrayList<>());
+                if (Plane.COPLANAR != planeCat) {
+                    List<Polygon> triangles = polygon.toTriangles();
+                    this.plane = triangles.get(0).getPlane();
+                    this.polygons.add(triangles.get(0));
+                    this.polygonQueue.addAll(0, triangles.subList(1, triangles.size()));
+                } else {
+                    this.plane = polygon.plane;
+                    this.polygons.add(polygon);
+                }
+            } else {
+                this.plane = polygon.plane;
+                this.polygons.add(polygon);
+            }
         }
 
-        List<Polygon> frontP = new ArrayList<>(polygonQueue.size());
-        List<Polygon> backP = new ArrayList<>(polygonQueue.size());
+        List<Polygon> frontP = PolygonUtil.getList(polygonQueue.size());
+        List<Polygon> backP = PolygonUtil.getList(polygonQueue.size());
+//        List<Polygon> frontP = new ArrayList<>(polygonQueue.size());
+//        List<Polygon> backP = new ArrayList<>(polygonQueue.size());
 
         // parellel version does not work here WHY NOT?
         polygonQueue.forEach((polygon) -> {
             this.plane.splitPolygon(
                     polygon, this.polygons, this.polygons, frontP, backP);
         });
+//        this.plane.splitPolygons(polygonQueue, frontP, backP, frontP, backP);
 
         if (!frontP.isEmpty()) {
             if (this.front == null) {
@@ -235,6 +277,8 @@ final class Node {
             }
             this.back.add(backP);
         }
+        PolygonUtil.releaseList(frontP);
+        PolygonUtil.releaseList(backP);
         this.polygonQueue.clear();
     }
 }

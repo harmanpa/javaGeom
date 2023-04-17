@@ -100,10 +100,7 @@ public final class Polygon {
      * @param vertices polygon vertices
      */
     public Polygon(List<Vertex> vertices) {
-        this(vertices, Plane.createFromPoints(
-                vertices.get(0).pos,
-                vertices.get(1).pos,
-                vertices.get(2).pos));
+        this(vertices, Plane.createFromVertices(vertices));
     }
     
     public Polygon(List<Vertex> vertices, Plane plane) {

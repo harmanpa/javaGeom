@@ -36,8 +36,10 @@ package math.geom3d.csg;
 // # class Plane
 import java.util.ArrayList;
 import java.util.List;
+import math.geom2d.Tolerance2D;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
+import math.geom3d.fitting.FittingUtils;
 
 // TODO: Auto-generated Javadoc
 /**
@@ -46,12 +48,6 @@ import math.geom3d.Vector3D;
  * @author Michael Hoffer &lt;info@michaelhoffer.de&gt;
  */
 public class Plane implements Cloneable {
-
-    /**
-     * EPSILON is the tolerance used by {@link #splitPolygon(eu.mihosoft.vrl.v3d.Polygon, java.util.List, java.util.List, java.util.List, java.util.List)
-     * } to decide if a point is on the plane.
-     */
-    public static final double EPSILON = 1e-6;
 
     /**
      * XY plane.
@@ -95,6 +91,24 @@ public class Plane implements Cloneable {
         return dist;
     }
 
+    public static Plane createFromVertices(List<Vertex> vs) {
+        return FittingUtils.sequentials(Vertex.class, vs, 3, true)
+                .map(triple -> createFromPoints(triple[0].pos, triple[1].pos, triple[2].pos))
+                .reduce((Plane a, Plane b) -> average(a, b))
+                .get();
+    }
+
+    public static Plane createFromPoints(List<Point3D> vs) {
+        return FittingUtils.sequentials(Point3D.class, vs, 3, true)
+                .map(triple -> createFromPoints(triple[0], triple[1], triple[2]))
+                .reduce((Plane a, Plane b) -> average(a, b))
+                .get();
+    }
+
+    public static Plane average(Plane a, Plane b) {
+        return new Plane(a.getNormal().plus(b.getNormal()).normalize(), (a.getDist() + b.getDist()) / 2);
+    }
+
     /**
      * Creates a plane defined by the the specified points.
      *
@@ -108,14 +122,13 @@ public class Plane implements Cloneable {
         return new Plane(n, n.dot(new Vector3D(a)));
     }
 
-
     /**
      * Flips this plane.
      */
     public Plane flip() {
         return new Plane(normal.opposite(), -dist);
     }
-    
+
     public void splitPolygons(
             List<Polygon> polygons,
             List<Polygon> coplanarFront,
@@ -124,6 +137,11 @@ public class Plane implements Cloneable {
             List<Polygon> back) {
         polygons.stream().parallel().forEach(polygon -> splitPolygon(polygon, coplanarFront, coplanarBack, front, back));
     }
+
+    public static final int COPLANAR = 0;
+    public static final int FRONT = 1;
+    public static final int BACK = 2;
+    public static final int SPANNING = 3;
 
     /**
      * Splits a {@link Polygon} by this plane if needed. After that it puts the
@@ -145,10 +163,6 @@ public class Plane implements Cloneable {
             List<Polygon> coplanarBack,
             List<Polygon> front,
             List<Polygon> back) {
-        final int COPLANAR = 0;
-        final int FRONT = 1;
-        final int BACK = 2;
-        final int SPANNING = 3;
 
         // Classify each point as well as the entire polygon into one of the above
         // four classes.
@@ -156,7 +170,7 @@ public class Plane implements Cloneable {
         List<Integer> types = new ArrayList<>(polygon.vertices.size());
         for (int i = 0; i < polygon.vertices.size(); i++) {
             double t = this.normal.dot(new Vector3D(polygon.vertices.get(i).pos)) - this.dist;
-            int type = (t < -Plane.EPSILON) ? BACK : (t > Plane.EPSILON) ? FRONT : COPLANAR;
+            int type = (t < -Tolerance2D.get()) ? BACK : (t > Tolerance2D.get()) ? FRONT : COPLANAR;
             polygonType |= type;
             types.add(type);
         }
@@ -207,5 +221,28 @@ public class Plane implements Cloneable {
                 }
                 break;
         }
+    }
+
+    public int categorise(
+            Polygon polygon, List<Integer> types) {
+        // Classify each point as well as the entire polygon into one of the above
+        // four classes.
+        int polygonType = 0;
+        for (int i = 0; i < polygon.vertices.size(); i++) {
+            double t = this.normal.dot(new Vector3D(polygon.vertices.get(i).pos)) - this.dist;
+            int type = (t < -Tolerance2D.get()) ? BACK : (t > Tolerance2D.get()) ? FRONT : COPLANAR;
+            polygonType |= type;
+            types.add(type);
+        }
+        return polygonType;
+    }
+
+    public double tolerance(Polygon polygon) {
+        double tolerance = 0.0;
+        for (int i = 0; i < polygon.vertices.size(); i++) {
+            double t = this.normal.dot(new Vector3D(polygon.vertices.get(i).pos)) - this.dist;
+            tolerance = Math.max(tolerance, Math.abs(t));
+        }
+        return tolerance;
     }
 }
