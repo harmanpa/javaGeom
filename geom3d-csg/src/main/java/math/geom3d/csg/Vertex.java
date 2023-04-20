@@ -71,7 +71,7 @@ public class Vertex {
      * Inverts all orientation-specific data. (e.g. vertex normal).
      */
     public Vertex flip() {
-        return new Vertex(pos, normal.opposite());
+        return new Vertex(pos, normal==null ? normal : normal.opposite());
     }
 
     /**
@@ -83,8 +83,7 @@ public class Vertex {
      * @return a new vertex between this and the specified vertex
      */
     public Vertex interpolate(Vertex other, double t) {
-        return new Vertex(pos.lerp(other.pos, t),
-                normal.lerp(other.normal, t));
+        return new Vertex(pos.lerp(other.pos, t), normal==null ? null : normal.lerp(other.normal, t));
     }
 
     /**
