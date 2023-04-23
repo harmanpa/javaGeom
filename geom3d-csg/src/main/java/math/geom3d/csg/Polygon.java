@@ -35,8 +35,10 @@ package math.geom3d.csg;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 import math.geom3d.Box3D;
 import math.geom3d.Point3D;
@@ -48,13 +50,10 @@ import math.geom3d.csg.util.PolygonUtil;
 /**
  * Represents a convex polygon.
  *
- * Each convex polygon has a {@code shared} property, which is shared between
- * all polygons that are clones of each other or where split from the same
- * polygon. This can be used to define per-polygon properties (such as surface
- * color).
  */
 public final class Polygon {
-
+    private static long n = 0L;
+    public final long source;
     /**
      * Polygon vertices.
      */
@@ -100,12 +99,13 @@ public final class Polygon {
      * @param vertices polygon vertices
      */
     public Polygon(List<Vertex> vertices) {
-        this(vertices, Plane.createFromVertices(vertices));
+        this(vertices, Plane.createFromVertices(vertices), n++);
     }
     
-    public Polygon(List<Vertex> vertices, Plane plane) {
+    public Polygon(List<Vertex> vertices, Plane plane, long source) {
         this.vertices = vertices;
         this.plane = plane;
+        this.source = source;
     }
 
     /**
@@ -130,7 +130,7 @@ public final class Polygon {
     public Polygon flip() {
         List<Vertex> newVertices = vertices.stream().map(vertex -> vertex.flip()).collect(Collectors.toList());
         Collections.reverse(newVertices);
-        return new Polygon(newVertices, plane.flip());
+        return new Polygon(newVertices, plane.flip(), source*-1);
     }
 
     public Plane getPlane() {
@@ -153,7 +153,7 @@ public final class Polygon {
         Point3D b = newVertices.get(1).pos;
         Point3D c = newVertices.get(2).pos;
         Plane newPlane = new Plane(this.plane.getNormal(), this.plane.normal.dot(new Vector3D(a)));
-        return new Polygon(newVertices, newPlane);
+        return new Polygon(newVertices, newPlane, source);
     }
 
     /**
@@ -174,9 +174,9 @@ public final class Polygon {
         Plane newPlane = new Plane(new Vector3D(a, b).cross(new Vector3D(a, c)).normalize(), this.plane.normal.dot(new Vector3D(a)));
         if (transform.isMirror()) {
             // the transformation includes mirroring. flip polygon
-            return new Polygon(newVertices, newPlane).flip();
+            return new Polygon(newVertices, newPlane, source).flip();
         }
-        return new Polygon(newVertices, newPlane);
+        return new Polygon(newVertices, newPlane, source);
     }
 
     /**
@@ -227,6 +227,63 @@ public final class Polygon {
      */
     public Box3D getBounds() {
         return Box3D.fromPoints(getPoints());
+    }
+    
+    public static Collection<Polygon> merge(Collection<Polygon> polygons) {
+        // TODO
+        return polygons;
+    }
+    
+//    public Collection<Polygon> mergeCoplanar(Polygon other) {
+//        
+//    }
+    
+    public boolean intersects(Polygon other) {
+        List<Integer> types = new ArrayList<>(other.vertices.size());
+        int polygonType = plane.categorise(other, types);
+        switch(polygonType) {
+            case Plane.COPLANAR:
+                for(Point3D v : other.getPoints()) {
+                    if(contains(v)) {
+                        return true;
+                    }
+                }
+                return false;
+            case Plane.SPANNING:
+                for (int i = 0; i < other.vertices.size(); i++) {
+                    int j = (i + 1) % other.vertices.size();
+                    int ti = types.get(i);
+                    int tj = types.get(j);
+                    if ((ti | tj) == Plane.SPANNING) {
+                        Vertex vi = other.vertices.get(i);
+                        Vertex vj = other.vertices.get(j);
+                        double t = (plane.dist - plane.normal.dot(new Vector3D(vi.pos))) / plane.normal.dot(new Vector3D(vi.pos, vj.pos));
+                        Vertex v = vi.interpolate(vj, t);
+                        if(contains(v.pos)) {
+                            return true;
+                        }
+                    }
+                }
+                List<Integer> myTypes = new ArrayList<>(vertices.size());
+                other.plane.categorise(this, myTypes);
+                for (int i = 0; i < vertices.size(); i++) {
+                    int j = (i + 1) % vertices.size();
+                    int ti = myTypes.get(i);
+                    int tj = myTypes.get(j);
+                    if ((ti | tj) == Plane.SPANNING) {
+                        Vertex vi = vertices.get(i);
+                        Vertex vj = vertices.get(j);
+                        double t = (other.plane.dist - other.plane.normal.dot(new Vector3D(vi.pos))) / other.plane.normal.dot(new Vector3D(vi.pos, vj.pos));
+                        Vertex v = vi.interpolate(vj, t);
+                        if(other.contains(v.pos)) {
+                            return true;
+                        }
+                    }
+                }
+                return false;
+            default:
+                return false;
+        }
     }
 
     /**
@@ -305,4 +362,32 @@ public final class Polygon {
                 return result;
         }
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 17 * hash + Objects.hashCode(this.vertices);
+        hash = 17 * hash + Objects.hashCode(this.plane);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Polygon other = (Polygon) obj;
+        if (!Objects.equals(this.vertices, other.vertices)) {
+            return false;
+        }
+        return Objects.equals(this.plane, other.plane);
+    }
+    
+    
 }

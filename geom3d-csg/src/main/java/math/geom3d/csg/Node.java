@@ -33,6 +33,8 @@
  */
 package math.geom3d.csg;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -124,7 +126,7 @@ final class Node {
      */
     private List<Polygon> clipPolygons(List<Polygon> polygons) {
         build();
-        if (this.plane == null || polygons.isEmpty()) {
+        if (this.plane == null) {
             return new ArrayList<>(polygons);
         }
         List<Polygon> frontP = new ArrayList<>(polygons.size());
@@ -138,6 +140,27 @@ final class Node {
             frontP.addAll(backP);
         }
         return frontP;
+    }
+
+    public void getPlanarEdges(List<Edge> edges) {
+
+    }
+
+    public void getCoplanarEdges(List<Edge> edges) {
+
+    }
+
+    public void getIntersectingEdges(List<Edge> edges) {
+        build();
+        if (this.plane == null) {
+            return;
+        }
+        List<Polygon> intersecting = PolygonUtil.getList(1000);
+        allPolygons(intersecting);
+        List<Integer> types = new ArrayList<>();
+        for (Polygon p : intersecting) {
+        }
+        PolygonUtil.releaseList(intersecting);
     }
 
     private void clipPolygons(List<Polygon> polygons, List<Polygon> result) {
@@ -184,19 +207,25 @@ final class Node {
      */
     public List<Polygon> allPolygons() {
         List<Polygon> localPolygons = new ArrayList<>(1000);
-        this.allPolygons(localPolygons);
+        allPolygons(localPolygons);
         return localPolygons;
     }
 
     public void allPolygons(List<Polygon> result) {
-        result.addAll(this.polygons);
+        HashMultimap<Plane, Polygon> mm = HashMultimap.create(1000, 5);
+        allPolygons(mm);
+        mm.asMap().entrySet().forEach(entry -> result.addAll(Polygon.merge(entry.getValue())));
+    }
+
+    public void allPolygons(Multimap<Plane, Polygon> result) {
+        this.polygons.forEach(p -> result.put(p.plane, p));
         if (this.front != null) {
             this.front.allPolygons(result);
         }
         if (this.back != null) {
             this.back.allPolygons(result);
         }
-        result.addAll(this.polygonQueue);
+        this.polygonQueue.forEach(p -> result.put(p.plane, p));
     }
 
     private Node duplicate() {

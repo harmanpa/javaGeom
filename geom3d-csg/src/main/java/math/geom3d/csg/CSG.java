@@ -33,12 +33,20 @@
  */
 package math.geom3d.csg;
 
+import com.google.common.collect.HashMultimap;
+import com.google.common.collect.Multimap;
+import com.google.common.collect.Sets;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
+import math.geom2d.exceptions.Geom2DException;
 import math.geom3d.Box3D;
 import math.geom3d.GeometricObject3D;
 import math.geom3d.Point3D;
@@ -49,6 +57,10 @@ import math.geom3d.csg.primitives.Sphere;
 import math.geom3d.csg.util.HullUtil;
 import math.geom3d.quickhull.QuickHullException;
 import math.geom3d.transform.AffineTransform3D;
+import org.jgrapht.Graph;
+import org.jgrapht.alg.connectivity.ConnectivityInspector;
+import org.jgrapht.graph.builder.GraphTypeBuilder;
+import org.jgrapht.util.ArrayUnenforcedSet;
 
 //import javafx.scene.paint.Color;
 //import javafx.scene.paint.PhongMaterial;
@@ -498,6 +510,15 @@ public class CSG implements Shape3D {
     
     public Stream<Polygon> streamPolygons() {
         return polygons.size() > 200 ? polygons.parallelStream() : polygons.stream();
+    }
+    
+    public boolean intersects(CSG other) {
+        return Sets.cartesianProduct(
+                    new ArrayUnenforcedSet<>(getPolygons()),
+                    new ArrayUnenforcedSet<>(other.getPolygons()))
+                .stream()
+                .parallel()
+                .anyMatch(pair -> pair.get(0).intersects(pair.get(1)));
     }
 
     /**
@@ -1419,5 +1440,40 @@ public class CSG implements Shape3D {
         }).sum();
         volume = Math.abs(volume);
         return volume;
+    }
+    
+    public List<CSG> decompose() throws Geom2DException {
+        Multimap<Edge, Polygon> polygonsByEdge = HashMultimap.create(getPolygons().size() * 3, 2);
+        Graph<Polygon, Edge> meshGraph = GraphTypeBuilder.undirected()
+                .edgeClass(Edge.class)
+                .allowingMultipleEdges(true)
+                .vertexClass(Polygon.class)
+                .buildGraph();
+        for(Polygon p : getPolygons()) {
+            meshGraph.addVertex(p);
+        }
+        for(Polygon p : meshGraph.vertexSet()) {
+            for(Edge e : Edge.fromPolygon(p)) {
+                polygonsByEdge.put(e, p);
+            }
+        }
+        for(Map.Entry<Edge, Collection<Polygon>> entry : polygonsByEdge.asMap().entrySet()) {
+            switch(entry.getValue().size()) {
+                case 0:
+                case 1:
+                    break;
+                case 2:
+                    List<Polygon> ps = new ArrayList<>(entry.getValue());
+                    meshGraph.addEdge(ps.get(0), ps.get(1), entry.getKey());
+                    break;
+                default:
+                    System.out.println(entry.getValue().size());
+            }
+        }
+        return new ConnectivityInspector<>(meshGraph)
+                .connectedSets()
+                .stream()
+                .map(polygonSet -> new CSG(new ArrayList<>(polygonSet)))
+                .collect(Collectors.toList());        
     }
 }

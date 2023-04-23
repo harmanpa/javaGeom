@@ -52,6 +52,10 @@ public class Edge {
         direction = new Vector3D(p1.pos, p2.pos).normalize();
     }
 
+    public Edge reverse() {
+        return new Edge(p2, p1);
+    }
+
     /**
      * Gets the p1.
      *
@@ -120,57 +124,57 @@ public class Edge {
         return edges.stream().map(e -> e.p1.pos).collect(Collectors.toList());
     }
 
-    /**
-     * To polygon.
-     *
-     * @param points the points
-     * @param plane the plane
-     * @return the polygon
-     */
-    public static Polygon toPolygon(List<Point3D> points, Plane plane) {
-        return new Polygon(points.stream().map(point -> new Vertex(point, plane.getNormal())).collect(Collectors.toList()), plane);
-    }
+//    /**
+//     * To polygon.
+//     *
+//     * @param points the points
+//     * @param plane the plane
+//     * @return the polygon
+//     */
+//    public static Polygon toPolygon(List<Point3D> points, Plane plane) {
+//        return new Polygon(points.stream().map(point -> new Vertex(point, plane.getNormal())).collect(Collectors.toList()), plane);
+//    }
 
-    /**
-     * To polygons.
-     *
-     * @param boundaryEdges the boundary edges
-     * @param plane the plane
-     * @return the list
-     */
-    public static List<Polygon> toPolygons(List<Edge> boundaryEdges, Plane plane) {
-
-        List<Point3D> boundaryPath = new ArrayList<>(boundaryEdges.size());
-
-        boolean[] used = new boolean[boundaryEdges.size()];
-        Edge edge = boundaryEdges.get(0);
-        used[0] = true;
-        while (true) {
-            Edge finalEdge = edge;
-
-            boundaryPath.add(finalEdge.p1.pos);
-
-            int nextEdgeIndex = boundaryEdges.indexOf(boundaryEdges.stream().
-                    filter(e -> finalEdge.p2.equals(e.p1)).findFirst().get());
-
-            if (used[nextEdgeIndex]) {
-//                System.out.println("nexIndex: " + nextEdgeIndex);
-                break;
-            }
-//            System.out.print("edge: " + edge.p2.pos);
-            edge = boundaryEdges.get(nextEdgeIndex);
-//            System.out.println("-> edge: " + edge.p1.pos);
-            used[nextEdgeIndex] = true;
-        }
-
-        List<Polygon> result = new ArrayList<>(1);
-
-        System.out.println("#bnd-path-length: " + boundaryPath.size());
-
-        result.add(toPolygon(boundaryPath, plane));
-
-        return result;
-    }
+//    /**
+//     * To polygons.
+//     *
+//     * @param boundaryEdges the boundary edges
+//     * @param plane the plane
+//     * @return the list
+//     */
+//    public static List<Polygon> toPolygons(List<Edge> boundaryEdges, Plane plane) {
+//
+//        List<Point3D> boundaryPath = new ArrayList<>(boundaryEdges.size());
+//
+//        boolean[] used = new boolean[boundaryEdges.size()];
+//        Edge edge = boundaryEdges.get(0);
+//        used[0] = true;
+//        while (true) {
+//            Edge finalEdge = edge;
+//
+//            boundaryPath.add(finalEdge.p1.pos);
+//
+//            int nextEdgeIndex = boundaryEdges.indexOf(boundaryEdges.stream().
+//                    filter(e -> finalEdge.p2.equals(e.p1)).findFirst().get());
+//
+//            if (used[nextEdgeIndex]) {
+////                System.out.println("nexIndex: " + nextEdgeIndex);
+//                break;
+//            }
+////            System.out.print("edge: " + edge.p2.pos);
+//            edge = boundaryEdges.get(nextEdgeIndex);
+////            System.out.println("-> edge: " + edge.p1.pos);
+//            used[nextEdgeIndex] = true;
+//        }
+//
+//        List<Polygon> result = new ArrayList<>(1);
+//
+//        System.out.println("#bnd-path-length: " + boundaryPath.size());
+//
+//        result.add(toPolygon(boundaryPath, plane));
+//
+//        return result;
+//    }
 
     /**
      * The Class Node.
@@ -470,46 +474,46 @@ public class Edge {
         return -1;
     }
 
-    /**
-     * _to polygons.
-     *
-     * @param boundaryEdges the boundary edges
-     * @param plane the plane
-     * @return the list
-     */
-    public static List<Polygon> _toPolygons(List<Edge> boundaryEdges, Plane plane) {
-
-        List<Point3D> boundaryPath = new ArrayList<>();
-
-        boolean[] used = new boolean[boundaryEdges.size()];
-        Edge edge = boundaryEdges.get(0);
-        used[0] = true;
-        while (true) {
-            Edge finalEdge = edge;
-
-            boundaryPath.add(finalEdge.p1.pos);
-
-            int nextEdgeIndex = boundaryEdges.indexOf(boundaryEdges.stream().
-                    filter(e -> finalEdge.p2.equals(e.p1)).findFirst().get());
-
-            if (used[nextEdgeIndex]) {
-//                System.out.println("nexIndex: " + nextEdgeIndex);
-                break;
-            }
-//            System.out.print("edge: " + edge.p2.pos);
-            edge = boundaryEdges.get(nextEdgeIndex);
-//            System.out.println("-> edge: " + edge.p1.pos);
-            used[nextEdgeIndex] = true;
-        }
-
-        List<Polygon> result = new ArrayList<>();
-
-        System.out.println("#bnd-path-length: " + boundaryPath.size());
-
-        result.add(toPolygon(boundaryPath, plane));
-
-        return result;
-    }
+//    /**
+//     * _to polygons.
+//     *
+//     * @param boundaryEdges the boundary edges
+//     * @param plane the plane
+//     * @return the list
+//     */
+//    public static List<Polygon> _toPolygons(List<Edge> boundaryEdges, Plane plane) {
+//
+//        List<Point3D> boundaryPath = new ArrayList<>();
+//
+//        boolean[] used = new boolean[boundaryEdges.size()];
+//        Edge edge = boundaryEdges.get(0);
+//        used[0] = true;
+//        while (true) {
+//            Edge finalEdge = edge;
+//
+//            boundaryPath.add(finalEdge.p1.pos);
+//
+//            int nextEdgeIndex = boundaryEdges.indexOf(boundaryEdges.stream().
+//                    filter(e -> finalEdge.p2.equals(e.p1)).findFirst().get());
+//
+//            if (used[nextEdgeIndex]) {
+////                System.out.println("nexIndex: " + nextEdgeIndex);
+//                break;
+//            }
+////            System.out.print("edge: " + edge.p2.pos);
+//            edge = boundaryEdges.get(nextEdgeIndex);
+////            System.out.println("-> edge: " + edge.p1.pos);
+//            used[nextEdgeIndex] = true;
+//        }
+//
+//        List<Polygon> result = new ArrayList<>();
+//
+//        System.out.println("#bnd-path-length: " + boundaryPath.size());
+//
+//        result.add(toPolygon(boundaryPath, plane));
+//
+//        return result;
+//    }
 
     /**
      * Determines whether the specified point lies on tthis edge.
@@ -574,10 +578,10 @@ public class Edge {
             return false;
         }
         final Edge other = (Edge) obj;
-        if (!(Objects.equals(this.p1, other.p1) || Objects.equals(this.p2, other.p1))) {
+        if (!Objects.equals(this.p1, other.p1)) {
             return false;
         }
-        return Objects.equals(this.p2, other.p2) || Objects.equals(this.p1, other.p2);
+        return Objects.equals(this.p2, other.p2);
     }
 
     @Override

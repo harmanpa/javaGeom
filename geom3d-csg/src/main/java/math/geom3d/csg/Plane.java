@@ -36,6 +36,7 @@ package math.geom3d.csg;
 // # class Plane
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import math.geom2d.Tolerance2D;
 import math.geom3d.Point3D;
 import math.geom3d.Vector3D;
@@ -166,14 +167,8 @@ public class Plane implements Cloneable {
 
         // Classify each point as well as the entire polygon into one of the above
         // four classes.
-        int polygonType = 0;
         List<Integer> types = new ArrayList<>(polygon.vertices.size());
-        for (int i = 0; i < polygon.vertices.size(); i++) {
-            double t = this.normal.dot(new Vector3D(polygon.vertices.get(i).pos)) - this.dist;
-            int type = (t < -Tolerance2D.get()) ? BACK : (t > Tolerance2D.get()) ? FRONT : COPLANAR;
-            polygonType |= type;
-            types.add(type);
-        }
+        int polygonType = categorise(polygon, types);
 
         //System.out.println("> switching");
         // Put the polygon in the correct list, splitting it when necessary.
@@ -214,10 +209,49 @@ public class Plane implements Cloneable {
                     }
                 }
                 if (f.size() >= 3) {
-                    front.add(new Polygon(f));
+                    front.add(new Polygon(f, polygon.plane, polygon.source));
                 }
                 if (b.size() >= 3) {
-                    back.add(new Polygon(b));
+                    back.add(new Polygon(b, polygon.plane, polygon.source));
+                }
+                break;
+        }
+    }
+
+    public void slicePolygon(
+            Polygon polygon,
+            List<Edge> planarEdges) {
+
+        // Classify each point as well as the entire polygon into one of the above
+        // four classes.
+        List<Integer> types = new ArrayList<>(polygon.vertices.size());
+        int polygonType = categorise(polygon, types);
+
+        //System.out.println("> switching");
+        // Put the polygon in the correct list, splitting it when necessary.
+        switch (polygonType) {
+            case COPLANAR:
+                planarEdges.addAll(Edge.fromPolygon(polygon));
+                break;
+            case SPANNING:
+                List<Vertex> c = new ArrayList<>(polygon.vertices.size());
+                for (int i = 0; i < polygon.vertices.size(); i++) {
+                    int j = (i + 1) % polygon.vertices.size();
+                    int ti = types.get(i);
+                    int tj = types.get(j);
+                    Vertex vi = polygon.vertices.get(i);
+                    Vertex vj = polygon.vertices.get(j);
+                    if (ti == COPLANAR) {
+                        c.add(vi);
+                    }
+                    if ((ti | tj) == SPANNING) {
+                        double t = (this.dist - this.normal.dot(new Vector3D(vi.pos))) / this.normal.dot(new Vector3D(vi.pos, vj.pos));
+                        Vertex v = vi.interpolate(vj, t);
+                        c.add(v);
+                    }
+                }
+                for (int i = 0; i < c.size() - 1; i++) {
+                    planarEdges.add(new Edge(c.get(i), c.get(i + 1)));
                 }
                 break;
         }
@@ -245,4 +279,32 @@ public class Plane implements Cloneable {
         }
         return tolerance;
     }
+
+    @Override
+    public int hashCode() {
+        int hash = 3;
+        hash = 37 * hash + Objects.hashCode(this.normal);
+        hash = 37 * hash + Tolerance2D.hash(this.dist);
+        return hash;
+    }
+
+    @Override
+    public boolean equals(Object obj) {
+        if (this == obj) {
+            return true;
+        }
+        if (obj == null) {
+            return false;
+        }
+        if (getClass() != obj.getClass()) {
+            return false;
+        }
+        final Plane other = (Plane) obj;
+        if (Tolerance2D.compare(dist, other.dist) != 0) {
+            return false;
+        }
+        return Objects.equals(this.normal, other.normal);
+    }
+    
+    
 }
