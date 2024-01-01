@@ -27,21 +27,31 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 import math.geom2d.Tolerance2D;
+import math.geom2d.Point2D;
+import math.geom2d.polygon.SimplePolygon2D;
 import math.geom3d.Point3D;
+import math.geom3d.GeometricObject3D;
+import math.geom3d.Shape3D;
+import math.geom3d.Box3D;
+import math.geom3d.transform.AffineTransform3D;;
 import math.geom3d.Vector3D;
 import math.geom3d.csg.CSG;
 import math.geom3d.csg.Polygon;
+import math.geom3d.plane.Plane3D;
+import org.apache.commons.math3.linear.Array2DRowRealMatrix;
+import org.apache.commons.math3.linear.LUDecomposition;
+import org.apache.commons.math3.util.FastMath;
 
 /**
  * This object represents a triangle in 3D space.
  *
  * @author CCHall
  */
-public class Triangle3D {
+public class Triangle3D implements Shape3D {
 
     private final Point3D[] vertices;
     private final Vector3D normal;
-    
+
     Triangle3D(List<Point3D> points, Vector3D normal) {
         this(points.get(0), points.get(1), points.get(2), normal);
     }
@@ -69,9 +79,9 @@ public class Triangle3D {
      * Creates a triangle with the given vertices at its corners and a given
      * normal.
      *
-     * @param v1 A corner vertex
-     * @param v2 A corner vertex
-     * @param v3 A corner vertex
+     * @param v1     A corner vertex
+     * @param v2     A corner vertex
+     * @param v3     A corner vertex
      * @param normal The normal
      */
     public Triangle3D(Point3D v1, Point3D v2, Point3D v3, Vector3D normal) {
@@ -95,14 +105,100 @@ public class Triangle3D {
                 .collect(Collectors.toList()));
     }
 
+    public static double windingNumber(List<Triangle3D> triangles, Point3D p) {
+        return triangles.stream().parallel().mapToDouble(tri -> tri.windingNumber(p)).sum();
+    }
+
+    public static boolean isInside(List<Triangle3D> triangles, Point3D p) {
+        return windingNumber(triangles, p) >= 2 * Math.PI;
+    }
+
+    public static double distance(List<Triangle3D> triangles, Point3D p) {
+        return triangles.stream().parallel().mapToDouble(tri -> tri.distance(p)).min().orElse(Double.MAX_VALUE);
+    }
+
+    public static double signedDistance(List<Triangle3D> triangles, Point3D p) {
+        return (isInside(triangles, p) ? -1.0 : 1.0) * distance(triangles, p);
+    }
+
     /**
      *
      * @return
      */
+    @Override
     public boolean isEmpty() {
         return vertices[0].distance(vertices[1]) < Tolerance2D.get()
                 || vertices[1].distance(vertices[2]) < Tolerance2D.get()
                 || vertices[2].distance(vertices[0]) < Tolerance2D.get();
+    }
+
+    @Override
+    public boolean isBounded() {
+        return true;
+    }
+
+    @Override
+    public Box3D boundingBox() {
+        return Box3D.fromPoints(this.vertices);
+    }
+
+    @Override
+    public Triangle3D transform(AffineTransform3D trans) {
+        return new Triangle3D(vertices[0].transform(trans), vertices[1].transform(trans), vertices[2].transform(trans));
+    }
+
+    @Override
+    public double distance(Point3D p) {
+        double minDistance = Double.MAX_VALUE;
+        minDistance = Math.min(minDistance, this.vertices[0].distance(p));
+        minDistance = Math.min(minDistance, this.vertices[1].distance(p));
+        minDistance = Math.min(minDistance, this.vertices[2].distance(p));
+        Plane3D plane = getPlane();
+        double planarDistance = plane.distance(p);
+        if (planarDistance < minDistance) {
+            Point2D p2 = plane.pointPosition(plane.projectPoint(p));
+            if (new SimplePolygon2D(
+                    plane.pointPosition(plane.projectPoint(this.vertices[0])),
+                    plane.pointPosition(plane.projectPoint(this.vertices[1])),
+                    plane.pointPosition(plane.projectPoint(this.vertices[2]))).contains(p2)) {
+                return planarDistance;
+            }
+        }
+        return minDistance;
+    }
+
+    public Plane3D getPlane() {
+        return Plane3D.fromNormal(this.vertices[0], this.normal);
+    }
+
+    @Override
+    public boolean contains(Point3D point) {
+        return distance(point) < Tolerance2D.get();
+    }
+
+    /**
+     * Based on
+     * https://github.com/marmakoide/inside-3d-mesh/blob/master/is_inside_mesh.py
+     * 
+     * @param point
+     * @return
+     */
+    public double windingNumber(Point3D point) {
+        Point3D pa = vertices[0].minus(point);
+        Point3D pb = vertices[1].minus(point);
+        Point3D pc = vertices[2].minus(point);
+        double det = new LUDecomposition(new Array2DRowRealMatrix(new double[][] {
+                new double[] { pa.getX(), pa.getY(), pa.getZ() },
+                new double[] { pb.getX(), pb.getY(), pb.getZ() },
+                new double[] { pc.getX(), pc.getY(), pc.getZ() }
+        })).getDeterminant();
+        double a = vertices[0].distance(point);
+        double b = vertices[0].distance(point);
+        double c = vertices[0].distance(point);
+        double dab = pa.asVector().dot(pb.asVector());
+        double dbc = pb.asVector().dot(pc.asVector());
+        double dca = pc.asVector().dot(pa.asVector());
+        return FastMath.atan2(det, (a * b * c) + c * dab + a * dbc + b * dca);
     }
 
     /**
@@ -144,7 +240,7 @@ public class Triangle3D {
      * Gets the normal vector
      *
      * @return A vector pointing in a direction perpendicular to the surface of
-     * the triangle.
+     *         the triangle.
      */
     public Vector3D getNormal() {
         return normal;
@@ -160,11 +256,28 @@ public class Triangle3D {
         return new Triangle3D(vertices[0].times(scale), vertices[1].times(scale), vertices[2].times(scale), normal);
     }
 
+    @Override
+    public boolean almostEquals(GeometricObject3D obj, double eps) {
+        if (obj instanceof Triangle3D) {
+            Triangle3D other = (Triangle3D) obj;
+            return (this.vertices[0].almostEquals(other.vertices[0], eps)
+                    && this.vertices[1].almostEquals(other.vertices[1], eps)
+                    && this.vertices[2].almostEquals(other.vertices[2], eps))
+                    || (this.vertices[0].almostEquals(other.vertices[1], eps)
+                            && this.vertices[1].almostEquals(other.vertices[2], eps)
+                            && this.vertices[2].almostEquals(other.vertices[0], eps))
+                    || (this.vertices[0].almostEquals(other.vertices[2], eps)
+                            && this.vertices[1].almostEquals(other.vertices[0], eps)
+                            && this.vertices[2].almostEquals(other.vertices[1], eps));
+        }
+        return false;
+    }
+
     /**
      * @see java.lang.Object#equals(java.lang.Object)
      * @param obj Object to test equality
      * @return True if the other object is a triangle whose verticese are the
-     * same as this one.
+     *         same as this one.
      */
     @Override
     public boolean equals(Object obj) {
