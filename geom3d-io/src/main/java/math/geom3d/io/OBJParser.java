@@ -22,7 +22,7 @@ public class OBJParser {
 
     static CSG toCSG(ReadableObj obj) {
         List<Polygon> polygons = new ArrayList<>(obj.getNumFaces());
-        for(int i=0;i<obj.getNumFaces();i++) {
+        for (int i = 0; i < obj.getNumFaces(); i++) {
             polygons.add(toPolygon(obj, obj.getFace(i)));
         }
         return CSG.fromPolygons(polygons);
@@ -30,7 +30,7 @@ public class OBJParser {
 
     static Polygon toPolygon(ReadableObj obj, ObjFace face) {
         Point3D[] vertices = new Point3D[face.getNumVertices()];
-        for(int i=0;i<vertices.length;i++) {
+        for (int i = 0; i < vertices.length; i++) {
             vertices[i] = getVertex(obj, face.getVertexIndex(i));
         }
         return Polygon.fromPoints(vertices);
@@ -38,6 +38,6 @@ public class OBJParser {
 
     static Point3D getVertex(ReadableObj obj, int index) {
         FloatTuple xyz = obj.getVertex(index);
-        return new Point3D((double)xyz.getX(), (double)xyz.getY(), (double)xyz.getZ());
+        return new Point3D((double) xyz.getX(), (double) xyz.getY(), (double) xyz.getZ());
     }
 }

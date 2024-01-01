@@ -5,13 +5,21 @@
  */
 package math.geom3d.io;
 
+import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
+import java.io.Reader;
+import java.io.InputStreamReader;
+import java.io.BufferedReader;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+
 import math.geom3d.Point3D;
 
 /**
@@ -20,8 +28,23 @@ import math.geom3d.Point3D;
  */
 public class DXFParser {
 
+    public static List<Triangle3D> parseDXFFile(InputStream is) throws IOException {
+        return parseDXFFile(new InputStreamReader(is, StandardCharsets.UTF_8));
+    }
+
+    public static List<Triangle3D> parseDXFFile(Reader reader) throws IOException {
+        return parseDXFFile(new BufferedReader(reader).lines().collect(Collectors.toList()));
+    }
+
+    public static List<Triangle3D> parseDXFFile(File f) throws IOException {
+        return parseDXFFile(f.toPath());
+    }
+
     public static List<Triangle3D> parseDXFFile(Path path) throws IOException {
-        List<String> lines = Files.readAllLines(path);
+        return parseDXFFile(Files.readAllLines(path));
+    }
+
+    public static List<Triangle3D> parseDXFFile(List<String> lines) {
         List<Triangle3D> out = new ArrayList<>();
         boolean inFace = false;
         String id = "";
