@@ -167,6 +167,14 @@ public class Triangle3D implements Shape3D {
         return minDistance;
     }
 
+    public double area() {
+        Plane3D plane = getPlane();
+        return Math.abs(new SimplePolygon2D(
+            plane.pointPosition(plane.projectPoint(this.vertices[0])),
+            plane.pointPosition(plane.projectPoint(this.vertices[1])),
+            plane.pointPosition(plane.projectPoint(this.vertices[2]))).area());
+    }
+
     public Plane3D getPlane() {
         return Plane3D.fromNormal(this.vertices[0], this.normal);
     }

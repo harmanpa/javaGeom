@@ -24,6 +24,10 @@ public class Direction3D implements GeometricObject3D {
         return v;
     }
 
+    public static Direction3D perpendicular(Direction3D a, Direction3D b) {
+        return new Direction3D(Vector3D.crossProduct(a.getV(), b.getV()));
+    }
+
     @Override
     public String toString() {
         return "Direction3D{" + "v=" + v + '}';
