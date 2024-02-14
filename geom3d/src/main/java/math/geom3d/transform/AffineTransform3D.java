@@ -103,21 +103,33 @@ public final class AffineTransform3D implements Bijection3D {
     public final static AffineTransform3D createScaling(double sx, double sy, double sz) {
         return new AffineTransform3D(sx, 0, 0, 0, 0, sy, 0, 0, 0, 0, sz, 0);
     }
-    
+
+    public final static AffineTransform3D createReflectionX() {
+        return new AffineTransform3D(-1, 0, 0, 0, 0, 1, 0, 0, 0, 0, 1, 0);
+    }
+
+    public final static AffineTransform3D createReflectionY() {
+        return new AffineTransform3D(1, 0, 0, 0, 0, -1, 0, 0, 0, 0, 1, 0);
+    }
+
+    public final static AffineTransform3D createReflectionZ() {
+        return new AffineTransform3D(1, 0, 0, 0, 0, 1, 0, 0, 0, 0, -1, 0);
+    }
+
     public final static AffineTransform3D fromMatrix(RealMatrix m) {
         return new AffineTransform3D(
                 m.getEntry(0, 0),
                 m.getEntry(0, 1),
                 m.getEntry(0, 2),
-                m.getColumnDimension()>3 ? m.getEntry(0, 3) : 0.0,
+                m.getColumnDimension() > 3 ? m.getEntry(0, 3) : 0.0,
                 m.getEntry(1, 0),
                 m.getEntry(1, 1),
                 m.getEntry(1, 2),
-                m.getColumnDimension()>3 ? m.getEntry(1, 3) : 0.0,
+                m.getColumnDimension() > 3 ? m.getEntry(1, 3) : 0.0,
                 m.getEntry(2, 0),
                 m.getEntry(2, 1),
                 m.getEntry(2, 2),
-                m.getColumnDimension()>3 ? m.getEntry(2, 3) : 0.0);
+                m.getColumnDimension() > 3 ? m.getEntry(2, 3) : 0.0);
     }
 
     // ===================================================================
@@ -232,7 +244,7 @@ public final class AffineTransform3D implements Bijection3D {
      * @return
      */
     public double[] coefficients() {
-        double[] tab = {m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23};
+        double[] tab = { m00, m01, m02, m03, m10, m11, m12, m13, m20, m21, m22, m23 };
         return tab;
     }
 
@@ -241,11 +253,11 @@ public final class AffineTransform3D implements Bijection3D {
      *
      * @return the determinant of the transform.
      */
-    private double determinant() {
+    public double determinant() {
         return m00 * (m11 * m22 - m12 * m21) - m01 * (m10 * m22 - m20 * m12)
                 + m02 * (m10 * m21 - m20 * m11);
     }
-        
+
     /**
      * Computes the inverse affine transform.
      *
@@ -259,17 +271,17 @@ public final class AffineTransform3D implements Bijection3D {
                 (m21 * m02 - m01 * m22) / det,
                 (m01 * m12 - m11 * m02) / det,
                 (m01 * (m22 * m13 - m12 * m23) + m02 * (m11 * m23 - m21 * m13)
-                - m03 * (m11 * m22 - m21 * m12)) / det,
+                        - m03 * (m11 * m22 - m21 * m12)) / det,
                 (m20 * m12 - m10 * m22) / det,
                 (m00 * m22 - m20 * m02) / det,
                 (m10 * m02 - m00 * m12) / det,
                 (m00 * (m12 * m23 - m22 * m13) - m02 * (m10 * m23 - m20 * m13)
-                + m03 * (m10 * m22 - m20 * m12)) / det,
+                        + m03 * (m10 * m22 - m20 * m12)) / det,
                 (m10 * m21 - m20 * m11) / det,
                 (m20 * m01 - m00 * m21) / det,
                 (m00 * m11 - m10 * m01) / det,
                 (m00 * (m21 * m13 - m11 * m23) + m01 * (m10 * m23 - m20 * m13)
-                - m03 * (m10 * m21 - m20 * m11)) / det);
+                        - m03 * (m10 * m21 - m20 * m11)) / det);
     }
 
     // ===================================================================
@@ -376,40 +388,40 @@ public final class AffineTransform3D implements Bijection3D {
             return false;
         }
         double tab[] = ((AffineTransform3D) obj).coefficients();
-        if (Tolerance2D.compare(tab[0], m00)!=0) {
+        if (Tolerance2D.compare(tab[0], m00) != 0) {
             return false;
         }
-        if (Tolerance2D.compare(tab[1], m01)!=0) {
+        if (Tolerance2D.compare(tab[1], m01) != 0) {
             return false;
         }
-        if (Tolerance2D.compare(tab[2], m02)!=0) {
+        if (Tolerance2D.compare(tab[2], m02) != 0) {
             return false;
         }
-        if (Tolerance2D.compare(tab[3], m03)!=0) {
+        if (Tolerance2D.compare(tab[3], m03) != 0) {
             return false;
         }
-        if (Tolerance2D.compare(tab[4], m10)!=0) {
+        if (Tolerance2D.compare(tab[4], m10) != 0) {
             return false;
         }
-        if (Tolerance2D.compare(tab[5], m11)!=0) {
+        if (Tolerance2D.compare(tab[5], m11) != 0) {
             return false;
         }
-        if (Tolerance2D.compare(tab[6], m12)!=0) {
+        if (Tolerance2D.compare(tab[6], m12) != 0) {
             return false;
         }
-        if (Tolerance2D.compare(tab[7], m13)!=0) {
+        if (Tolerance2D.compare(tab[7], m13) != 0) {
             return false;
         }
-        if (Tolerance2D.compare(tab[8], m20)!=0) {
+        if (Tolerance2D.compare(tab[8], m20) != 0) {
             return false;
         }
-        if (Tolerance2D.compare(tab[9], m21)!=0) {
+        if (Tolerance2D.compare(tab[9], m21) != 0) {
             return false;
         }
-        if (Tolerance2D.compare(tab[10], m22)!=0) {
+        if (Tolerance2D.compare(tab[10], m22) != 0) {
             return false;
         }
-        if (Tolerance2D.compare(tab[11], m23)!=0) {
+        if (Tolerance2D.compare(tab[11], m23) != 0) {
             return false;
         }
         return true;
@@ -432,25 +444,25 @@ public final class AffineTransform3D implements Bijection3D {
         hash = 67 * hash + Tolerance2D.hash(this.m23);
         return hash;
     }
-    
+
     public static Point3D centroid(List<Point3D> points) {
         return new Point3D(
-            points.stream().mapToDouble(p -> p.getX()).summaryStatistics().getAverage(),
-            points.stream().mapToDouble(p -> p.getY()).summaryStatistics().getAverage(),
-            points.stream().mapToDouble(p -> p.getZ()).summaryStatistics().getAverage());
+                points.stream().mapToDouble(p -> p.getX()).summaryStatistics().getAverage(),
+                points.stream().mapToDouble(p -> p.getY()).summaryStatistics().getAverage(),
+                points.stream().mapToDouble(p -> p.getZ()).summaryStatistics().getAverage());
     }
 
     public static AffineTransform3D calculate(List<Point3D> pointsA, List<Point3D> pointsB) throws Geom2DException {
-        if(pointsA.size()<3 || pointsA.size() != pointsB.size()) {
+        if (pointsA.size() < 3 || pointsA.size() != pointsB.size()) {
             throw new Geom2DException("Need more points");
         }
-        int n = pointsA.size();        
+        int n = pointsA.size();
         Point3D centroidA = centroid(pointsA);
         Point3D centroidB = centroid(pointsB);
         // Kabsch Algorithm
         RealMatrix P = new Array2DRowRealMatrix(3, n);
         RealMatrix Q = new Array2DRowRealMatrix(3, n);
-        for(int i=0; i<n; i++) {
+        for (int i = 0; i < n; i++) {
             P.setEntry(i, 0, pointsA.get(i).minus(centroidA).getX());
             P.setEntry(i, 1, pointsA.get(i).minus(centroidA).getY());
             P.setEntry(i, 2, pointsA.get(i).minus(centroidA).getZ());
@@ -466,23 +478,25 @@ public final class AffineTransform3D implements Bijection3D {
         M.setEntry(2, 2, Math.signum(new LUDecomposition(svd.getV().multiply(svd.getUT())).getDeterminant()));
         RealMatrix R = svd.getV().multiply(M).multiply(svd.getUT());
         AffineTransform3D transform = AffineTransform3D.createTranslation(new Vector3D(centroidA, new Point3D()))
-                .preConcatenate(new AffineTransform3D(new double[]{
-                    R.getEntry(0, 0),
-                    R.getEntry(0, 1),
-                    R.getEntry(0, 2),
-                    R.getEntry(1, 0),
-                    R.getEntry(1, 1),
-                    R.getEntry(1, 2),
-                    R.getEntry(2, 0),
-                    R.getEntry(2, 1),
-                    R.getEntry(2, 2)})).preConcatenate(AffineTransform3D.createTranslation(centroidB.asVector()));
+                .preConcatenate(new AffineTransform3D(new double[] {
+                        R.getEntry(0, 0),
+                        R.getEntry(0, 1),
+                        R.getEntry(0, 2),
+                        R.getEntry(1, 0),
+                        R.getEntry(1, 1),
+                        R.getEntry(1, 2),
+                        R.getEntry(2, 0),
+                        R.getEntry(2, 1),
+                        R.getEntry(2, 2) }))
+                .preConcatenate(AffineTransform3D.createTranslation(centroidB.asVector()));
         return transform;
     }
 
     @Override
     public String toString() {
-        return "AffineTransform3D{" + "m00=" + m00 + ", m01=" + m01 + ", m02=" + m02 + ", m03=" + m03 + ", m10=" + m10 + ", m11=" + m11 + ", m12=" + m12 + ", m13=" + m13 + ", m20=" + m20 + ", m21=" + m21 + ", m22=" + m22 + ", m23=" + m23 + '}';
+        return "AffineTransform3D{" + "m00=" + m00 + ", m01=" + m01 + ", m02=" + m02 + ", m03=" + m03 + ", m10=" + m10
+                + ", m11=" + m11 + ", m12=" + m12 + ", m13=" + m13 + ", m20=" + m20 + ", m21=" + m21 + ", m22=" + m22
+                + ", m23=" + m23 + '}';
     }
-    
-    
+
 }
