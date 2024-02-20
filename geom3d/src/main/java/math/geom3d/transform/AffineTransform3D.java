@@ -460,8 +460,8 @@ public final class AffineTransform3D implements Bijection3D {
         Point3D centroidA = centroid(pointsA);
         Point3D centroidB = centroid(pointsB);
         // Kabsch Algorithm
-        RealMatrix P = new Array2DRowRealMatrix(3, n);
-        RealMatrix Q = new Array2DRowRealMatrix(3, n);
+        RealMatrix P = new Array2DRowRealMatrix(n, 3);
+        RealMatrix Q = new Array2DRowRealMatrix(n, 3);
         for (int i = 0; i < n; i++) {
             P.setEntry(i, 0, pointsA.get(i).minus(centroidA).getX());
             P.setEntry(i, 1, pointsA.get(i).minus(centroidA).getY());
