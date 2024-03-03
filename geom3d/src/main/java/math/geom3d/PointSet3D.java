@@ -133,9 +133,9 @@ public class PointSet3D implements Shape3D, Iterable<Point3D> {
         double xmin = Double.MAX_VALUE;
         double ymin = Double.MAX_VALUE;
         double zmin = Double.MAX_VALUE;
-        double xmax = Double.MIN_VALUE;
-        double ymax = Double.MIN_VALUE;
-        double zmax = Double.MIN_VALUE;
+        double xmax = -Double.MAX_VALUE;
+        double ymax = -Double.MAX_VALUE;
+        double zmax = -Double.MAX_VALUE;
 
         for (Point3D point : points) {
             xmin = Math.min(xmin, point.getX());

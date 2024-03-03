@@ -509,9 +509,9 @@ public abstract class LinearCurve3D extends AbstractContinuousCurve3D
         double xmin = Double.MAX_VALUE;
         double ymin = Double.MAX_VALUE;
         double zmin = Double.MAX_VALUE;
-        double xmax = Double.MIN_VALUE;
-        double ymax = Double.MIN_VALUE;
-        double zmax = Double.MIN_VALUE;
+        double xmax = -Double.MAX_VALUE;
+        double ymax = -Double.MAX_VALUE;
+        double zmax = -Double.MAX_VALUE;
 
         Iterator<Point3D> iter = vertices.iterator();
         Point3D point;

@@ -88,7 +88,7 @@ public class CheckBufferSelfIntersectingContour2 extends JPanel {
     public static double[] getSignedDistanceRangeCurvePoints(CirculinearCurve2D curve,
             Collection<? extends Point2D> points) {
         double minDist = Double.MAX_VALUE;
-        double maxDist = Double.MIN_VALUE;
+        double maxDist = -Double.MAX_VALUE;
         for (Point2D point : points) {
             double dist = getSignedDistance(curve, point);
             minDist = Math.min(minDist, dist);
