@@ -5,8 +5,19 @@
 package math.geom2d;
 
 import com.fasterxml.jackson.annotation.JsonIgnore;
+import java.util.ArrayDeque;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Comparator;
+import java.util.Deque;
 import java.util.DoubleSummaryStatistics;
+import java.util.List;
+import java.util.function.BiFunction;
+import java.util.function.BinaryOperator;
+import java.util.stream.Collectors;
 import java.util.stream.DoubleStream;
+import java.util.stream.Stream;
 
 /**
  *
@@ -90,6 +101,94 @@ public class Range1D implements Comparable<Range1D> {
         } else {
             return 0;
         }
+    }
+
+    static final Comparator<Range1D> MINCOMPARATOR = (Range1D o1, Range1D o2) -> Double.compare(o1.getMin(), o2.getMin());
+
+    static final BiFunction<Deque<Range1D>, Range1D, Deque<Range1D>> ACCUMULATOR = (Deque<Range1D> queue, Range1D range) -> {
+        if (queue.isEmpty() || queue.peekLast().getMax() < range.getMin()) {
+            queue.addLast(range);
+        } else {
+            Range1D last = queue.pollLast();
+            queue.addLast(new Range1D(last.getMin(), range.getMax()));
+        }
+        return queue;
+    };
+
+    static final BinaryOperator<Deque<Range1D>> COMBINER = (Deque<Range1D> set1, Deque<Range1D> set2) -> {
+        set2.forEach(r -> ACCUMULATOR.apply(set1, r));
+        return set1;
+    };
+
+    /**
+     * Create the resulting ranges from subtracting the given range from this
+     *
+     * @param range
+     * @return
+     */
+    public Collection<Range1D> subtract(Range1D range) {
+        return subtract(Arrays.asList(range));
+    }
+
+    /**
+     * Create the resulting ranges from subtracting the given ranges from this
+     *
+     * @param ranges
+     * @return
+     */
+    public Collection<Range1D> subtract(Collection<Range1D> ranges) {
+        return subtract(ranges.stream());
+    }
+
+    /**
+     * Create the resulting ranges from subtracting the given ranges from this
+     *
+     * @param ranges
+     * @return
+     */
+    public Collection<Range1D> subtract(Stream<Range1D> ranges) {
+        // Merge the ranges in case they overlap each other, and filter to those overlapping this range
+        List<Range1D> overlapping = merge(ranges).stream()
+                .filter(range -> isOverlapping(range))
+                .collect(Collectors.toList());
+        // If there are none just return this
+        if (overlapping.isEmpty()) {
+            return Arrays.asList(this);
+        }
+        List<Range1D> out = new ArrayList<>();
+        // Consider whether ranges are needed before and after the subtracted ones
+        boolean firstIsContained = overlapping.get(0).getMin() > getMin();
+        boolean lastIsContained = overlapping.get(overlapping.size() - 1).getMax() < getMax();
+        if (firstIsContained) {
+            out.add(new Range1D(getMin(), overlapping.get(0).getMin()));
+        }
+        for (int i = 1; i < overlapping.size(); i++) {
+            out.add(new Range1D(overlapping.get(i - 1).getMax(), overlapping.get(i).getMin()));
+        }
+        if (lastIsContained) {
+            out.add(new Range1D(overlapping.get(overlapping.size() - 1).getMax(), getMax()));
+        }
+        return out;
+    }
+
+    /**
+     * Combine a Collection of ranges by merging any that overlap
+     *
+     * @param ranges
+     * @return
+     */
+    public static Collection<Range1D> merge(Collection<Range1D> ranges) {
+        return merge(ranges.stream());
+    }
+
+    /**
+     * Combine a Stream of ranges by merging any that overlap
+     *
+     * @param ranges
+     * @return
+     */
+    public static Collection<Range1D> merge(Stream<Range1D> ranges) {
+        return ranges.sequential().sorted(MINCOMPARATOR).reduce(new ArrayDeque<>(), ACCUMULATOR, COMBINER);
     }
 
 }
