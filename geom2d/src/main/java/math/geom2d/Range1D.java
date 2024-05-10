@@ -191,4 +191,26 @@ public class Range1D implements Comparable<Range1D> {
         return ranges.sequential().sorted(MINCOMPARATOR).reduce(new ArrayDeque<>(), ACCUMULATOR, COMBINER);
     }
 
+    public static Collection<Range1D> union(Collection<Collection<Range1D>> allRanges) {
+        return merge(allRanges.stream().flatMap(c -> c.stream()));
+    }
+
+    public static Collection<Range1D> intersect(Collection<Collection<Range1D>> allRanges) {
+        return allRanges.stream().reduce(Range1D::intersect).orElseGet(() -> Arrays.asList());
+    }
+
+    public static Collection<Range1D> union(Collection<Range1D> rangesA, Collection<Range1D> rangesB) {
+        return union(Arrays.asList(rangesA, rangesB));
+    }
+
+    public static Collection<Range1D> intersect(Collection<Range1D> rangesA, Collection<Range1D> rangesB) {
+        if (rangesA.isEmpty() || rangesB.isEmpty()) {
+            return Arrays.asList();
+        }
+        List<Range1D> mergedA = merge(rangesA).stream().collect(Collectors.toList());
+        Range1D outer = new Range1D(mergedA.get(0).getMin(), mergedA.get(mergedA.size() - 1).getMax());
+        Collection<Range1D> intermediate = outer.subtract(mergedA);
+        return merge(merge(rangesB).stream().flatMap(range -> range.subtract(intermediate).stream()));
+    }
+
 }
