@@ -178,10 +178,11 @@ public class Triangle3D implements Shape3D {
     }
 
     boolean triangleContains(Plane3D plane, Point2D point2) {
-        return Polygons2D.rayTestInside(new SimplePolygon2D(
+        List<Point2D> ps = Arrays.asList(
                 plane.pointPosition(plane.projectPoint(this.vertices[0])),
                 plane.pointPosition(plane.projectPoint(this.vertices[1])),
-                plane.pointPosition(plane.projectPoint(this.vertices[2]))), point2);
+                plane.pointPosition(plane.projectPoint(this.vertices[2])));
+        return ps.contains(point2) || Polygons2D.rayTestInside(new SimplePolygon2D(ps), point2);
     }
 
     public double area() {

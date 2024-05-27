@@ -15,6 +15,7 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import math.geom2d.Box2D;
@@ -314,12 +315,12 @@ public final class Polygons2D {
         } else {
             ray = new StraightLine2D(point, polygon.centroid());
         }
-        Map<Boolean, List<Point2D>> partitioned = polygon.edges().stream()
+        Map<Boolean, Set<Point2D>> partitioned = polygon.edges().stream()
                 .map(edge -> edge.intersection(ray))
                 .filter(i -> i != null)
-                .collect(Collectors.partitioningBy(i -> ray.position(i) > 0.0));
-        List<Point2D> right = partitioned.get(Boolean.TRUE);
-        List<Point2D> left = partitioned.get(Boolean.FALSE);
+                .collect(Collectors.partitioningBy(i -> ray.position(i) > 0.0, Collectors.toSet()));
+        Set<Point2D> right = partitioned.get(Boolean.TRUE);
+        Set<Point2D> left = partitioned.get(Boolean.FALSE);
         return right != null && left != null && !right.isEmpty() && !left.isEmpty() && right.size() == left.size();
     }
 
