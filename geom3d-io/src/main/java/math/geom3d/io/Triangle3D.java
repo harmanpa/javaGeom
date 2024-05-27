@@ -33,10 +33,12 @@ import math.geom3d.Point3D;
 import math.geom3d.GeometricObject3D;
 import math.geom3d.Shape3D;
 import math.geom3d.Box3D;
-import math.geom3d.transform.AffineTransform3D;;
+import math.geom3d.transform.AffineTransform3D;
+;
 import math.geom3d.Vector3D;
 import math.geom3d.csg.CSG;
 import math.geom3d.csg.Polygon;
+import math.geom3d.line.StraightLine3D;
 import math.geom3d.plane.Plane3D;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.LUDecomposition;
@@ -79,9 +81,9 @@ public class Triangle3D implements Shape3D {
      * Creates a triangle with the given vertices at its corners and a given
      * normal.
      *
-     * @param v1     A corner vertex
-     * @param v2     A corner vertex
-     * @param v3     A corner vertex
+     * @param v1 A corner vertex
+     * @param v2 A corner vertex
+     * @param v3 A corner vertex
      * @param normal The normal
      */
     public Triangle3D(Point3D v1, Point3D v2, Point3D v3, Vector3D normal) {
@@ -167,12 +169,25 @@ public class Triangle3D implements Shape3D {
         return minDistance;
     }
 
+    public Point3D intersection(StraightLine3D ray) {
+        Plane3D plane = getPlane();
+        Point3D p = plane.lineIntersection(ray);
+        Point2D p2 = plane.pointPosition(plane.projectPoint(p));
+        if (new SimplePolygon2D(
+                plane.pointPosition(plane.projectPoint(this.vertices[0])),
+                plane.pointPosition(plane.projectPoint(this.vertices[1])),
+                plane.pointPosition(plane.projectPoint(this.vertices[2]))).contains(p2)) {
+            return p;
+        }
+        return null;
+    }
+
     public double area() {
         Plane3D plane = getPlane();
         return Math.abs(new SimplePolygon2D(
-            plane.pointPosition(plane.projectPoint(this.vertices[0])),
-            plane.pointPosition(plane.projectPoint(this.vertices[1])),
-            plane.pointPosition(plane.projectPoint(this.vertices[2]))).area());
+                plane.pointPosition(plane.projectPoint(this.vertices[0])),
+                plane.pointPosition(plane.projectPoint(this.vertices[1])),
+                plane.pointPosition(plane.projectPoint(this.vertices[2]))).area());
     }
 
     public Plane3D getPlane() {
@@ -187,7 +202,7 @@ public class Triangle3D implements Shape3D {
     /**
      * Based on
      * https://github.com/marmakoide/inside-3d-mesh/blob/master/is_inside_mesh.py
-     * 
+     *
      * @param point
      * @return
      */
@@ -195,10 +210,10 @@ public class Triangle3D implements Shape3D {
         Point3D pa = vertices[0].minus(point);
         Point3D pb = vertices[1].minus(point);
         Point3D pc = vertices[2].minus(point);
-        double det = new LUDecomposition(new Array2DRowRealMatrix(new double[][] {
-                new double[] { pa.getX(), pa.getY(), pa.getZ() },
-                new double[] { pb.getX(), pb.getY(), pb.getZ() },
-                new double[] { pc.getX(), pc.getY(), pc.getZ() }
+        double det = new LUDecomposition(new Array2DRowRealMatrix(new double[][]{
+            new double[]{pa.getX(), pa.getY(), pa.getZ()},
+            new double[]{pb.getX(), pb.getY(), pb.getZ()},
+            new double[]{pc.getX(), pc.getY(), pc.getZ()}
         })).getDeterminant();
         double a = vertices[0].distance(point);
         double b = vertices[0].distance(point);
@@ -248,7 +263,7 @@ public class Triangle3D implements Shape3D {
      * Gets the normal vector
      *
      * @return A vector pointing in a direction perpendicular to the surface of
-     *         the triangle.
+     * the triangle.
      */
     public Vector3D getNormal() {
         return normal;
@@ -272,11 +287,11 @@ public class Triangle3D implements Shape3D {
                     && this.vertices[1].almostEquals(other.vertices[1], eps)
                     && this.vertices[2].almostEquals(other.vertices[2], eps))
                     || (this.vertices[0].almostEquals(other.vertices[1], eps)
-                            && this.vertices[1].almostEquals(other.vertices[2], eps)
-                            && this.vertices[2].almostEquals(other.vertices[0], eps))
+                    && this.vertices[1].almostEquals(other.vertices[2], eps)
+                    && this.vertices[2].almostEquals(other.vertices[0], eps))
                     || (this.vertices[0].almostEquals(other.vertices[2], eps)
-                            && this.vertices[1].almostEquals(other.vertices[0], eps)
-                            && this.vertices[2].almostEquals(other.vertices[1], eps));
+                    && this.vertices[1].almostEquals(other.vertices[0], eps)
+                    && this.vertices[2].almostEquals(other.vertices[1], eps));
         }
         return false;
     }
@@ -285,7 +300,7 @@ public class Triangle3D implements Shape3D {
      * @see java.lang.Object#equals(java.lang.Object)
      * @param obj Object to test equality
      * @return True if the other object is a triangle whose verticese are the
-     *         same as this one.
+     * same as this one.
      */
     @Override
     public boolean equals(Object obj) {
