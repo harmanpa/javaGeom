@@ -14,9 +14,13 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.List;
+import java.util.Map;
+import java.util.stream.Collectors;
 
 import math.geom2d.Box2D;
 import math.geom2d.Point2D;
+import math.geom2d.Tolerance2D;
+import math.geom2d.Vector2D;
 import math.geom2d.circulinear.CirculinearDomain2D;
 import math.geom2d.circulinear.buffer.BufferCalculator;
 import math.geom2d.domain.Boundary2D;
@@ -24,6 +28,7 @@ import math.geom2d.domain.Boundaries2D;
 import math.geom2d.domain.Contour2D;
 import math.geom2d.domain.ContourArray2D;
 import math.geom2d.line.LineSegment2D;
+import math.geom2d.line.StraightLine2D;
 import math.geom2d.point.PointSets2D;
 import math.geom2d.polygon.convhull.JarvisMarch2D;
 import org.apache.commons.math3.util.FastMath;
@@ -302,6 +307,22 @@ public final class Polygons2D {
         return wn;
     }
 
+    public final static boolean rayTestInside(Polygon2D polygon, Point2D point) {
+        StraightLine2D ray;
+        if (point.distance(polygon.centroid()) < Tolerance2D.get()) {
+            ray = new StraightLine2D(point, new Vector2D(1, 0));
+        } else {
+            ray = new StraightLine2D(point, polygon.centroid());
+        }
+        Map<Boolean, List<Point2D>> partitioned = polygon.edges().stream()
+                .map(edge -> edge.intersection(ray))
+                .filter(i -> i != null)
+                .collect(Collectors.partitioningBy(i -> ray.position(i) > 0.0));
+        List<Point2D> right = partitioned.get(Boolean.TRUE);
+        List<Point2D> left = partitioned.get(Boolean.FALSE);
+        return right != null && left != null && !right.isEmpty() && !left.isEmpty() && right.size() == left.size();
+    }
+
     /**
      * Tests if a point is Left|On|Right of an infinite line. Input: three
      * points P0, P1, and P2 Return: >0 for P2 left of the line through P0 and
@@ -358,10 +379,10 @@ public final class Polygons2D {
 
     /**
      * Add a point to an existing convex hull
-     * 
+     *
      * @param hull
      * @param point
-     * @return 
+     * @return
      */
     public final static Polygon2D incrementalHull(Polygon2D hull, Point2D point) {
         // https://cs.jhu.edu/~misha/Spring16/07.pdf

@@ -28,6 +28,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 import math.geom2d.Tolerance2D;
 import math.geom2d.Point2D;
+import math.geom2d.polygon.Polygons2D;
 import math.geom2d.polygon.SimplePolygon2D;
 import math.geom3d.Point3D;
 import math.geom3d.GeometricObject3D;
@@ -159,10 +160,7 @@ public class Triangle3D implements Shape3D {
         double planarDistance = plane.distance(p);
         if (planarDistance < minDistance) {
             Point2D p2 = plane.pointPosition(plane.projectPoint(p));
-            if (new SimplePolygon2D(
-                    plane.pointPosition(plane.projectPoint(this.vertices[0])),
-                    plane.pointPosition(plane.projectPoint(this.vertices[1])),
-                    plane.pointPosition(plane.projectPoint(this.vertices[2]))).contains(p2)) {
+            if (triangleContains(plane, p2)) {
                 return planarDistance;
             }
         }
@@ -173,13 +171,17 @@ public class Triangle3D implements Shape3D {
         Plane3D plane = getPlane();
         Point3D p = plane.lineIntersection(ray);
         Point2D p2 = plane.pointPosition(plane.projectPoint(p));
-        if (new SimplePolygon2D(
-                plane.pointPosition(plane.projectPoint(this.vertices[0])),
-                plane.pointPosition(plane.projectPoint(this.vertices[1])),
-                plane.pointPosition(plane.projectPoint(this.vertices[2]))).contains(p2)) {
+        if (triangleContains(plane, p2)) {
             return p;
         }
         return null;
+    }
+
+    boolean triangleContains(Plane3D plane, Point2D point2) {
+        return Polygons2D.rayTestInside(new SimplePolygon2D(
+                plane.pointPosition(plane.projectPoint(this.vertices[0])),
+                plane.pointPosition(plane.projectPoint(this.vertices[1])),
+                plane.pointPosition(plane.projectPoint(this.vertices[2]))), point2);
     }
 
     public double area() {
