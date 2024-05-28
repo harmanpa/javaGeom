@@ -321,7 +321,7 @@ public final class Polygons2D {
                 .collect(Collectors.partitioningBy(i -> ray.position(i) > 0.0, Collectors.toSet()));
         Set<Point2D> right = partitioned.get(Boolean.TRUE);
         Set<Point2D> left = partitioned.get(Boolean.FALSE);
-        return right != null && left != null && !right.isEmpty() && !left.isEmpty() && right.size() == left.size();
+        return right != null && left != null && !right.isEmpty() && !left.isEmpty() && (right.size() % 2 != 0 || left.size() % 2 != 0);
     }
 
     /**
