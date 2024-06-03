@@ -23,9 +23,12 @@ SOFTWARE.
  */
 package math.geom3d.io;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.IntStream;
+import java.util.stream.Stream;
 import math.geom2d.Tolerance2D;
 import math.geom2d.Point2D;
 import math.geom2d.polygon.Polygons2D;
@@ -41,6 +44,8 @@ import math.geom3d.csg.CSG;
 import math.geom3d.csg.Polygon;
 import math.geom3d.line.StraightLine3D;
 import math.geom3d.plane.Plane3D;
+import math.geom3d.quickhull.QuickHull3D;
+import math.geom3d.quickhull.QuickHullException;
 import org.apache.commons.math3.linear.Array2DRowRealMatrix;
 import org.apache.commons.math3.linear.LUDecomposition;
 import org.apache.commons.math3.util.FastMath;
@@ -93,6 +98,19 @@ public class Triangle3D implements Shape3D {
         this.vertices[1] = v2;
         this.vertices[2] = v3;
         this.normal = normal;
+    }
+
+    public static List<Triangle3D> hull(List<Triangle3D> tris) throws QuickHullException {
+        QuickHull3D hull = new QuickHull3D();
+        Point3D[] hullPoints = tris.stream().flatMap(tri -> Stream.of(tri.getVertices())).toArray(Point3D[]::new);
+        hull.build(hullPoints);
+        hull.triangulate();
+        int[][] faces = hull.getFaces();
+        return Stream.of(faces)
+                .map(verts -> IntStream.of(verts).mapToObj(vert -> hullPoints[hull.getVertexPointIndices()[vert]]).toArray(Point3D[]::new))
+                .flatMap(points -> Polygon.fromPoints(points).toTriangles().stream())
+                .map(triangularPolygon -> new Triangle3D(triangularPolygon.getPoints(), triangularPolygon.getNormal()))
+                .collect(Collectors.toList());
     }
 
     public static List<Triangle3D> fromCSG(CSG csg) {

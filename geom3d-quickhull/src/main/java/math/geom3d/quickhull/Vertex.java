@@ -1,6 +1,8 @@
 package math.geom3d.quickhull;
 
 // TODO: Auto-generated Javadoc
+import math.geom3d.Point3D;
+
 /**
  * Represents vertices of the hull, as well as the points from which it is
  * formed.
@@ -12,7 +14,7 @@ class Vertex {
     /**
      * Spatial point associated with this vertex.
      */
-    Point3d pnt;
+    Point3D pnt;
 
     /**
      * Back index into an array.
@@ -38,7 +40,7 @@ class Vertex {
      * Constructs a vertex and sets its coordinates to 0.
      */
     public Vertex() {
-        pnt = new Point3d();
+        pnt = new Point3D();
     }
 
     /**
@@ -50,7 +52,7 @@ class Vertex {
      * @param idx the idx
      */
     public Vertex(double x, double y, double z, int idx) {
-        pnt = new Point3d(x, y, z);
+        pnt = new Point3D(x, y, z);
         index = idx;
     }
 

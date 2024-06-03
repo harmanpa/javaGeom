@@ -10,7 +10,6 @@ import java.util.List;
 import math.geom3d.Point3D;
 import math.geom3d.csg.CSG;
 import math.geom3d.csg.Polygon;
-import math.geom3d.quickhull.Point3d;
 import math.geom3d.quickhull.QuickHull3D;
 import math.geom3d.quickhull.QuickHullException;
 
@@ -37,7 +36,7 @@ public class HullUtil {
      * @throws math.geom3d.quickhull.QuickHullException
      */
     public static CSG hull(List<Point3D> points) throws QuickHullException {
-        Point3d[] hullPoints = points.stream().map((vec) -> new Point3d(vec.getX(), vec.getY(), vec.getZ())).toArray(Point3d[]::new);
+        Point3D[] hullPoints = points.toArray(Point3D[]::new);
         QuickHull3D hull = new QuickHull3D();
         hull.build(hullPoints);
         hull.triangulate();

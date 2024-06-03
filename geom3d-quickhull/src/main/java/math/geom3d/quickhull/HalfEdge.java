@@ -196,7 +196,7 @@ class HalfEdge {
      */
     public double lengthSquared() {
         if (tail() != null) {
-            return head().pnt.distanceSquared(tail().pnt);
+            return head().pnt.distanceSq(tail().pnt);
         } else {
             return -1;
         }

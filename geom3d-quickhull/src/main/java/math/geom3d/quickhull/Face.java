@@ -13,6 +13,9 @@
  */
 package math.geom3d.quickhull;
 
+import math.geom3d.Point3D;
+import math.geom3d.Vector3D;
+
 /**
  * Basic triangular face used to form the hull.
  *
@@ -33,7 +36,7 @@ class Face {
     /**
      * The normal.
      */
-    private final Vector3d normal;
+    private Vector3D normal;
 
     /**
      * The area.
@@ -43,7 +46,7 @@ class Face {
     /**
      * The centroid.
      */
-    private final Point3d centroid;
+    private Point3D centroid;
 
     /**
      * The plane offset.
@@ -95,14 +98,14 @@ class Face {
      *
      * @param centroid the centroid
      */
-    public void computeCentroid(Point3d centroid) {
-        centroid.setZero();
+    public void computeCentroid() {
+        centroid = new Point3D();
         HalfEdge he = he0;
         do {
-            centroid.add(he.head().pnt);
+            centroid = centroid.plus(he.head().pnt);
             he = he.next;
         } while (he != he0);
-        centroid.scale(1 / (double) numVerts);
+        centroid = centroid.times(1 / (double) numVerts);
     }
 
     /**
@@ -111,8 +114,8 @@ class Face {
      * @param normal the normal
      * @param minArea the min area
      */
-    public void computeNormal(Vector3d normal, double minArea) {
-        computeNormal(normal);
+    public void computeNormal(double minArea) {
+        computeNormal();
 
         if (area < minArea) {
             // make the normal more robust by removing
@@ -130,18 +133,14 @@ class Face {
                 hedge = hedge.next;
             } while (hedge != he0);
 
-            Point3d p2 = hedgeMax.head().pnt;
-            Point3d p1 = hedgeMax.tail().pnt;
+            Point3D p2 = hedgeMax.head().pnt;
+            Point3D p1 = hedgeMax.tail().pnt;
             double lenMax = Math.sqrt(lenSqrMax);
-            double ux = (p2.x - p1.x) / lenMax;
-            double uy = (p2.y - p1.y) / lenMax;
-            double uz = (p2.z - p1.z) / lenMax;
-            double dot = normal.x * ux + normal.y * uy + normal.z * uz;
-            normal.x -= dot * ux;
-            normal.y -= dot * uy;
-            normal.z -= dot * uz;
-
-            normal.normalize();
+            double ux = (p2.getX() - p1.getX()) / lenMax;
+            double uy = (p2.getY() - p1.getY()) / lenMax;
+            double uz = (p2.getZ() - p1.getZ()) / lenMax;
+            double dot = normal.getX() * ux + normal.getY() * uy + normal.getZ() * uz;
+            normal = normal.minus(new Vector3D(ux, uy, uz).times(dot)).normalize();
         }
     }
 
@@ -150,18 +149,18 @@ class Face {
      *
      * @param normal the normal
      */
-    public void computeNormal(Vector3d normal) {
+    public void computeNormal() {
         HalfEdge he1 = he0.next;
         HalfEdge he2 = he1.next;
 
-        Point3d p0 = he0.head().pnt;
-        Point3d p2 = he1.head().pnt;
+        Point3D p0 = he0.head().pnt;
+        Point3D p2 = he1.head().pnt;
 
-        double d2x = p2.x - p0.x;
-        double d2y = p2.y - p0.y;
-        double d2z = p2.z - p0.z;
+        double d2x = p2.getX() - p0.getX();
+        double d2y = p2.getY() - p0.getY();
+        double d2z = p2.getZ() - p0.getZ();
 
-        normal.setZero();
+        normal = new Vector3D();
 
         numVerts = 2;
 
@@ -171,29 +170,27 @@ class Face {
             double d1z = d2z;
 
             p2 = he2.head().pnt;
-            d2x = p2.x - p0.x;
-            d2y = p2.y - p0.y;
-            d2z = p2.z - p0.z;
+            d2x = p2.getX() - p0.getX();
+            d2y = p2.getY() - p0.getY();
+            d2z = p2.getZ() - p0.getZ();
 
-            normal.x += d1y * d2z - d1z * d2y;
-            normal.y += d1z * d2x - d1x * d2z;
-            normal.z += d1x * d2y - d1y * d2x;
+            normal = normal.plus(new Vector3D(d1y * d2z - d1z * d2y, d1z * d2x - d1x * d2z, d1x * d2y - d1y * d2x));
 
             he1 = he2;
             he2 = he2.next;
             numVerts++;
         }
         area = normal.norm();
-        normal.scale(1 / area);
+        normal = normal.times(1 / area);
     }
 
     /**
      * Compute normal and centroid.
      */
     private void computeNormalAndCentroid() throws QuickHullException {
-        computeNormal(normal);
-        computeCentroid(centroid);
-        planeOffset = normal.dot(centroid);
+        computeNormal();
+        computeCentroid();
+        planeOffset = normal.dot(centroid.asVector());
         int numv = 0;
         HalfEdge he = he0;
         do {
@@ -212,9 +209,9 @@ class Face {
      * @param minArea the min area
      */
     private void computeNormalAndCentroid(double minArea) {
-        computeNormal(normal, minArea);
-        computeCentroid(centroid);
-        planeOffset = normal.dot(centroid);
+        computeNormal(minArea);
+        computeCentroid();
+        planeOffset = normal.dot(centroid.asVector());
     }
 
     /**
@@ -291,8 +288,8 @@ class Face {
      * Instantiates a new face.
      */
     public Face() {
-        normal = new Vector3d();
-        centroid = new Point3d();
+        normal = new Vector3D();
+        centroid = new Point3D();
         mark = VISIBLE;
     }
 
@@ -349,8 +346,8 @@ class Face {
      * @param p the point
      * @return distance from the point to the plane
      */
-    public double distanceToPlane(Point3d p) {
-        return normal.x * p.x + normal.y * p.y + normal.z * p.z - planeOffset;
+    public double distanceToPlane(Point3D p) {
+        return normal.getX() * p.getX() + normal.getY() * p.getY() + normal.getZ() * p.getZ() - planeOffset;
     }
 
     /**
@@ -358,7 +355,7 @@ class Face {
      *
      * @return the planar normal
      */
-    public Vector3d getNormal() {
+    public Vector3D getNormal() {
         return normal;
     }
 
@@ -367,7 +364,7 @@ class Face {
      *
      * @return the centroid
      */
-    public Point3d getCentroid() {
+    public Point3D getCentroid() {
         return centroid;
     }
 
@@ -594,17 +591,17 @@ class Face {
         // by the half edge hedge0 and the point at the
         // head of hedge1.
 
-        Point3d p0 = hedge0.tail().pnt;
-        Point3d p1 = hedge0.head().pnt;
-        Point3d p2 = hedge1.head().pnt;
+        Point3D p0 = hedge0.tail().pnt;
+        Point3D p1 = hedge0.head().pnt;
+        Point3D p2 = hedge1.head().pnt;
 
-        double dx1 = p1.x - p0.x;
-        double dy1 = p1.y - p0.y;
-        double dz1 = p1.z - p0.z;
+        double dx1 = p1.getX() - p0.getX();
+        double dy1 = p1.getY() - p0.getY();
+        double dz1 = p1.getZ() - p0.getZ();
 
-        double dx2 = p2.x - p0.x;
-        double dy2 = p2.y - p0.y;
-        double dz2 = p2.z - p0.z;
+        double dx2 = p2.getX() - p0.getX();
+        double dy2 = p2.getY() - p0.getY();
+        double dz2 = p2.getZ() - p0.getZ();
 
         double x = dy1 * dz2 - dz1 * dy2;
         double y = dz1 * dx2 - dx1 * dz2;
