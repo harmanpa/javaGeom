@@ -23,7 +23,6 @@ SOFTWARE.
  */
 package math.geom3d.io;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -38,7 +37,6 @@ import math.geom3d.GeometricObject3D;
 import math.geom3d.Shape3D;
 import math.geom3d.Box3D;
 import math.geom3d.transform.AffineTransform3D;
-;
 import math.geom3d.Vector3D;
 import math.geom3d.csg.CSG;
 import math.geom3d.csg.Polygon;
