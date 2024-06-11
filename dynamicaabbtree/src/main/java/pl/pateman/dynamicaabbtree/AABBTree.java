@@ -6,9 +6,13 @@ import java.util.*;
 import java.util.function.Predicate;
 
 import static java.lang.Math.max;
+import java.util.Random;
+import java.util.function.BiPredicate;
 
 /**
  * Created by pateman.
+ *
+ * @param <T>
  */
 public final class AABBTree<T extends Boundable & Identifiable> {
 
@@ -247,7 +251,7 @@ public final class AABBTree<T extends Boundable & Identifiable> {
     }
 
     private void detectCollisionPairsWithNode(AABBTreeNode<T> nodeToTest, CollisionFilter<T> filter, Set<CollisionPair<T>> alreadyTested,
-                                              List<CollisionPair<T>> result) {
+            List<CollisionPair<T>> result) {
         Deque<Integer> stack = new ArrayDeque<>();
         stack.offer(root);
         AABBf overlapWith = nodeToTest.getAABB();
@@ -350,6 +354,14 @@ public final class AABBTree<T extends Boundable & Identifiable> {
         syncUpHierarchy(nodeGrandparent);
     }
 
+    public void findTreeClosest(AABBTree<T> other, List<CollisionPair<T>> result) {
+        traverseTreePair(this, other, (a, b) -> true, new DistanceComparator(), result);
+    }
+
+    public void detectTreeCollisions(AABBTree<T> other, List<CollisionPair<T>> result) {
+        traverseTreePair(this, other, (a, b) -> a.testAABB(b), (a, b) -> 0, result);
+    }
+
     public void detectOverlaps(AABBf overlapWith, List<T> result) {
         detectOverlaps(overlapWith, defaultAABBOverlapFilter, result);
     }
@@ -396,6 +408,93 @@ public final class AABBTree<T extends Boundable & Identifiable> {
     public void detectRayIntersection(Rayf ray, AABBOverlapFilter<T> filter, List<T> result) {
         rayIntersection.set(ray.oX, ray.oY, ray.oZ, ray.dX, ray.dY, ray.dZ);
         traverseTree(aabb -> rayIntersection.test(aabb.minX, aabb.minY, aabb.minZ, aabb.maxX, aabb.maxY, aabb.maxZ), filter, result);
+    }
+
+    private static <T extends Boundable & Identifiable> void traverseTreePair(
+            AABBTree<T> treeA,
+            AABBTree<T> treeB,
+            BiPredicate<AABBf, AABBf> nodesTest,
+            Comparator<AABBf[]> comparator,
+            List<CollisionPair<T>> result) {
+        if (treeA.root == AABBTreeNode.INVALID_NODE_INDEX || treeB.root == AABBTreeNode.INVALID_NODE_INDEX) {
+            return;
+        }
+        Random random = new Random();
+        Deque<int[]> stack = new ArrayDeque<>();
+        stack.offer(new int[]{treeA.root, treeB.root});
+
+        while (!stack.isEmpty()) {
+            int[] nodeIndices = stack.pop();
+            if (nodeIndices[0] == AABBTreeNode.INVALID_NODE_INDEX || nodeIndices[1] == AABBTreeNode.INVALID_NODE_INDEX) {
+                continue;
+            }
+            AABBTreeNode<T> nodeA = treeA.getNodeAt(nodeIndices[0]);
+            AABBf nodeAABBA = nodeA.getAABB();
+            AABBTreeNode<T> nodeB = treeB.getNodeAt(nodeIndices[1]);
+            AABBf nodeAABBB = nodeB.getAABB();
+            if (nodesTest.test(nodeAABBA, nodeAABBB)) {
+                if (nodeA.isLeaf()) {
+                    if (nodeB.isLeaf()) {
+                        result.add(new CollisionPair(nodeA.getData(), nodeB.getData()));
+                    } else {
+                        split(false, getNodeChildren(nodeB), treeB, nodeIndices[0], nodeAABBA, comparator, stack);
+                    }
+                } else if (nodeB.isLeaf()) {
+                    split(true, getNodeChildren(nodeA), treeA, nodeIndices[1], nodeAABBB, comparator, stack);
+                } else {
+                    if (random.nextBoolean()) {
+                        split(true, getNodeChildren(nodeA), treeA, nodeIndices[1], nodeAABBB, comparator, stack);
+                    } else {
+                        split(false, getNodeChildren(nodeB), treeB, nodeIndices[0], nodeAABBA, comparator, stack);
+                    }
+                }
+            }
+        }
+    }
+
+    private static <T extends Boundable & Identifiable> boolean split(
+            boolean splitA, int[] children,
+            AABBTree<T> treeSplit, int otherIndex, AABBf otherAABB,
+            Comparator<AABBf[]> comparator, Deque<int[]> stack) {
+        switch (children.length) {
+            case 2:
+                switch (comparator.compare(
+                        new AABBf[]{splitA ? treeSplit.getNodeAt(children[0]).getAABB() : otherAABB, splitA ? otherAABB : treeSplit.getNodeAt(children[0]).getAABB()},
+                        new AABBf[]{splitA ? treeSplit.getNodeAt(children[1]).getAABB() : otherAABB, splitA ? otherAABB : treeSplit.getNodeAt(children[1]).getAABB()})) {
+                    case -1:
+                        stack.offer(new int[]{splitA ? children[0] : otherIndex, splitA ? otherIndex : children[0]});
+                        break;
+                    case 1:
+                        stack.offer(new int[]{splitA ? children[1] : otherIndex, splitA ? otherIndex : children[1]});
+                        break;
+                    default:
+                        stack.offer(new int[]{splitA ? children[0] : otherIndex, splitA ? otherIndex : children[0]});
+                        stack.offer(new int[]{splitA ? children[1] : otherIndex, splitA ? otherIndex : children[1]});
+                }
+                return true;
+            case 1:
+                stack.offer(new int[]{splitA ? children[0] : otherIndex, splitA ? otherIndex : children[0]});
+                break;
+            default:
+            // nothing
+        }
+        return false;
+    }
+
+    private static <T extends Boundable & Identifiable> int[] getNodeChildren(AABBTreeNode<T> node) {
+        int left = node.getLeftChild();
+        int right = node.getRightChild();
+        if (left == AABBTreeNode.INVALID_NODE_INDEX) {
+            if (right == AABBTreeNode.INVALID_NODE_INDEX) {
+                return new int[0];
+            } else {
+                return new int[]{right};
+            }
+        } else if (right == AABBTreeNode.INVALID_NODE_INDEX) {
+            return new int[]{left};
+        } else {
+            return new int[]{left, right};
+        }
     }
 
     private void traverseTree(Predicate<AABBf> nodeTest, AABBOverlapFilter<T> filter, List<T> result) {
