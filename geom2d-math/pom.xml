@@ -32,9 +32,9 @@
             <version>1.4.0</version>
         </dependency>
         <dependency>
-            <groupId>com.github.pateman</groupId>
+            <groupId>jgeom</groupId>
             <artifactId>dynamicaabbtree</artifactId>
-            <version>515a0a7cfe</version>
+            <version>${project.version}</version>
         </dependency>
         <dependency>
             <groupId>jgeom</groupId>
