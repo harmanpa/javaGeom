@@ -10,6 +10,11 @@
     <packaging>jar</packaging>
     <dependencies>
         <dependency>
+            <groupId>jgeom</groupId>
+            <artifactId>geom2d-math</artifactId>
+            <version>${project.version}</version>
+        </dependency>
+        <dependency>
             <groupId>${project.groupId}</groupId>
             <artifactId>geom3d-poly2tri</artifactId>
             <version>${project.version}</version>

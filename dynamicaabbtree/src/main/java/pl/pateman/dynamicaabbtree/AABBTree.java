@@ -8,6 +8,8 @@ import java.util.function.Predicate;
 import static java.lang.Math.max;
 import java.util.Random;
 import java.util.function.BiPredicate;
+import math.geom3d.transform.AffineTransform3D;
+
 
 /**
  * Created by pateman.
@@ -360,6 +362,22 @@ public final class AABBTree<T extends Boundable & Identifiable> {
 
     public void detectTreeCollisions(AABBTree<T> other, List<CollisionPair<T>> result) {
         traverseTreePair(this, other, (a, b) -> a.testAABB(b), (a, b) -> 0, result);
+    }
+
+    public void findTreeClosest(AABBTree<T> other, AffineTransform3D transformOther, List<CollisionPair<T>> result) {
+        traverseTreePair(this, other, (a, b) -> true, new TransformedDistanceComparator(new AffineTransform3D(), transformOther), result);
+    }
+
+    public void detectTreeCollisions(AABBTree<T> other, AffineTransform3D transformOther, List<CollisionPair<T>> result) {
+        traverseTreePair(this, other, (a, b) -> AABBUtils.testAABB(a, b, transformOther), (a, b) -> 0, result);
+    }
+
+    public void findTreeClosest(AffineTransform3D transformThis, AABBTree<T> other, AffineTransform3D transformOther, List<CollisionPair<T>> result) {
+        traverseTreePair(this, other, (a, b) -> true, new TransformedDistanceComparator(transformThis, transformOther), result);
+    }
+
+    public void detectTreeCollisions(AffineTransform3D transformThis, AABBTree<T> other, AffineTransform3D transformOther, List<CollisionPair<T>> result) {
+        traverseTreePair(this, other, (a, b) -> AABBUtils.testAABB(a, transformThis, b, transformOther), (a, b) -> 0, result);
     }
 
     public void detectOverlaps(AABBf overlapWith, List<T> result) {
