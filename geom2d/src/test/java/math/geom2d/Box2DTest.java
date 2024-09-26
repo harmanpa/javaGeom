@@ -25,9 +25,11 @@
  */
 package math.geom2d;
 
+import junit.framework.Assert;
 import junit.framework.TestCase;
 import math.geom2d.domain.Boundary2D;
 import math.geom2d.polygon.LinearRing2D;
+import org.junit.Test;
 
 public class Box2DTest extends TestCase {
 
@@ -136,4 +138,31 @@ public class Box2DTest extends TestCase {
         assertEquals(1, bnd0111.continuousCurves().size());
     }
 
+    @Test
+    public void testExternalDistance() {
+        Box2D box0 = new Box2D(0, 1, 0, 1);
+        Box2D box1 = new Box2D(2, 3, 0, 1);
+        Box2D box2 = new Box2D(0, 1, 2, 3);
+        Box2D box3 = new Box2D(2, 3, 2, 3);
+        Assert.assertEquals("Wrong external distance box0 to box1", 1, box0.distance(box1), 1e-6);
+        Assert.assertEquals("Wrong external distance box1 to box0", 1, box1.distance(box0), 1e-6);
+        Assert.assertEquals("Wrong external distance box0 to box2", 1, box0.distance(box2), 1e-6);
+        Assert.assertEquals("Wrong external distance box2 to box0", 1, box2.distance(box0), 1e-6);
+        Assert.assertEquals("Wrong external distance box0 to box3", Math.sqrt(2), box0.distance(box3), 1e-6);
+        Assert.assertEquals("Wrong external distance box3 to box0", Math.sqrt(2), box3.distance(box0), 1e-6);
+    }
+
+    @Test
+    public void testInternalDistance() {
+        Box2D box0 = new Box2D(0, 1, 0, 1);
+        Box2D box1 = new Box2D(0.8, 1.8, 0, 1);
+        Box2D box2 = new Box2D(0, 1, 0.8, 1.8);
+        Box2D box3 = new Box2D(0.8, 1.8, 0.8, 1.8);
+        Assert.assertEquals("Wrong internal distance box0 to box1", -0.2, box0.distance(box1), 1e-6);
+        Assert.assertEquals("Wrong internal distance box1 to box0", -0.2, box1.distance(box0), 1e-6);
+        Assert.assertEquals("Wrong internal distance box0 to box2", -0.2, box0.distance(box2), 1e-6);
+        Assert.assertEquals("Wrong internal distance box2 to box0", -0.2, box2.distance(box0), 1e-6);
+        Assert.assertEquals("Wrong internal distance box0 to box3", -0.2, box0.distance(box3), 1e-6);
+        Assert.assertEquals("Wrong internal distance box3 to box0", -0.2, box3.distance(box0), 1e-6);
+    }
 }

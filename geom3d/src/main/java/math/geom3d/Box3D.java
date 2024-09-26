@@ -206,7 +206,7 @@ public class Box3D implements GeometricObject3D {
 
     @JsonIgnore
     public Point3D[] getExtremes() {
-        return new Point3D[] { new Point3D(xmin, ymin, zmin), new Point3D(xmax, ymax, zmax) };
+        return new Point3D[]{new Point3D(xmin, ymin, zmin), new Point3D(xmax, ymax, zmax)};
     }
 
     /**
@@ -296,8 +296,8 @@ public class Box3D implements GeometricObject3D {
 
     @JsonIgnore
     public Range1D[] getRanges() {
-        return new Range1D[] { new Range1D(getMinX(), getMaxX()), new Range1D(getMinY(), getMaxY()),
-                new Range1D(getMinZ(), getMaxZ()) };
+        return new Range1D[]{new Range1D(getMinX(), getMaxX()), new Range1D(getMinY(), getMaxY()),
+            new Range1D(getMinZ(), getMaxZ())};
     }
 
     @JsonIgnore
@@ -321,38 +321,21 @@ public class Box3D implements GeometricObject3D {
         return corners[0].distance(corners[1]);
     }
 
-    /**
-     * Returns an approximate distance unless the approximate distance is below a
-     * given value
-     */
-    public double fastDistance(Box3D other, double accurateBelow) {
-        double fDistance = getCenter().distance(other.getCenter()) - (diagonal() / 2 + other.diagonal() / 2);
-        if (fDistance < accurateBelow) {
-            return distance(other);
-        }
-        return fDistance;
-    }
-
     public double distance(Box3D other) {
-        int[] overlaps = new int[3];
+        double[] distances = new double[3];
         Range1D[] ranges = getRanges();
         Range1D[] otherRanges = other.getRanges();
+        int overlap = 0;
         for (int i = 0; i < 3; i++) {
-            overlaps[i] = ranges[i].compareTo(otherRanges[i]);
+            distances[i] = ranges[i].distance(otherRanges[i]);
+            overlap += distances[i] < 0 ? 1 : 0;
         }
-        if (overlaps[0] == 0 && overlaps[1] == 0 && overlaps[2] != 0) {
-            return ranges[2].distance(otherRanges[2]);
-        } else if (overlaps[0] == 0 && overlaps[1] != 0 && overlaps[2] == 0) {
-            return ranges[1].distance(otherRanges[1]);
-        } else if (overlaps[0] != 0 && overlaps[1] == 0 && overlaps[2] == 0) {
-            return ranges[0].distance(otherRanges[0]);
-        } else if (overlaps[0] == 0 && overlaps[1] == 0 && overlaps[2] == 0) {
-            return Math.max(Math.max(ranges[0].distance(otherRanges[0]), ranges[1].distance(otherRanges[1])),
-                    ranges[2].distance(otherRanges[2]));
+        if (overlap < 3) {
+            // It is outside. We use hypot on the 3 relative distances, but using 0 where there is overlap
+            return Math.hypot(Math.max(distances[0], 0.0), Math.hypot(Math.max(distances[1], 0.0), Math.max(distances[2], 0.0)));
         } else {
-            return streamVertices()
-                    .mapToDouble(v -> other.streamVertices().mapToDouble(v2 -> v.distance(v2)).min().getAsDouble())
-                    .min().getAsDouble();
+            // It is inside, all are negative but we want smallest absolute value (hence largest)
+            return Math.max(Math.max(distances[0], distances[1]), distances[2]);
         }
     }
 }

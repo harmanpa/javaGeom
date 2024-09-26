@@ -695,25 +695,25 @@ public class Box2D implements GeometricObject2D {
     }
 
     public Stream<Point2D> streamVertices() {
-        return Stream.of(true, false).flatMap(x -> 
-            Stream.of(true, false).map(y -> new Point2D(x ? getMaxX() : getMinX(), y ? getMaxY() : getMinY())));
+        return Stream.of(true, false).flatMap(x
+                -> Stream.of(true, false).map(y -> new Point2D(x ? getMaxX() : getMinX(), y ? getMaxY() : getMinY())));
     }
 
     public double distance(Box2D other) {
-        int[] overlaps = new int[2];
+        double[] distances = new double[2];
         Range1D[] ranges = getRanges();
         Range1D[] otherRanges = other.getRanges();
-        for(int i=0; i<2; i++) {
-            overlaps[i] = ranges[i].compareTo(otherRanges[i]);
+        int overlap = 0;
+        for (int i = 0; i < 2; i++) {
+            distances[i] = ranges[i].distance(otherRanges[i]);
+            overlap += distances[i] < 0 ? 1 : 0;
         }
-        if(overlaps[0]==0 && overlaps[1]!=0) {
-            return ranges[1].distance(otherRanges[1]);
-        } else if(overlaps[0]!=0 && overlaps[1]==0) {
-            return ranges[0].distance(otherRanges[0]);
-        } else if(overlaps[0]==0 && overlaps[1]==0) {
-            return Math.max(ranges[0].distance(otherRanges[0]), ranges[1].distance(otherRanges[1]));
+        if (overlap < 2) {
+            // It is outside. We use hypot on the 3 relative distances, but using 0 where there is overlap
+            return Math.hypot(Math.max(distances[0], 0.0), Math.max(distances[1], 0.0));
         } else {
-            return streamVertices().mapToDouble(v -> other.streamVertices().mapToDouble(v2 -> v.distance(v2)).min().getAsDouble()).min().getAsDouble();
+            // It is inside, all are negative but we want smallest absolute value (hence largest)
+            return Math.max(distances[0], distances[1]);
         }
     }
 }
