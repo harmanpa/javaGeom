@@ -1217,7 +1217,9 @@ public class QuickHull3D {
             newFaces.add(hedgeSide.getFace());
             hedgeSidePrev = hedgeSide;
         }
-        hedgeSideBegin.next.setOpposite(hedgeSidePrev);
+        if (hedgeSideBegin != null) {
+            hedgeSideBegin.next.setOpposite(hedgeSidePrev);
+        }
     }
 
     /**
@@ -1424,7 +1426,7 @@ public class QuickHull3D {
      * Checks the correctness of the hull using the distance tolerance returned
      * by {@link QuickHull3D#getDistanceTolerance
      * getDistanceTolerance}; see null null null null null null null null null
-     * null null null null null null     {@link QuickHull3D#check(PrintStream,double)
+     * null null null null null null null     {@link QuickHull3D#check(PrintStream,double)
 	 * check(PrintStream,double)} for details.
      *
      * @param ps print stream for diagnostic messages; may be set to
@@ -1475,7 +1477,7 @@ public class QuickHull3D {
                         if (ps != null) {
                             ps.println(
                                     "Point " + i + " " + dist + " above face "
-                                            + face.getVertexString());
+                                    + face.getVertexString());
                         }
                         return false;
                     }
